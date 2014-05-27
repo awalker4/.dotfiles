@@ -1,4 +1,12 @@
+########################################
+#
+# ~/.screenrc
+# Start-up settings for Screen
+#
+########################################
+
 startup_message off
+
 defscrollback 10000
 
 hardstatus alwayslastline
