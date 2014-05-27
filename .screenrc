@@ -1,0 +1,45 @@
+startup_message off
+defscrollback 10000
+
+hardstatus alwayslastline
+hardstatus string "%{kG}%50>%-w%{ky}%n %t%{-}%+w%{-} %>%=%{ky}Ctrl-A ?%{-} for help"
+
+# Wow, visual bell really sucks.
+# vbellwait 0.1
+# vbell_msg "* Ding! *"
+
+# Print message on status if activity is detected in a hidden window.
+defmonitor on
+activity "activity in window %n: %t"
+msgwait 10
+
+# Don't kill window after its child process dies.
+zombie "^["
+
+# This is for mouse scroll-wheel support.
+# Tell screen that xterm can scroll.
+termcapinfo xterm ti@:te@
+# Bind Shift+PgUp/PgDn.
+bindkey -m "^[[5;2~" stuff ^b
+bindkey -m "^[[6;2~" stuff ^f
+
+################
+# 256 colors
+# http://frexx.de/xterm-256-notes/
+# terminfo and termcap for nice 256 color terminal
+# allow bold colors - necessary for some reason
+attrcolor b ".I"
+# tell screen how to set colors. AB = background, AF=foreground
+termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
+# erase background with current bg color
+defbce "on"
+
+# replace dangerous kill key bindings...
+bind k
+bind ^k
+# ...with better one.
+bind 'K' kill
+
+# This allows ssh-agent to work through screen sessions.
+unsetenv SSH_AUTH_SOCK
+setenv SSH_AUTH_SOCK $HOME/.screen/ssh-auth-sock.$HOSTNAME
