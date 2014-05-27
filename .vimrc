@@ -5,7 +5,6 @@
 "   -> General
 "   -> Vim interface
 "   -> Colors and fonts
-"   -> Navigation
 "   -> Text, indenting, pasting
 "   -> Search
 "   -> Files, backups, undo
@@ -68,6 +67,19 @@ set mat=2
 " Stop certain movements from returning to line start
 set nostartofline
 
+" Press jj to exit insert mode
+inoremap jj <Esc>
+
+" Better split panes
+set splitbelow
+set splitright
+
+" Easier navigation between split windows
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
@@ -75,14 +87,6 @@ set nostartofline
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " Syntax highlighting
 syntax enable
-
-
-
-""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Navigation
-""""""""""""""""""""""""""""""""""""""""""""""""""
-" Press jj to exit insert mode
-inoremap jj <Esc>
 
 
 
