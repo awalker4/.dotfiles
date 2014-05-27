@@ -41,7 +41,7 @@ alias .....='cd ../../../..'
 
 alias cp='cp -iv'
 alias mv='mv -v'
-alias rem='rm -iv'
+alias rm='rm -iv'
 
 
 #### Functions ####
