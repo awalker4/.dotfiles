@@ -1,15 +1,18 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " ~/.vimrc
+" Vim config
 "
 " Sections:
 "   -> General
-"   -> Vim interface
 "   -> Colors and fonts
+"   -> Vim interface
 "   -> Text, indenting, pasting
 "   -> Search
 "   -> Files, backups, undo
 "   -> Additional functions
+"   -> Scripts, plugins
 """"""""""""""""""""""""""""""""""""""""""""""""""
+
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
@@ -19,11 +22,10 @@
 set nocompatible
 
 " Remember up to 1000 lines
-set history=1000
+set history=250
 
 " Filetype plugins
 filetype plugin on
-filetype indent on
 
 " Watch for external changes
 set autoread
@@ -34,6 +36,16 @@ let g:mapleader=","
 
 " Ask about changes
 set confirm
+
+" Open help in a vertical split
+au BufWinEnter *.txt if &ft == 'help' | wincmd L | nmap q :q<CR> | endif
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Colors and fonts
+""""""""""""""""""""""""""""""""""""""""""""""""""
+" Syntax highlighting
+syntax enable
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
@@ -80,13 +92,6 @@ nnoremap <C-H> <C-W><C-H>
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
-" => Colors and fonts
-""""""""""""""""""""""""""""""""""""""""""""""""""
-" Syntax highlighting
-syntax enable
-
-
-""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Text, indenting, pasting
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " Use spaces over tabs
@@ -104,9 +109,13 @@ nnoremap <F2> :set invpaste paste?<CR>
 set pastetoggle=<F2>
 set showmode
 
-" Delete trailing white spset ai "Auto indent
+" Delete trailing white space
+set ai "Auto indent
 set si "Smart indent
 set wrap "Wrap lines
+
+" Autocompletion
+set omnifunc=syntaxcomplete#Complete
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
@@ -122,6 +131,8 @@ set smartcase
 " Jump to first match
 set incsearch
 
+set hlsearch
+
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Additional functions
@@ -134,3 +145,25 @@ func! DeleteTrailingWS()
 endfunc
 autocmd BufWrite *.py :call DeleteTrailingWS()
 autocmd BufWrite *.coffee :call DeleteTrailingWS()
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Scripts, plugins
+""""""""""""""""""""""""""""""""""""""""""""""""""
+" Use Vundle
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+Plugin 'gmarik/Vundle.vim'
+
+if v:version >= 704 || v:version == 703 && has("patch584")
+    Plugin 'Valloric/YouCompleteMe' " Program autocompletion (Vim 7.3.584+)
+else
+    Plugin 'vim-scripts/AutoComplPop' " Use for autocompletion below Vim 7.3.584
+endif
+
+Plugin 'vim-scripts/taglist.vim'
+Plugin 'tpope/vim-fugitive' " Git integration
+
+call vundle#end()
+filetype plugin indent on
