@@ -13,8 +13,8 @@ hardstatus alwayslastline
 hardstatus string "%{kG}%50>%-w%{ky}%n %t%{-}%+w%{-} %>%=%{ky}Ctrl-A ?%{-} for help"
 
 # Wow, visual bell really sucks.
-# vbellwait 0.1
-# vbell_msg "* Ding! *"
+vbell "off"
+vbell_msg "* Ding! *"
 
 # Print message on status if activity is detected in a hidden window.
 defmonitor on
@@ -47,6 +47,9 @@ bind k
 bind ^k
 # ...with better one.
 bind 'K' kill
+
+bindkey "^[Od" prev  # change window with ctrl-left
+bindkey "^[Oc" next  # change window with ctrl-right
 
 # This allows ssh-agent to work through screen sessions.
 unsetenv SSH_AUTH_SOCK

@@ -25,7 +25,7 @@ if [ -f $HOME/.cvs_env ]; then
 fi
 
 #Don't save duplicate lines
-export HISTCONTROL=ignoredups
+export HISTCONTROL=erasedups
 
 
 ### #Aliases ####
@@ -39,9 +39,11 @@ alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
 
+alias h='history'
+alias ls='ls -h --color'
 alias cp='cp -iv'
 alias mv='mv -v'
-alias rm='rm -iv'
+alias rm='rm -Iv'
 
 
 #### Functions ####
