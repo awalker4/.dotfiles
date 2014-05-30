@@ -6,7 +6,7 @@
 ########################################
 
 # If not running interactively, don't do anything
-if [[ $- != *-* ]]; then return; fi
+[ -z "$PS1" ] && return
 
 #Greeting
 echo 
@@ -75,3 +75,4 @@ function repeat()       # Repeat n times command.
         eval "$@";
     done
 }
+
