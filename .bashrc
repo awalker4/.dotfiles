@@ -33,11 +33,16 @@ export HISTCONTROL=erasedups
 #Quick and easy telnet
 tel () { telnet 192.168.$1.$2 $3; }
 
-# Quick navigation
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias .....='cd ../../../..'
+# .. - Does a 'cd ..'
+# .. 3 - Does a 'cd ../../..'
+#
+function .. (){
+  local arg=${1:-1};
+  while [ $arg -gt 0 ]; do
+    cd .. >&/dev/null;
+    arg=$(($arg - 1));
+  done
+}
 
 alias h='history'
 alias ls='ls -h --color'
