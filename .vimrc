@@ -1,6 +1,6 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " ~/.vimrc
-" Vim config
+" Vim settings
 "
 " Sections:
 "   -> General
@@ -21,7 +21,7 @@
 " Don't break anything
 set nocompatible
 
-" Remember up to 1000 lines
+" Remember up to 250 lines of history
 set history=250
 
 " Filetype plugins
@@ -46,6 +46,9 @@ au BufWinEnter *.txt if &ft == 'help' | wincmd L | nmap q :q<CR> | endif
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " Syntax highlighting
 syntax enable
+
+" Make popups readable
+hi Pmenusel ctermbg=blue
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
@@ -131,6 +134,7 @@ set smartcase
 " Jump to first match
 set incsearch
 
+"Always highlight matches
 set hlsearch
 
 
@@ -159,11 +163,12 @@ Plugin 'gmarik/Vundle.vim'
 if v:version >= 704 || v:version == 703 && has("patch584")
     Plugin 'Valloric/YouCompleteMe' " Program autocompletion (Vim 7.3.584+)
 else
-    Plugin 'vim-scripts/AutoComplPop' " Use for autocompletion below Vim 7.3.584
+    Plugin 'vim-scripts/AutoComplPop' " the alternative
 endif
 
 Plugin 'vim-scripts/taglist.vim'
 Plugin 'tpope/vim-fugitive' " Git integration
+Plugin 'justinmk/vim-sneak' " Easy jump forward motion
 
 call vundle#end()
 filetype plugin indent on
