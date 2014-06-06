@@ -10,7 +10,7 @@
 "   -> Search
 "   -> Files, backups, undo
 "   -> Additional functions
-"   -> Scripts, plugins
+"   -> Plugins
 """"""""""""""""""""""""""""""""""""""""""""""""""
 
 
@@ -152,8 +152,10 @@ autocmd BufWrite *.coffee :call DeleteTrailingWS()
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
-" => Scripts, plugins
+" => Plugins
 """"""""""""""""""""""""""""""""""""""""""""""""""
+filetype plugin indent on
+
 " Use Vundle
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
@@ -172,4 +174,6 @@ Plugin 'vim-scripts/taglist.vim' " Show tags in current project
 Plugin 'vim-scripts/ShowMarks' " Visualize location marks
 
 call vundle#end()
-filetype plugin indent on
+
+" Settings for ShowMarks
+let g:showmarks_enable=0 " Off by default
