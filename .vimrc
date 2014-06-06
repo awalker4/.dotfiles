@@ -38,7 +38,7 @@ let g:mapleader=","
 set confirm
 
 " Open everything in a vertical split
-au BufWinEnter *.txt if &ft == 'help' | wincmd L | nmap q :q<CR> | endif
+au BufWinEnter *.txt* if &ft == 'help' | wincmd L | nmap q :q<CR> | endif
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
