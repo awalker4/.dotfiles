@@ -27,33 +27,12 @@ msgwait 1
 # visual bell is the devil
 vbell "off"
 
-
-########################################
-# => Bindings
-########################################
-
-# ^a R will source .screenrc without restart
-bind R eval "source $HOME/.screenrc" "echo '.screenrc was refreshed'"
-
-# make it harder to accidentally kill something
-bind k
-bind ^k
-bind 'K' kill
-
-# Bind Shift+PgUp/PgDn.
-bindkey -m "^[[5;2~" stuff ^b
-bindkey -m "^[[6;2~" stuff ^f
-
-bindkey "^[Od" prev  # change window with ctrl-left
-bindkey "^[Oc" next  # change window with ctrl-right
-
-
-
-
-defscrollback 10000
-
 # Don't kill window after its child process dies.
 zombie "^["
+
+# Allow ssh-agent to work through screen sessions.
+unsetenv SSH_AUTH_SOCK
+setenv SSH_AUTH_SOCK $HOME/.screen/ssh-auth-sock.$HOSTNAME
 
 # This is for mouse scroll-wheel support.
 # Tell screen that xterm can scroll.
@@ -71,6 +50,16 @@ termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
 defbce "on"
 
 
-# Allow ssh-agent to work through screen sessions.
-unsetenv SSH_AUTH_SOCK
-setenv SSH_AUTH_SOCK $HOME/.screen/ssh-auth-sock.$HOSTNAME
+########################################
+# => Bindings
+########################################
+
+# ^a R will source .screenrc without restart
+bind R eval "source $HOME/.screenrc" "echo '.screenrc was refreshed'"
+
+# Bind Shift+PgUp/PgDn.
+bindkey -m "^[[5;2~" stuff ^b
+bindkey -m "^[[6;2~" stuff ^f
+
+bindkey "^[Od" prev  # change window with ctrl-left
+bindkey "^[Oc" next  # change window with ctrl-right
