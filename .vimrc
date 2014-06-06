@@ -34,10 +34,10 @@ set autoread
 let mapleader=","
 let g:mapleader=","
 
-" Ask about changes
+" Ask about changes instead of throwing an error
 set confirm
 
-" Open help in a vertical split
+" Open everything in a vertical split
 au BufWinEnter *.txt if &ft == 'help' | wincmd L | nmap q :q<CR> | endif
 
 
@@ -163,12 +163,13 @@ Plugin 'gmarik/Vundle.vim'
 if v:version >= 704 || v:version == 703 && has("patch584")
     Plugin 'Valloric/YouCompleteMe' " Program autocompletion (Vim 7.3.584+)
 else
-    Plugin 'vim-scripts/AutoComplPop' " the alternative
+    Plugin 'vim-scripts/AutoComplPop'
 endif
 
-Plugin 'vim-scripts/taglist.vim'
 Plugin 'tpope/vim-fugitive' " Git integration
-Plugin 'justinmk/vim-sneak' " Easy jump forward motion
+Plugin 'justinmk/vim-sneak' " Easy forward motion
+Plugin 'vim-scripts/taglist.vim' " Show tags in current project 
+Plugin 'vim-scripts/ShowMarks' " Visualize location marks
 
 call vundle#end()
 filetype plugin indent on
