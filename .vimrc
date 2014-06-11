@@ -8,9 +8,9 @@
 "   -> Vim interface
 "   -> Text, indenting, pasting
 "   -> Search
-"   -> Files, backups, undo
-"   -> Additional functions
+"   -> Leader shortcuts
 "   -> Plugins
+"   -> Additional functions
 """"""""""""""""""""""""""""""""""""""""""""""""""
 
 
@@ -30,14 +30,10 @@ filetype plugin on
 " Watch for external changes
 set autoread
 
-" Set the map leader
-let mapleader=","
-let g:mapleader=","
-
 " Ask about changes instead of throwing an error
 set confirm
 
-" Open everything in a vertical split
+" Open help files in a vertical split
 au BufWinEnter *.txt* if &ft == 'help' | wincmd L | nmap q :q<CR> | endif
 
 
@@ -137,18 +133,26 @@ set incsearch
 "Always highlight matches
 set hlsearch
 
+" Use literal regex
+"nnoremap / /\v
+"vnoremap / /\v
+
+" Substitute globally by default
+set gdefault
+
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
-" => Additional functions
+" => Leader shortcuts
 """"""""""""""""""""""""""""""""""""""""""""""""""
-" Delete trailing white space on save, useful for Python and CoffeeScript
-func! DeleteTrailingWS()
-  exe "normal mz"
-  %s/\s\+$//ge
-  exe "normal `z"
-endfunc
-autocmd BufWrite *.py :call DeleteTrailingWS()
-autocmd BufWrite *.coffee :call DeleteTrailingWS()
+" Set the leader key
+let mapleader=","
+let g:mapleader=","
+
+" Open and jump to new split window
+nnoremap <leader>nw :vne<cr><C-l>
+
+" Open vimrc
+nnoremap <leader>ev :vsp ~/.vimrc<cr>
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
@@ -168,12 +172,41 @@ else
     Plugin 'vim-scripts/AutoComplPop'
 endif
 
-Plugin 'tpope/vim-fugitive' " Git integration
-Plugin 'justinmk/vim-sneak' " Easy forward motion
-Plugin 'vim-scripts/taglist.vim' " Show tags in current project 
 Plugin 'vim-scripts/ShowMarks' " Visualize location marks
+Plugin 'vim-scripts/taglist.vim' " Show tags in current project 
+
+"Snipmate and dependencies
+Plugin 'MarcWeber/vim-addon-mw-utils'
+Plugin 'tomtom/tlib_vim'
+Plugin 'garbas/vim-snipmate'
+Plugin 'honza/vim-snippets'
+
+"Plugin 'tpope/vim-fugitive' " Git integration
+Plugin 'justinmk/vim-sneak' " Easy forward motion
 
 call vundle#end()
 
-" Settings for ShowMarks
+""""""""""""""""""""""""""""""
+" => Plugin settings
+""""""""""""""""""""""""""""""
+
+""""""""""""""""""""
+" ShowMarks
+""""""""""""""""""""
 let g:showmarks_enable=0 " Off by default
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Additional functions
+""""""""""""""""""""""""""""""""""""""""""""""""""
+" Make bash scripts executable by default
+au BufWrite * if &ft == 'sh' | echo 'hello' | endif
+
+" Delete trailing white space on save, useful for Python and CoffeeScript
+func! DeleteTrailingWS()
+  exe "normal mz"
+  %s/\s\+$//ge
+  exe "normal `z"
+endfunc
+autocmd BufWrite *.py :call DeleteTrailingWS()
+autocmd BufWrite *.coffee :call DeleteTrailingWS()

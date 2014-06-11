@@ -27,6 +27,9 @@ if [ -f $HOME/.cvs_env ]; then
     . $HOME/.cvs_env
 fi
 
+# Build tools for work are here
+export PATH=$PATH:/users/tools/bin/
+
 #Greeting
 echo 
 echo Hello $USER
