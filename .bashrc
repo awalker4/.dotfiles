@@ -7,6 +7,7 @@
 #   -> General
 #   -> Aliases, shortcuts
 #   -> Functions
+#   -> Work stuff
 ########################################
 
 
@@ -26,9 +27,6 @@ fi
 if [ -f $HOME/.cvs_env ]; then
     . $HOME/.cvs_env
 fi
-
-# Build tools for work are here
-export PATH=$PATH:/users/tools/bin/
 
 #Greeting
 echo 
@@ -104,3 +102,14 @@ repeat() {
         eval "$@";
     done
 }
+
+
+########################################
+# => Work stuff
+########################################
+
+# Build tools are here
+export PATH=$PATH:/users/tools/bin/
+
+# Private mockbuild
+alias mock="/usr/bin/mock --configdir=/users/awalker/mockbuild/cfg"
