@@ -10,7 +10,7 @@
 "   -> Search
 "   -> Leader shortcuts
 "   -> Plugins
-"   -> Additional functions
+"   -> Autocommands
 """"""""""""""""""""""""""""""""""""""""""""""""""
 
 
@@ -34,7 +34,7 @@ set autoread
 set confirm
 
 " Open help files in a vertical split
-au BufWinEnter *.txt* if &ft == 'help' | wincmd L | nmap q :q<CR> | endif
+au BufWinEnter *.txt* if &ft == 'help' | wincmd L | endif
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
@@ -103,9 +103,6 @@ set smarttab
 set shiftwidth=4
 set softtabstop=4
 
-" Use F2 to toggle pasting from outside vim
-nnoremap <F2> :set invpaste paste?<CR>
-set pastetoggle=<F2>
 set showmode
 
 " Delete trailing white space
@@ -154,6 +151,10 @@ nnoremap <leader>nw :vne<cr><C-l>
 " Open vimrc
 nnoremap <leader>ev :vsp ~/.vimrc<cr>
 
+" Toggle pasting from outside vim
+nnoremap <leader>p :set invpaste paste?<CR>
+set pastetoggle=<leader>p
+
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugins
@@ -197,10 +198,13 @@ let g:showmarks_enable=0 " Off by default
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
-" => Additional functions
+" => Autocommands
 """"""""""""""""""""""""""""""""""""""""""""""""""
+" Set bash filetype if the shebang is present
+au Bufread,Bufwrite * if getline("1") == '#!/bin/bash' | set filetype=sh | endif
+
 " Make bash scripts executable by default
-au BufWrite * if &ft == 'sh' | echo 'hello' | endif
+au BufWritePost * if &ft == 'sh' | exe '!chmod u+x %' | endif
 
 " Delete trailing white space on save, useful for Python and CoffeeScript
 func! DeleteTrailingWS()
