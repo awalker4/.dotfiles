@@ -142,8 +142,8 @@ set gdefault
 " => Leader shortcuts
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " Set the leader key
-let mapleader=","
-let g:mapleader=","
+let mapleader="<Space>"
+let g:mapleader="<Space>"
 
 " Open and jump to new split window
 nnoremap <leader>nw :vne<cr><C-l>
