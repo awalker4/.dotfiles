@@ -13,8 +13,6 @@
 "   -> Autocommands
 """"""""""""""""""""""""""""""""""""""""""""""""""
 
-
-
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """"""""""""""""""""""""""""""""""""""""""""""""""
@@ -36,7 +34,6 @@ set confirm
 " Open help files in a vertical split
 au BufWinEnter *.txt* if &ft == 'help' | wincmd L | endif
 
-
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and fonts
 """"""""""""""""""""""""""""""""""""""""""""""""""
@@ -45,7 +42,6 @@ syntax enable
 
 " Make popups readable
 hi Pmenusel ctermbg=blue
-
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Vim interface
@@ -91,7 +87,6 @@ nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
-
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Text, indenting, pasting
 """"""""""""""""""""""""""""""""""""""""""""""""""
@@ -114,7 +109,6 @@ set wrap "Wrap lines
 
 " Autocompletion
 set omnifunc=syntaxcomplete#Complete
-
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Search
@@ -139,7 +133,6 @@ set hlsearch
 " Substitute globally by default
 set gdefault
 
-
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Leader shortcuts
 """"""""""""""""""""""""""""""""""""""""""""""""""
@@ -160,7 +153,6 @@ set pastetoggle=<leader>p
 " Save and make current project
 nnoremap <leader>wm :w<CR>:make<CR><CR>
 
-
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugins
 """"""""""""""""""""""""""""""""""""""""""""""""""
@@ -178,7 +170,6 @@ else
     Plugin 'vim-scripts/AutoComplPop'
 endif
 
-Plugin 'vim-scripts/ShowMarks' " Visualize location marks
 Plugin 'vim-scripts/taglist.vim' " Show tags in current project 
 
 "Snipmate and dependencies
@@ -187,7 +178,7 @@ Plugin 'tomtom/tlib_vim'
 Plugin 'garbas/vim-snipmate'
 Plugin 'honza/vim-snippets'
 
-"Plugin 'tpope/vim-fugitive' " Git integration
+Plugin 'tpope/vim-fugitive' " Git integration
 Plugin 'justinmk/vim-sneak' " Easy forward motion
 
 call vundle#end()
@@ -200,7 +191,6 @@ call vundle#end()
 " ShowMarks
 """"""""""""""""""""
 let g:showmarks_enable=0 " Off by default
-
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Autocommands
@@ -217,5 +207,4 @@ func! DeleteTrailingWS()
   %s/\s\+$//ge
   exe "normal `z"
 endfunc
-autocmd BufWrite *.py :call DeleteTrailingWS()
-autocmd BufWrite *.coffee :call DeleteTrailingWS()
+autocmd BufWrite *.py,*.coffee :call DeleteTrailingWS()
