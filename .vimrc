@@ -53,6 +53,8 @@ hi Pmenusel ctermbg=blue
 " Turn on the wild menu
 set wildmenu
 
+set wildmode=longest
+
 " Hide abandoned buffers
 set hid
 
@@ -142,8 +144,8 @@ set gdefault
 " => Leader shortcuts
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " Set the leader key
-let mapleader="<Space>"
-let g:mapleader="<Space>"
+let mapleader=","
+let g:mapleader=","
 
 " Open and jump to new split window
 nnoremap <leader>nw :vne<cr><C-l>
@@ -154,6 +156,9 @@ nnoremap <leader>ev :vsp ~/.vimrc<cr>
 " Toggle pasting from outside vim
 nnoremap <leader>p :set invpaste paste?<CR>
 set pastetoggle=<leader>p
+
+" Save and make current project
+nnoremap <leader>wm :w<CR>:make<CR><CR>
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
