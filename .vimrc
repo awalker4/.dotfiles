@@ -141,17 +141,24 @@ let mapleader=","
 let g:mapleader=","
 
 " Open and jump to new split window
-nnoremap <leader>nw :vne<cr><C-l>
+map <leader>nw :vne<cr><C-l>
 
 " Open vimrc
-nnoremap <leader>ev :vsp ~/.vimrc<cr>
+map <leader>ev :vsp ~/.vimrc<cr>
 
 " Toggle pasting from outside vim
-nnoremap <leader>p :set invpaste paste?<CR>
+map <leader>p :set invpaste paste?<CR>
 set pastetoggle=<leader>p
 
 " Save and make current project
-nnoremap <leader>wm :w<CR>:make<CR><CR>
+map <leader>wm :w<CR>:make<CR><CR>
+
+" Expand working directory for quickly opening nearby files
+cnoremap %% <C-R>=fnameescape(expand('%:h')).'/'<cr>
+map <leader>ew :e %%
+map <leader>es :sp %%
+"map <leader>ev :vsp %%
+map <leader>et :tabe %%
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugins
