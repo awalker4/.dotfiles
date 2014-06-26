@@ -215,3 +215,6 @@ func! DeleteTrailingWS()
   exe "normal `z"
 endfunc
 autocmd BufWrite *.py,*.coffee :call DeleteTrailingWS()
+
+" Source vimrc changes immediately
+au bufwritepost .vimrc source $MYVIMRC
