@@ -53,6 +53,7 @@ alias cp='cp -iv'
 alias mv='mv -v'
 alias rm='rm -Iv'
 alias h='history'
+alias grep='grep --color'
 
 
 #Quick and easy telnet

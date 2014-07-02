@@ -110,6 +110,9 @@ set wrap "Wrap lines
 " Autocompletion
 set omnifunc=syntaxcomplete#Complete
 
+" Make Y behavior more consistent
+nnoremap Y y$
+
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Search
 """"""""""""""""""""""""""""""""""""""""""""""""""
@@ -146,12 +149,9 @@ map <leader>nw :vne<cr><C-l>
 " Open vimrc
 map <leader>ev :vsp ~/.vimrc<cr>
 
-" Toggle pasting from outside vim
-map <leader>p :set invpaste paste?<CR>
-set pastetoggle=<leader>p
-
-" Save and make current project
-map <leader>wm :w<CR>:make<CR><CR>
+" Shortcuts to call :make
+map <leader>mp :w<CR>:make<CR><CR> " save and Make Project
+map <leader>mt :w<CR>:make %:r<CR> " save and Make This
 
 " Expand working directory for quickly opening nearby files
 cnoremap %% <C-R>=fnameescape(expand('%:h')).'/'<cr>
@@ -185,7 +185,9 @@ Plugin 'tomtom/tlib_vim'
 Plugin 'garbas/vim-snipmate'
 Plugin 'honza/vim-snippets'
 
+Plugin 'nelstrom/vim-visual-star-search' " Search for selected text when in visual mode
 Plugin 'tpope/vim-fugitive' " Git integration
+Plugin 'tpope/vim-unimpaired' " Some nice bracket maps
 Plugin 'justinmk/vim-sneak' " Easy forward motion
 
 call vundle#end()
