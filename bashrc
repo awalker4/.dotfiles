@@ -114,3 +114,8 @@ export PATH=$PATH:/users/tools/bin/
 
 # Private mockbuild
 alias mock="/usr/bin/mock --configdir=/users/awalker/mockbuild/cfg"
+
+# Even quicker checkouts
+mainline-co() {
+    cbs-co --product XOS 9999_0_0_0 $1
+}
