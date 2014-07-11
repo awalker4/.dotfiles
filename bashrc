@@ -42,6 +42,10 @@ echo
 #Don't save duplicate lines
 export HISTCONTROL=erasedups
 
+# Get ls to play nicely with solarized
+if [[ -f ~/.dircolors/dircolors.ansi-dark ]]; then
+    eval $(dircolors ~/.dircolors/dircolors.ansi-dark)
+fi
 
 ########################################
 # => Aliases, shortcuts
