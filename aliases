@@ -1,0 +1,10 @@
+alias ls='ls -h --color'
+alias cp='cp -iv'
+alias mv='mv -v'
+alias rm='rm -Iv'
+alias h='history'
+alias grep='grep --color'
+
+alias gst='git status'
+
+alias pacs='sudo pacman -S'

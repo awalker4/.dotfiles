@@ -51,14 +51,7 @@ fi
 # => Aliases, shortcuts
 ########################################
 
-#Some straightforward ones
-alias ls='ls -h --color'
-alias cp='cp -iv'
-alias mv='mv -v'
-alias rm='rm -Iv'
-alias h='history'
-alias grep='grep --color'
-
+source ~/.dotfiles/aliases
 
 #Quick and easy telnet
 tel () { telnet 192.168.$1.$2 $3; }
