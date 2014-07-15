@@ -193,18 +193,17 @@ Plugin 'mattn/gist-vim' " Quickly upload gists
 Plugin 'nelstrom/vim-visual-star-search' " Search for selected text when in visual mode
 Plugin 'tpope/vim-unimpaired' " Some nice bracket maps
 Plugin 'tpope/vim-surround' " Some nice bracket maps
-" Plugin 'justinmk/vim-sneak' " Easy forward motion
+ "Plugin 'justinmk/vim-sneak' " Easy forward motion
 Plugin 'scrooloose/nerdcommenter' " Some nice bracket maps
 Plugin 'scrooloose/syntastic' " Some nice bracket maps
 "Plugin 'bling/vim-airline' " Some nice bracket maps
-" command t?
-" test ctrl p
 Plugin 'altercation/vim-colors-solarized' " Some nice bracket maps
+Plugin 'kien/ctrlp.vim'
 
 call vundle#end()
 
-"set background=dark
-"colorscheme solarized
+set background=dark
+colorscheme solarized
 
 """"""""""""""""""""""""""""""
 " => Plugin settings
