@@ -6,10 +6,15 @@ dir=~/.dotfiles
 olddir=~/dotfiles_old
 files=$(ls | grep 'rc\|conf')
 
-mkdir $olddir
+if [[ ! -d $olddir ]]; then
+    mkdir $olddir
+fi
 
 for file in $files; do
-    mv ~/.$file $olddir
+    if [[ -f ~/.$file ]]; then
+        mv ~/.$file $olddir
+    fi
+
     echo "Linking $file to ~/.$file"
     ln -s $dir/$file ~/.$file
 done

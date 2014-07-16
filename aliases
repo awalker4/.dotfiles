@@ -1,3 +1,13 @@
+# System
+alias off='sudo shutdown 0'
+alias reboot='sudo reboot'
+
+# Pacman
+alias pacs='sudo pacman -S'
+alias pacr='sudo pacman -R'
+
+# Shell
+alias realias="vim ~/.dotfiles/aliases; source ~/.dotfiles/aliases"
 alias ls='ls -h --color'
 alias cp='cp -iv'
 alias mv='mv -v'
@@ -5,6 +15,6 @@ alias rm='rm -Iv'
 alias h='history'
 alias grep='grep --color'
 
+# Git
 alias gst='git status'
-
-alias pacs='sudo pacman -S'
+alias glog='git log --oneline --decorate --color --graph'
