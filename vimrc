@@ -41,7 +41,7 @@ au BufWinEnter *.txt* if &ft == 'help' | wincmd L | endif
 syntax enable
 
 " Make popups readable
-hi Pmenusel ctermbg=blue
+hi Pmenusel ctermbg=red
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Vim interface
@@ -94,7 +94,7 @@ nnoremap <C-H> <C-W><C-H>
 set expandtab
 
 " Smart tabbing
-set smarttab 
+set smarttab
 
 " 1 tab = 4 spaces
 set shiftwidth=4
@@ -177,28 +177,30 @@ Plugin 'gmarik/Vundle.vim'
     "Plugin 'vim-scripts/AutoComplPop'
 "endif
 
-Plugin 'vim-scripts/taglist.vim' " Show tags in current project 
+" Visual
+Plugin 'bling/vim-airline' " Status line
+Plugin 'altercation/vim-colors-solarized' " Solarized colorscheme
 
-"Snipmate and dependencies
+" Navigation
+Plugin 'kien/ctrlp.vim'
+Plugin 'tpope/vim-unimpaired' " Some nice bracket maps
+Plugin 'nelstrom/vim-visual-star-search' " Use visual selection for * and #
+"Plugin 'justinmk/vim-sneak' " Easy forward motion
+
+" Coding
 Plugin 'MarcWeber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
-Plugin 'garbas/vim-snipmate'
 Plugin 'honza/vim-snippets'
+Plugin 'garbas/vim-snipmate' " Depends on above three
 
-" Plugins for git
+Plugin 'scrooloose/nerdcommenter' " Quick commenting
+Plugin 'scrooloose/syntastic' " Show syntax errors
+Plugin 'tpope/vim-surround' " Quickly surround text
+
+" Git/Github
 Plugin 'tpope/vim-fugitive' " Git integration
 Plugin 'mattn/webapi-vim'
 Plugin 'mattn/gist-vim' " Quickly upload gists
-
-Plugin 'nelstrom/vim-visual-star-search' " Search for selected text when in visual mode
-Plugin 'tpope/vim-unimpaired' " Some nice bracket maps
-Plugin 'tpope/vim-surround' " Some nice bracket maps
- "Plugin 'justinmk/vim-sneak' " Easy forward motion
-Plugin 'scrooloose/nerdcommenter' " Some nice bracket maps
-Plugin 'scrooloose/syntastic' " Some nice bracket maps
-"Plugin 'bling/vim-airline' " Some nice bracket maps
-Plugin 'altercation/vim-colors-solarized' " Some nice bracket maps
-Plugin 'kien/ctrlp.vim'
 
 call vundle#end()
 
@@ -213,6 +215,14 @@ colorscheme solarized
 " ShowMarks
 """"""""""""""""""""
 let g:showmarks_enable=0 " Off by default
+
+""""""""""""""""""""
+" Ctrlp
+""""""""""""""""""""
+let g:ctrlp_clear_cache_on_exit = 0
+"let g:ctrlp_use_caching = 100
+let g:ctrlp_open_multiple_files = '2vjr'
+set wildignore+=*/.o
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Autocommands
