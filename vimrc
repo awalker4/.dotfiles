@@ -150,8 +150,9 @@ map <leader>nw :vne<cr><C-l>
 map <leader>ev :vsp ~/.vimrc<cr>
 
 " Shortcuts to call :make
-map <leader>mp :w<CR>:make<CR><CR> " save and Make Project
+map <leader>mp :w<CR>:make<CR> " save and Make Project
 map <leader>mt :w<CR>:make %:r<CR> " save and Make This
+map <leader>mr :make run<CR> " Make Run (custom make target)
 
 " Expand working directory for quickly opening nearby files
 cnoremap %% <C-R>=fnameescape(expand('%:h')).'/'<cr>
@@ -217,6 +218,10 @@ colorscheme solarized
 let g:showmarks_enable=0 " Off by default
 
 """"""""""""""""""""
+" Fugitive
+""""""""""""""""""""
+set diffopt=vertical
+""""""""""""""""""""
 " Ctrlp
 """"""""""""""""""""
 let g:ctrlp_clear_cache_on_exit = 0
@@ -239,7 +244,7 @@ func! DeleteTrailingWS()
   %s/\s\+$//ge
   exe "normal `z"
 endfunc
-autocmd BufWrite *.py,*.coffee :call DeleteTrailingWS()
+"autocmd BufWrite *.py,*.coffee :call DeleteTrailingWS()
 
 " Source vimrc changes immediately
 au bufwritepost .vimrc source $MYVIMRC
