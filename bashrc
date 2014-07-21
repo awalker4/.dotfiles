@@ -3,7 +3,7 @@
 # Bash settings
 #
 # Sections:
-#   -> Start-up 
+#   -> Start-up
 #   -> General
 #   -> Aliases, shortcuts
 #   -> Functions
@@ -29,7 +29,7 @@ if [ -f $HOME/.cvs_env ]; then
 fi
 
 #Greeting
-echo 
+echo
 echo Hello $USER
 echo It is $(date)
 echo
@@ -38,6 +38,8 @@ echo
 ########################################
 # => General
 ########################################
+
+export TERM=xterm-256color
 
 #Don't save duplicate lines
 export HISTCONTROL=erasedups
