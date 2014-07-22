@@ -150,9 +150,12 @@ map <leader>nw :vne<cr><C-l>
 map <leader>ev :vsp ~/.vimrc<cr>
 
 " Shortcuts to call :make
-map <leader>mp :w<CR>:make<CR> " save and Make Project
-map <leader>mt :w<CR>:make %:r<CR> " save and Make This
-map <leader>mr :make run<CR> " Make Run (custom make target)
+" save and Make Project
+map <leader>mp :w<CR>:make<CR>
+" save and Make This
+map <leader>mt :w<CR>:make %:r<CR><CR>
+" Make Run (custom make target)
+map <leader>mr :make run<CR>
 
 " Expand working directory for quickly opening nearby files
 cnoremap %% <C-R>=fnameescape(expand('%:h')).'/'<cr>
@@ -164,7 +167,7 @@ map <leader>et :tabe %%
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugins
 """"""""""""""""""""""""""""""""""""""""""""""""""
-filetype plugin indent on
+filetype off
 
 " Use Vundle
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -172,11 +175,11 @@ call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
 
-"if v:version >= 704 || v:version == 703 && has("patch584")
-    "Plugin 'Valloric/YouCompleteMe' " Program autocompletion (Vim 7.3.584+)
-"else
-    "Plugin 'vim-scripts/AutoComplPop'
-"endif
+if v:version >= 704 || v:version == 703 && has("patch584")
+    Plugin 'Valloric/YouCompleteMe' " Program autocompletion (Vim 7.3.584+)
+else
+    Plugin 'vim-scripts/AutoComplPop'
+endif
 
 " Visual
 Plugin 'bling/vim-airline' " Status line
@@ -189,10 +192,11 @@ Plugin 'nelstrom/vim-visual-star-search' " Use visual selection for * and #
 "Plugin 'justinmk/vim-sneak' " Easy forward motion
 
 " Coding
-Plugin 'MarcWeber/vim-addon-mw-utils'
-Plugin 'tomtom/tlib_vim'
+"Plugin 'MarcWeber/vim-addon-mw-utils'
+"Plugin 'tomtom/tlib_vim'
 Plugin 'honza/vim-snippets'
-Plugin 'garbas/vim-snipmate' " Depends on above three
+"Plugin 'garbas/vim-snipmate' " Depends on above three
+Plugin 'sirver/ultisnips'
 
 Plugin 'scrooloose/nerdcommenter' " Quick commenting
 Plugin 'scrooloose/syntastic' " Show syntax errors
@@ -205,6 +209,8 @@ Plugin 'mattn/gist-vim' " Quickly upload gists
 
 call vundle#end()
 
+filetype plugin indent on
+
 set background=dark
 colorscheme solarized
 
@@ -213,14 +219,42 @@ colorscheme solarized
 """"""""""""""""""""""""""""""
 
 """"""""""""""""""""
-" ShowMarks
+" YouCompleteMe
 """"""""""""""""""""
-let g:showmarks_enable=0 " Off by default
+let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/ycm_extra_conf.py'
+
+function! g:UltiSnips_Complete()
+  call UltiSnips#ExpandSnippetOrJump()
+  if g:ulti_expand_or_jump_res == 0
+    if pumvisible()
+      return "\<C-N>"
+    else
+      return "\<TAB>"
+    endif
+  endif
+
+  return ""
+  endif
+endfunction
+
+au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsListSnippets="<c-e>"
+" this mapping Enter key to <C-y> to chose the current highlight item
+" and close the selection list, same as other IDEs.
+" CONFLICT with some plugins like tpope/Endwise
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+""""""""""""""""""""
+" Ultisnips
+""""""""""""""""""""
+"let g:UltiSnipsExpandTrigger="<c-e>"
 
 """"""""""""""""""""
 " Fugitive
 """"""""""""""""""""
 set diffopt=vertical
+
 """"""""""""""""""""
 " Ctrlp
 """"""""""""""""""""
@@ -232,11 +266,8 @@ set wildignore+=*/.o
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Autocommands
 """"""""""""""""""""""""""""""""""""""""""""""""""
-" Set bash filetype if the shebang is present
-au Bufread,Bufwrite * if getline("1") == '#!/bin/bash' | set filetype=sh | endif
-
-" Make bash scripts executable by default
-au BufWritePost * if &ft == 'sh' | exe '!chmod u+x %' | endif
+" Make shell scripts executable based on shebang
+au BufwritePost * if getline("1") == '#!/bin/bash' | exe '!chmod u+x %' | endif
 
 " Delete trailing white space on save, useful for Python and CoffeeScript
 func! DeleteTrailingWS()
