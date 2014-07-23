@@ -2,6 +2,13 @@
 alias off='sudo shutdown 0'
 alias reboot='sudo reboot'
 
+# Pacman
+if [[ -x $(which pacman) ]]; then
+    alias pacs='sudo pacman -S'
+    alias pacr='sudo pacman -R'
+    alias pacq='pacman -Q | grep'
+fi
+
 # Shell
 alias realias="vim ~/.dotfiles/aliases; source ~/.dotfiles/aliases"
 alias cp='cp -iv'
@@ -18,7 +25,7 @@ alias la='ls -lah --color'
 alias gst='git status'
 alias glog='git log --oneline --decorate --color --graph'
 
-# Pacman
-alias pacs='sudo pacman -S'
-alias pacr='sudo pacman -R'
-alias pacq='pacman -Q | grep'
+## Functions ##
+
+#Quick and easy telnet
+tel () { telnet 192.168.$1.$2 $3; }

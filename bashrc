@@ -55,9 +55,6 @@ fi
 
 source ~/.dotfiles/aliases
 
-#Quick and easy telnet
-tel () { telnet 192.168.$1.$2 $3; }
-
 #Use (..)^n to cd up n times
 function .. () {
   local arg=${1:-1};
