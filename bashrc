@@ -19,14 +19,22 @@
 [ -z "$PS1" ] && return
 
 # Source global definitions
-if [ -f /etc/bashrc ]; then
+if [[ -f /etc/bashrc ]]; then
     . /etc/bashrc
 fi
 
-# Load CVS variables
-if [ -f $HOME/.cvs_env ]; then
-    . $HOME/.cvs_env
+# Find any local definitions
+if [[ -f local/bashrc ]]; then
+    . local/bashrc
 fi
+
+# Get ls to play nicely with solarized
+if [[ -f ~/.dircolors/dircolors.ansi-dark ]]; then
+    eval $(dircolors ~/.dircolors/dircolors.ansi-dark)
+fi
+
+# Get aliases from file
+source ~/.dotfiles/aliases
 
 #Greeting
 echo
@@ -34,36 +42,13 @@ echo Hello $USER
 echo It is $(date)
 echo
 
-
 ########################################
 # => General
 ########################################
-
 export TERM=xterm-256color
 
 #Don't save duplicate lines
 export HISTCONTROL=erasedups
-
-# Get ls to play nicely with solarized
-if [[ -f ~/.dircolors/dircolors.ansi-dark ]]; then
-    eval $(dircolors ~/.dircolors/dircolors.ansi-dark)
-fi
-
-########################################
-# => Aliases, shortcuts
-########################################
-
-source ~/.dotfiles/aliases
-
-#Use (..)^n to cd up n times
-function .. () {
-  local arg=${1:-1};
-  while [ $arg -gt 0 ]; do
-    cd .. >&/dev/null;
-    arg=$(($arg - 1));
-  done
-}
-
 
 ########################################
 # => Functions
@@ -98,20 +83,4 @@ repeat() {
     for ((i=1; i <= max ; i++)); do
         eval "$@";
     done
-}
-
-
-########################################
-# => Work stuff
-########################################
-
-# Build tools are here
-export PATH=$PATH:/users/tools/bin/
-
-# Private mockbuild
-alias mock="/usr/bin/mock --configdir=/users/awalker/mockbuild/cfg"
-
-# Even quicker checkouts
-mainline-co() {
-    cbs-co --product XOS 9999_0_0_0 $1
 }
