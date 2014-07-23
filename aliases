@@ -3,7 +3,7 @@ alias off='sudo shutdown 0'
 alias reboot='sudo reboot'
 
 # Pacman
-if [[ -x $(which pacman) ]]; then
+if [[ -x /usr/bin/pacman ]]; then
     alias pacs='sudo pacman -S'
     alias pacr='sudo pacman -R'
     alias pacq='pacman -Q | grep'
