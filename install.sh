@@ -4,17 +4,29 @@
 
 dir=~/.dotfiles
 olddir=~/dotfiles_old
-files=$(ls | grep 'rc\|conf')
+rcfiles=$(ls | grep 'rc\|conf')
+scripts=$(ls scripts)
 
 if [[ ! -d $olddir ]]; then
     mkdir $olddir
 fi
 
-for file in $files; do
+echo "** Linking dotfiles **"
+for file in $rcfiles; do
     if [[ -f ~/.$file ]]; then
         mv ~/.$file $olddir
     fi
 
     echo "Linking $file to ~/.$file"
     ln -s $dir/$file ~/.$file
+done
+
+echo "** Linking scripts **"
+for file in $scripts; do
+    if [[ -f ~/bin/$file ]]; then
+        mv ~/bin/$file $olddir
+    fi
+
+    echo "Linking $file to ~/bin/$file"
+    ln -s $dir/scripts/$file ~/bin/$file
 done

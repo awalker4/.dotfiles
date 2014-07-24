@@ -1,0 +1,121 @@
+#!/usr/bin/env python2
+# getCVE
+# Takes a CVE in the form of 20xx-xxxx and prints out its information from Red Hat
+
+from HTMLParser import HTMLParser # For the CVE page
+import xml.etree.ElementTree as ET # For bugzilla
+import sys, urllib2, textwrap
+
+CVE_URL = "https://access.redhat.com/security/cve/CVE-"
+BUG_URL = "https://bugzilla.redhat.com/show_bug.cgi"
+
+# Used to extract the cvss and bugzilla link from cve html
+class cveParser(HTMLParser):
+    def __init__(self):
+        HTMLParser.__init__(self)
+        self.bugNo = "none"
+        self.bugName = "none"
+        self.cvss = 0
+
+    # Find data based on the preceding text
+    def handle_data(self, data):
+        if data == "Bugzilla:":
+            self.bugNo = "next"
+            return
+        elif self.bugNo == "next" and not data.isspace():
+            self.bugName = self.bugNo
+            self.bugNo = data
+            return
+        elif self.bugName == "next" and not data.isspace():
+            self.bugName = data.strip(': \nCVE1234567890- ')
+            return
+        elif data == "Base Score:":
+            self.cvss = -1
+            return
+        elif self.cvss == -1 and not data.isspace():
+            self.cvss = data
+            return
+
+# prefix each line with >
+# if necessary, wrap unbroken lines
+def quoteText(text):
+    MAX_LINE = 80
+    prefix = '> '
+
+    newStr = ""
+    for line in text.split('\n'):
+        if len(line) > MAX_LINE and len(line.split()) > 1: # wrap lines over the char length, ignoring urls
+            for wrapped in textwrap.wrap(line, width=MAX_LINE):
+                newStr += prefix + wrapped + '\n'
+        else:
+            newStr += prefix + line + '\n'
+    return newStr
+
+
+# Use cveParser to get data from the cve page
+def getCVEInfo(cveStr):
+    url = CVE_URL + cveStr
+    parser = cveParser()
+
+    try:
+        cvePage = urllib2.urlopen(url)
+        cveHTML = cvePage.read()
+        parser.feed(cveHTML)
+    except urllib2.URLError, e:
+        print "Error accessing CVE at: " + url
+
+    return (parser.bugName,
+            parser.bugNo,
+            parser.cvss)
+
+# Get comments from redhat bugzilla
+def getBug(bugNo):
+    bugXML = BUG_URL + "?ctype=xml&id=" + bugNo
+    bugHTML = BUG_URL + "?id=" + bugNo
+
+    xmlStr = urllib2.urlopen(bugXML).read()
+
+    bugSummary = ""
+    statements = []
+
+    bug = ET.fromstring(xmlStr)[0] # first element under root is the bug
+    for comment in bug.findall('long_desc'): # comment element
+        commentNo = comment.find('comment_count').text
+        commentText = comment.find('thetext').text
+
+        # Bug is summarized in first comment
+        if commentNo == '0':
+            bugSummary = commentText
+
+        # save any statements from the rest of the comments
+        elif commentText.startswith("Statement:") and not "(none)" in commentText:
+            statements.append((commentText.lstrip("Statement: \n")))
+
+    return (bugHTML,
+            bugSummary,
+            statements)
+
+def printCVE(cveStr):
+    bugName, bugNo, cvss = getCVEInfo(cveStr)
+
+    #CVE is invalid or its page is missing data
+    if bugName == "none" or bugNo == "none" or "cvss" == -1:
+        print "No information found for " + "CVE-" + cveStr +  ".\n"
+        return
+
+    bugAddress, bugSummary, statements = getBug(bugNo)
+
+    print "CVE-" + cveStr, "-", bugName
+    print ">> CVSS =", cvss, "\n"
+
+    print "From:", bugAddress, "\n"
+    print quoteText(bugSummary)
+    for statement in statements:
+        print quoteText(statement), "\n"
+
+def main():
+    for i in range(1, len(sys.argv)):
+        printCVE(sys.argv[i])
+
+if __name__ == "__main__":
+    main()
