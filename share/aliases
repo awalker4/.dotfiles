@@ -10,6 +10,8 @@ alias cp='cp -iv'
 alias mv='mv -v'
 alias rm='rm -Iv'
 alias mkdir='mkdir -pv'
+alias pu='pushd'
+alias po='popd'
 
 alias ls='ls -h --color'
 alias ll='ls -lh --color'
