@@ -1,18 +1,19 @@
-# System
-alias off='sudo shutdown 0'
-alias reboot='sudo reboot'
-
 # Pacman
 if [[ -x /usr/bin/pacman ]]; then
     alias pacs='sudo pacman -S'
     alias pacr='sudo pacman -R'
     alias pacq='pacman -Q | grep'
+
+    # If it's not arch, it's not my system. Don't screw something up.
+    alias off='sudo shutdown 0'
+    alias reboot='sudo reboot'
 fi
 
 # Shell
 alias realias="vim ~/.dotfiles/aliases; source ~/.dotfiles/aliases"
 alias cp='cp -iv'
 alias mv='mv -v'
+alias mkdir='mkdir -pv'
 alias rm='rm -Iv'
 alias h='history'
 alias grep='grep --color'
