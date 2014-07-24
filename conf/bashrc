@@ -21,8 +21,8 @@ if [[ -f /etc/bashrc ]]; then
 fi
 
 # Find any local definitions
-if [[ -f local/bashrc ]]; then
-    . local/bashrc
+if [[ -f ~/.dotfiles/local/bashrc ]]; then
+    . ~/.dotfiles/local/bashrc
 fi
 
 # Get ls to play nicely with solarized
@@ -31,7 +31,7 @@ if [[ -f ~/.dircolors/dircolors.ansi-dark ]]; then
 fi
 
 # Get aliases from file
-source ~/.dotfiles/aliases
+source ~/.dotfiles/share/aliases
 
 #Greeting
 echo

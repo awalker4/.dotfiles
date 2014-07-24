@@ -1,3 +1,24 @@
+# General shell
+alias realias='vim ~/.dotfiles/aliases; source ~/.dotfiles/aliases'
+alias vi='vim'
+alias h='history'
+alias grep='grep --color'
+alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde'
+
+# Files and directories
+alias cp='cp -iv'
+alias mv='mv -v'
+alias rm='rm -Iv'
+alias mkdir='mkdir -pv'
+
+alias ls='ls -h --color'
+alias ll='ls -lh --color'
+alias la='ls -lah --color'
+
+# Git
+alias gst='git status'
+alias glog='git log --oneline --decorate --color --graph'
+
 # Pacman
 if [[ -x /usr/bin/pacman ]]; then
     alias pacs='sudo pacman -S'
@@ -8,23 +29,6 @@ if [[ -x /usr/bin/pacman ]]; then
     alias off='sudo shutdown 0'
     alias reboot='sudo reboot'
 fi
-
-# Shell
-alias realias="vim ~/.dotfiles/aliases; source ~/.dotfiles/aliases"
-alias cp='cp -iv'
-alias mv='mv -v'
-alias mkdir='mkdir -pv'
-alias rm='rm -Iv'
-alias h='history'
-alias grep='grep --color'
-
-alias ls='ls -h --color'
-alias ll='ls -lh --color'
-alias la='ls -lah --color'
-
-# Git
-alias gst='git status'
-alias glog='git log --oneline --decorate --color --graph'
 
 ## Functions ##
 
@@ -51,13 +55,4 @@ extract() {
      else
          echo "'$1' is not a valid file"
      fi
-}
-
-# 'repeat i cmd' will do cmd i times
-repeat() {
-    local i max
-    max=$1; shift;
-    for ((i=1; i <= max ; i++)); do
-        eval "$@";
-    done
 }

@@ -41,7 +41,7 @@ else
   export EDITOR='mvim'
 fi
 
-source ~/.dotfiles/aliases
+source ~/.dotfiles/share/aliases
 
 # Get ls to play nicely with solarized
 if [[ ! -d ~/.dircolors ]]; then
