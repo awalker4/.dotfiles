@@ -99,7 +99,7 @@ def printCVE(cveStr):
     bugName, bugNo, cvss = getCVEInfo(cveStr)
 
     #CVE is invalid or its page is missing data
-    if bugName == "none" or bugNo == "none" or "cvss" == -1:
+    if bugName == "none" or bugNo == "none" or cvss == -1:
         print "No information found for " + "CVE-" + cveStr +  ".\n"
         return
 
