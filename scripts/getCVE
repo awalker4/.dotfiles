@@ -51,7 +51,6 @@ def quoteText(text):
             newStr += prefix + line + '\n'
     return newStr
 
-
 # Use cveParser to get data from the cve page
 def getCVEInfo(cveStr):
     url = CVE_URL + cveStr
@@ -113,9 +112,6 @@ def printCVE(cveStr):
     for statement in statements:
         print quoteText(statement), "\n"
 
-def main():
+if __name__ == "__main__":
     for i in range(1, len(sys.argv)):
         printCVE(sys.argv[i])
-
-if __name__ == "__main__":
-    main()
