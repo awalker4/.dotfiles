@@ -19,6 +19,7 @@ alias la='ls -lah --color'
 
 # Git
 alias gst='git status'
+alias gco='git checkout'
 alias glog='git log --oneline --decorate --color --graph'
 
 # Pacman
