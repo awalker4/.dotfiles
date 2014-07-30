@@ -2,84 +2,142 @@
 " ~/.vimrc
 " Vim settings
 "
+" Inspired largely by Steve Losh's vimrc
+" https://bitbucket.org/sjl/dotfiles/src/tip/vim/vimrc
+"
 " Sections:
 "   -> General
-"   -> Colors and fonts
-"   -> Vim interface
-"   -> Text, indenting, pasting
-"   -> Search
+"   -> Wildmenu
+"   -> Tabs
+"   -> Backups
+"   -> Remappings 
+"   -> Searching
 "   -> Leader shortcuts
 "   -> Plugins
+    "   -> Plugin settings
 "   -> Autocommands
+"   -> Colors 
 """"""""""""""""""""""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """"""""""""""""""""""""""""""""""""""""""""""""""
-" Don't break anything
 set nocompatible
-
-" Remember up to 250 lines of history
-set history=250
-
-" Filetype plugins
-filetype plugin on
-
-" Watch for external changes
-set autoread
-
-" Ask about changes instead of throwing an error
-set confirm
-
-" Open help files in a vertical split
-au BufWinEnter *.txt* if &ft == 'help' | wincmd L | endif
-
-""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Colors and fonts
-""""""""""""""""""""""""""""""""""""""""""""""""""
-" Syntax highlighting
-syntax enable
-
-" Make popups readable
-hi Pmenusel ctermbg=red
-
-""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Vim interface
-""""""""""""""""""""""""""""""""""""""""""""""""""
-" Turn on the wild menu
-set wildmenu
-
-set wildmode=longest
-
-" Hide abandoned buffers
-set hid
-
-" Show current position
-set ruler
+set encoding =utf-8
+set history=1000
+set undofile 
+set undoreload=10000
+set hidden
 set number
-
-" Higher command window
+set ruler " line and column number
 set cmdheight=2
+set showmode
+set laststatus=2 " always show status line
+set lazyredraw " don't redraw when in the middle of a command
+set autoread " load external changes
+set confirm " ask about saving changes
+set splitbelow
+set splitright
+set list
+set listchars=tab:▸\ ,eol:¬,extends:❯,precedes:❮
+set shiftround " round shifting to nearest indent
 
-" Always display last status
-set laststatus=2
-
-" Backspace over autoindent, line breaks, and start of insert action
-set backspace=indent,eol,start
+" Stop certain movements from returning to line start
+set nostartofline
 
 " Show matching brackets
 set showmatch
 set mat=2
 
-" Stop certain movements from returning to line start
-set nostartofline
+" Backspace over autoindent, line breaks, and start of insert action
+set backspace=indent,eol,start
+
+" When resizing vim, make splits equal size
+au VimResized * :wincmd =
+
+" Open help files in a vertical split
+au BufWinEnter *.txt* if &ft == 'help' | wincmd L | endif
+
+" Jump to previous line when opening
+augroup line_return
+    au!
+    au BufReadPost *
+        \ if line("'\"") > 0 && line("'\"") <= line("$") |
+        \     execute 'normal! g`"zvzz' |
+        \ endif
+augroup END
+
+" Source vimrc changes immediately
+au bufwritepost .vimrc source $MYVIMRC
+
+" Autocompletion
+set omnifunc=syntaxcomplete#Complete
+
+""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Wildmenu
+""""""""""""""""""""""""""""""""""""""""""""""""""
+set wildmenu
+set wildmode=list:longest
+
+set wildignore+=*.o,*.obj,*.exe
+
+""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Tabs
+""""""""""""""""""""""""""""""""""""""""""""""""""
+" 1 tab = 4 spaces
+set shiftwidth=4
+set softtabstop=4
+
+" Use spaces over tabs
+set expandtab
+
+" Smart tabbing
+set smarttab
+
+" Delete trailing white space
+set ai "Auto indent
+set si "Smart indent
+set wrap "Wrap lines
+
+""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Backups
+""""""""""""""""""""""""""""""""""""""""""""""""""
+set backup
+set noswapfile
+
+" Extra slash will add path to filenames
+set undodir=~/.vim/tmp/undo//
+set backupdir=~/.vim/tmp/backup//
+set directory=~/.vim/tmp/swap//
+
+" Create directories if needed
+if !isdirectory(expand(&undodir))
+    call mkdir(expand(&undodir), "p")
+endif
+if !isdirectory(expand(&backupdir))
+    call mkdir(expand(&backupdir), "p")
+endif
+if !isdirectory(expand(&directory))
+    call mkdir(expand(&directory), "p")
+endif
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Remappings
+""""""""""""""""""""""""""""""""""""""""""""""""""
+" Split line at cursor (opposite of J)
+nnoremap S i<cr><esc>^mwgk:silent! s/\v +$//<cr>:noh<cr>'w
+
+" Select (charwise) the contents of the current line, excluding indentation.
+nnoremap vv ^vg_
+
+" From insert mode, make the previous word uppercase
+inoremap <C-u> <esc>mzgUiw`za
 
 " Press jj to exit insert mode
 inoremap jj <Esc>
 
 " Better split panes
-set splitbelow
-set splitright
 
 " Easier navigation between split windows
 nnoremap <C-J> <C-W><C-J>
@@ -87,41 +145,15 @@ nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
-""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Text, indenting, pasting
-""""""""""""""""""""""""""""""""""""""""""""""""""
-" Use spaces over tabs
-set expandtab
-
-" Smart tabbing
-set smarttab
-
-" 1 tab = 4 spaces
-set shiftwidth=4
-set softtabstop=4
-
-set showmode
-
-" Delete trailing white space
-set ai "Auto indent
-set si "Smart indent
-set wrap "Wrap lines
-
-" Autocompletion
-set omnifunc=syntaxcomplete#Complete
-
 " Make Y behavior more consistent
 nnoremap Y y$
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
-" => Search
+" => Searching
 """"""""""""""""""""""""""""""""""""""""""""""""""
-" Press space to clear search highlighting
-nnoremap <silent> <Space> :silent noh<Bar>echo<CR>
-
 " Case insensitive search, except for capital letters
-set ignorecase
 set smartcase
+set ignorecase
 
 " Jump to first match
 set incsearch
@@ -135,6 +167,9 @@ set hlsearch
 
 " Substitute globally by default
 set gdefault
+
+" Press space to clear search highlighting
+nnoremap <silent> <Space> :silent noh<Bar>echo<CR>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Leader shortcuts
@@ -151,11 +186,14 @@ map <leader>ev :vsp ~/.vimrc<cr>
 
 " Shortcuts to call :make
 " save and Make Project
-map <leader>mp :w<CR>:make<CR>
+map <leader>mp :wa<CR>:make<CR>
 " save and Make This
 map <leader>mt :w<CR>:make %:r<CR><CR>
 " Make Run (custom make target)
 map <leader>mr :make run<CR>
+
+" Run current line in bash (Bash This)
+map <leader>bt :.w !bash<CR>
 
 " Expand working directory for quickly opening nearby files
 cnoremap %% <C-R>=fnameescape(expand('%:h')).'/'<cr>
@@ -180,6 +218,8 @@ if v:version >= 704 || v:version == 703 && has("patch584")
 else
     Plugin 'vim-scripts/AutoComplPop'
 endif
+
+Plugin 'MarcWeber/vim-addon-local-vimrc'
 
 " Visual
 Plugin 'bling/vim-airline' " Status line
@@ -211,9 +251,6 @@ call vundle#end()
 
 filetype plugin indent on
 
-set background=dark
-colorscheme solarized
-
 """"""""""""""""""""""""""""""
 " => Plugin settings
 """"""""""""""""""""""""""""""
@@ -221,29 +258,33 @@ colorscheme solarized
 """"""""""""""""""""
 " YouCompleteMe
 """"""""""""""""""""
-let g:ycm_global_ycm_extra_conf = '~/.vim/bundle/YouCompleteMe/ycm_extra_conf.py'
+let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
+"let g:ycm_path_to_python_interpreter = '/usr/bin/python'
+"let g:ycm_server_use_vim_stdout = 1
+"let g:ycm_server_log_level = 'debug'
+"let g:ycm_server_keep_logfiles = 1
 
-function! g:UltiSnips_Complete()
-  call UltiSnips#ExpandSnippetOrJump()
-  if g:ulti_expand_or_jump_res == 0
-    if pumvisible()
-      return "\<C-N>"
-    else
-      return "\<TAB>"
-    endif
-  endif
+"function! g:UltiSnips_Complete()
+  "call UltiSnips#ExpandSnippetOrJump()
+  "if g:ulti_expand_or_jump_res == 0
+    "if pumvisible()
+      "return "\<C-N>"
+    "else
+      "return "\<TAB>"
+    "endif
+  "endif
 
-  return ""
-  endif
-endfunction
+  "return ""
+  "endif
+"endfunction
 
-au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsListSnippets="<c-e>"
-" this mapping Enter key to <C-y> to chose the current highlight item
-" and close the selection list, same as other IDEs.
-" CONFLICT with some plugins like tpope/Endwise
-inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+"au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
+"let g:UltiSnipsJumpForwardTrigger="<tab>"
+"let g:UltiSnipsListSnippets="<c-e>"
+ "this mapping Enter key to <C-y> to chose the current highlight item
+ "and close the selection list, same as other IDEs.
+ "CONFLICT with some plugins like tpope/Endwise
+"inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
 """"""""""""""""""""
 " Ultisnips
@@ -261,13 +302,12 @@ set diffopt=vertical
 let g:ctrlp_clear_cache_on_exit = 0
 "let g:ctrlp_use_caching = 100
 let g:ctrlp_open_multiple_files = '2vjr'
-set wildignore+=*/.o
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Autocommands
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " Make shell scripts executable based on shebang
-au BufwritePost * if getline("1") == '#!/bin/bash' | exe '!chmod u+x %' | endif
+"au BufwritePost * if getline("1") == '#!/bin/bash' | exe '!chmod u+x %' | endif
 
 " Delete trailing white space on save, useful for Python and CoffeeScript
 func! DeleteTrailingWS()
@@ -277,5 +317,14 @@ func! DeleteTrailingWS()
 endfunc
 "autocmd BufWrite *.py,*.coffee :call DeleteTrailingWS()
 
-" Source vimrc changes immediately
-au bufwritepost .vimrc source $MYVIMRC
+""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Colors 
+""""""""""""""""""""""""""""""""""""""""""""""""""
+" Syntax highlighting
+syntax on
+set background=dark
+
+" Make popups readable
+hi Pmenusel ctermbg=red
+
+colorscheme solarized
