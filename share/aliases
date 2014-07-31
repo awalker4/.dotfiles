@@ -14,10 +14,15 @@ alias pu='pushd'
 alias po='popd'
 
 alias ls='ls -h --color'
-alias ll='ls -lh --color'
-alias la='ls -lah --color'
+alias ll='ls -oh --color'
+alias lal='ls -lah --color'
+alias la='ls -a --color'
 
 # Git
+alias ga='git add'
+alias gd='git diff'
+alias gc='git commit -m'
+alias gpsh='git push'
 alias gst='git status'
 alias gco='git checkout'
 alias glog='git log --oneline --decorate --color --graph'
@@ -25,12 +30,17 @@ alias glog='git log --oneline --decorate --color --graph'
 # Pacman
 if [[ -x /usr/bin/pacman ]]; then
     alias pacs='sudo pacman -S'
+    alias pacu='sudo pacman -U'
     alias pacr='sudo pacman -R'
     alias pacq='pacman -Q | grep'
 
     # If it's not arch, it's not my system. Don't screw something up.
     alias off='sudo shutdown 0'
     alias reboot='sudo reboot'
+fi
+
+if [[ -x /usr/bin/thunar ]]; then
+    alias thu='thunar "$(pwd)"'
 fi
 
 ## Functions ##
