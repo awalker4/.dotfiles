@@ -31,6 +31,10 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
+# Don't prompt when using rm
+# That's what rm -i is for
+setopt no_rm_star_silent 
+
 export TERM=xterm-256color
 export PATH=$PATH:$HOME/bin:/usr/local/bin
 
