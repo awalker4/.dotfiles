@@ -38,12 +38,7 @@ setopt no_rm_star_silent
 export TERM=xterm-256color
 export PATH=$PATH:$HOME/bin:/usr/local/bin
 
-# Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='mvim'
-fi
+export EDITOR='vim'
 
 source ~/.dotfiles/share/aliases
 
@@ -67,4 +62,3 @@ fancy-ctrl-z () {
 }
 zle -N fancy-ctrl-z
 bindkey '^Z' fancy-ctrl-z
-
