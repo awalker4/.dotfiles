@@ -46,3 +46,5 @@ export TERM=xterm-256color
 
 #Don't save duplicate lines
 export HISTCONTROL=erasedups
+
+alias ..='cd ..'
