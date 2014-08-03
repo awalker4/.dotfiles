@@ -28,7 +28,7 @@ alias gst='git status'
 alias gco='git checkout'
 alias glog='git log --oneline --decorate --color --graph'
 
-# Pacman
+# Package management
 if [[ -x /usr/bin/pacman ]]; then
     alias pacs='sudo pacman -S'
     alias pacu='sudo pacman -U'
@@ -38,12 +38,15 @@ if [[ -x /usr/bin/pacman ]]; then
     # If it's not arch, it's not my system. Don't screw something up.
     alias off='sudo shutdown 0'
     alias reboot='sudo reboot'
+
+elif [[ -x /bin/rpm ]]; then
+    alias rpmq='rpm -qa | grep'
 fi
 
-# Programs
-if [[ -x /usr/bin/dolphin ]]; then 
+# File explorer
+if [[ -x /usr/bin/dolphin ]]; then
     alias dol='dolphin "$(pwd)" 2>/dev/null &' # Open dolphin at this location
-elif [[ -x /usr/bin/thunar ]]; then 
+elif [[ -x /usr/bin/thunar ]]; then
     alias thu='thunar "$(pwd)"' # Open thunar
 fi
 
