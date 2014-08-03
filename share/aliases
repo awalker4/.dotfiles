@@ -43,7 +43,7 @@ fi
 # Programs
 if [[ -x /usr/bin/dolphin ]]; then 
     alias dol='dolphin "$(pwd)" 2>/dev/null &' # Open dolphin at this location
-else if [[ -x /usr/bin/thunar ]]; then 
+elif [[ -x /usr/bin/thunar ]]; then 
     alias thu='thunar "$(pwd)"' # Open thunar
 fi
 
