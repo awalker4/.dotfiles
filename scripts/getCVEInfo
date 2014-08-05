@@ -87,7 +87,7 @@ def getBug(bugNo):
             bugSummary = commentText
 
         # save any statements from the rest of the comments
-        elif commentText.startswith("Statement:") and not "(none)" in commentText:
+        elif "Statement:" in commentText and not "(none)" in commentText:
             statements.append((commentText.lstrip("Statement: \n")))
 
     return (bugHTML,
@@ -98,7 +98,7 @@ def getBug(bugNo):
 def printCVE(cveStr):
     bugName, bugNo, cvss = getCVEInfo(cveStr)
 
-    #CVE is invalid or its page is missing data
+    #CVE is invalid or its page is unavailable
     if bugName == "none" or bugNo == "none" or cvss == -1:
         return
 
@@ -109,13 +109,14 @@ def printCVE(cveStr):
 
     print "From:", bugAddress, "\n"
     print quoteText(bugSummary)
-    if len(statements) > 0:
-        for statement in statements:
-            print quoteText(statement), "\n"
-    else:
-        print
 
-# If no arguments are passed, use stdin
+    if len(statements) == 0: 
+	print #keep spacing consistent
+
+    for statement in statements:
+        print quoteText(statement), "\n"
+
+# If no arguments are passed, check stdin
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         args = sys.argv[1:]
