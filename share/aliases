@@ -8,7 +8,7 @@ alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-ti
 # Files and directories
 alias cp='cp -iv'
 alias mv='mv -v'
-alias rm='rm -Iv'
+alias rm='rm -v'
 alias mkdir='mkdir -pv'
 alias pu='pushd'
 alias po='popd'
@@ -23,11 +23,12 @@ alias ga='git add'
 alias gd='git diff'
 alias gc='git commit -m'
 alias gpsh='git push'
+alias gpll='git pull'
 alias gst='git status'
 alias gco='git checkout'
 alias glog='git log --oneline --decorate --color --graph'
 
-# Pacman
+# Package management
 if [[ -x /usr/bin/pacman ]]; then
     alias pacs='sudo pacman -S'
     alias pacu='sudo pacman -U'
@@ -37,10 +38,16 @@ if [[ -x /usr/bin/pacman ]]; then
     # If it's not arch, it's not my system. Don't screw something up.
     alias off='sudo shutdown 0'
     alias reboot='sudo reboot'
+
+elif [[ -x /bin/rpm ]]; then
+    alias rpmq='rpm -qa | grep'
 fi
 
-if [[ -x /usr/bin/thunar ]]; then
-    alias thu='thunar "$(pwd)"'
+# File explorer
+if [[ -x /usr/bin/dolphin ]]; then
+    alias dol='dolphin "$(pwd)" 2>/dev/null &' # Open dolphin at this location
+elif [[ -x /usr/bin/thunar ]]; then
+    alias thu='thunar "$(pwd)"' # Open thunar
 fi
 
 ## Functions ##

@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
-# getCVE
-# Takes a CVE in the form of 20xx-xxxx and prints out its information from Red Hat
+# getCVEInfo
+# Takes multiple CVEs in the form of 20xx-xxxx and prints out their information from Red Hat
 
 from HTMLParser import HTMLParser # For the CVE page
 import xml.etree.ElementTree as ET # For bugzilla
@@ -44,7 +44,7 @@ def quoteText(text):
 
     newStr = ""
     for line in text.split('\n'):
-        if len(line) > MAX_LINE and len(line.split()) > 1: # wrap lines over the char length, ignoring urls
+        if len(line) > MAX_LINE and len(line.split()) > 1: # wrap lines over the char length, ignoring one word lines (urls)
             for wrapped in textwrap.wrap(line, width=MAX_LINE):
                 newStr += prefix + wrapped + '\n'
         else:
@@ -87,19 +87,19 @@ def getBug(bugNo):
             bugSummary = commentText
 
         # save any statements from the rest of the comments
-        elif commentText.startswith("Statement:") and not "(none)" in commentText:
+        elif "Statement:" in commentText and not "(none)" in commentText:
             statements.append((commentText.lstrip("Statement: \n")))
 
     return (bugHTML,
             bugSummary,
             statements)
 
+# Print info for a single CVE in the form 20xx-xxxx
 def printCVE(cveStr):
     bugName, bugNo, cvss = getCVEInfo(cveStr)
 
-    #CVE is invalid or its page is missing data
+    #CVE is invalid or its page is unavailable
     if bugName == "none" or bugNo == "none" or cvss == -1:
-        print "No information found for " + "CVE-" + cveStr +  ".\n"
         return
 
     bugAddress, bugSummary, statements = getBug(bugNo)
@@ -109,9 +109,19 @@ def printCVE(cveStr):
 
     print "From:", bugAddress, "\n"
     print quoteText(bugSummary)
+
+    if len(statements) == 0: 
+	print #keep spacing consistent
+
     for statement in statements:
         print quoteText(statement), "\n"
 
+# If no arguments are passed, check stdin
 if __name__ == "__main__":
-    for i in range(1, len(sys.argv)):
-        printCVE(sys.argv[i])
+    if len(sys.argv) > 1:
+        args = sys.argv[1:]
+    else:
+        args = sys.stdin.readline().split()
+
+    for arg in args:
+        printCVE(arg)
