@@ -50,6 +50,10 @@ elif [[ -x /usr/bin/thunar ]]; then
     alias thu='thunar "$(pwd)"' # Open thunar
 fi
 
+# Various programs
+alias open='xdg-open'
+alias ff='firefox &'
+
 ## Functions ##
 
 #Quick and easy telnet
