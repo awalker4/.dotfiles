@@ -11,6 +11,7 @@
 "   -> Tabs
 "   -> Backups
 "   -> Remappings 
+"   -> Navigation
 "   -> Searching
 "   -> Leader shortcuts
 "   -> Plugins
@@ -153,6 +154,17 @@ nnoremap <C-H> <C-W><C-H>
 
 " Make Y behavior more consistent
 nnoremap Y y$
+
+""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Navigation
+""""""""""""""""""""""""""""""""""""""""""""""""""
+" Move through wrapped lines
+nnoremap j gj
+nnoremap k gk
+
+noremap H ^
+noremap L $
+vnoremap L g_
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Searching
