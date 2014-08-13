@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
 # Super simple script to send tasks to Remember the Milk
+# Usage: rtm bring home milk -n this task has a note
 # Todo: Fix plaintext password
 
 import sys, smtplib
