@@ -57,9 +57,6 @@ defbce "on"
 # ^a R will source .screenrc without restart
 bind R eval "source $HOME/.screenrc" "echo '.screenrc was refreshed'"
 
-# Bind Shift+PgUp/PgDn.
-bindkey -m "^[[5;2~" stuff ^b
-bindkey -m "^[[6;2~" stuff ^f
-
-bindkey "^[Od" prev  # change window with ctrl-left
-bindkey "^[Oc" next  # change window with ctrl-right
+# Some defaults from tmux
+bind x kill
+bind , title
