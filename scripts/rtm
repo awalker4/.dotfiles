@@ -1,0 +1,39 @@
+#!/usr/bin/env python2
+# Super simple script to send tasks to Remember the Milk
+# Todo: Fix plaintext password
+
+import sys, smtplib
+
+def sendTask(task, note):
+    gmailUser = ""
+    gmailPass = ""
+    s = smtplib.SMTP('smtp.gmail.com', 587)
+    s.ehlo()
+    s.starttls()
+    s.ehlo()
+    s.login(gmailUser, gmailPass)
+
+    sendFrom = ""
+    sendTo = ""
+
+    header = "To: " + sendTo + "\nFrom: " + sendFrom + "\nSubject: " + task + "\n"
+    s.sendmail(sendFrom, sendTo, header + note)
+    #print header + note
+    s.close()
+
+if __name__ == "__main__":
+    task = ""
+    note = ""
+    isNote = False
+
+    for i in range(1, len(sys.argv)):
+        if sys.argv[i] == "-n":
+            isNote = True
+            continue
+        if isNote:
+            note += sys.argv[i] + " "
+        else:
+            task += sys.argv[i] + " "
+
+    sendTask(task, note)
+
