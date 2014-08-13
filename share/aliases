@@ -51,7 +51,7 @@ elif [[ -x /usr/bin/thunar ]]; then
 fi
 
 # Various programs
-alias open='xdg-open'
+alias open='xdg-open 2>/dev/null &'
 alias ff='firefox 2>/dev/null &'
 
 ## Functions ##
