@@ -52,7 +52,7 @@ fi
 
 # Various programs
 alias open='xdg-open'
-alias ff='firefox &'
+alias ff='firefox 2>/dev/null &'
 
 ## Functions ##
 
