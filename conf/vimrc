@@ -209,6 +209,8 @@ map <leader>mp :wa<CR>:make<CR>
 map <leader>mt :w<CR>:make %:r<CR><CR>
 " Make Run (custom make target)
 map <leader>mr :make run<CR>
+" Run this file (make script)
+map <leader>ms :w<CR>:!%<CR>
 
 " Run current line in bash (Bash This)
 map <leader>bt :.w !bash<CR>
