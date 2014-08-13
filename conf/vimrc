@@ -29,7 +29,7 @@ set history=1000
 set undofile 
 set undoreload=10000
 set hidden
-set number
+set relativenumber
 set ruler " line and column number
 set cmdheight=2
 set showmode
@@ -187,7 +187,7 @@ set hlsearch
 set gdefault
 
 " Clear search highlighting
-map <leader><Tab> :silent noh<Bar>echo<cr> :silent call clearmatches()<Bar>echo<cr>
+map <leader>h :silent noh<Bar>echo<cr> :silent call clearmatches()<Bar>echo<cr>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Leader shortcuts
