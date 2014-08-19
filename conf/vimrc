@@ -187,7 +187,7 @@ set hlsearch
 set gdefault
 
 " Clear search highlighting
-map <leader>h :silent noh<Bar>echo<cr> :silent call clearmatches()<Bar>echo<cr>
+map <leader>h :silent noh<Bar>call clearmatches()<Bar>echo<cr>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Leader shortcuts
