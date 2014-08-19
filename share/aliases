@@ -56,9 +56,6 @@ alias ff='firefox 2>/dev/null &'
 
 ## Functions ##
 
-#Quick and easy telnet
-tel () { telnet 192.168.$1.$2 $3; }
-
 # Generic extracting
 extract() {
     if [ -f $1 ] ; then
