@@ -29,6 +29,7 @@ set history=1000
 set undofile 
 set undoreload=10000
 set hidden
+set number
 set relativenumber
 set ruler " line and column number
 set cmdheight=2
