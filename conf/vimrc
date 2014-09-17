@@ -212,6 +212,8 @@ map <leader>mt :w<CR>:make %:r<CR><CR>
 map <leader>mr :make run<CR>
 " Run this file (make script)
 map <leader>ms :w<CR>:!%<CR>
+" Make LaTeX
+map <leader>ml :w<CR>:!pdflatex -synctex=1 -interaction=nonstopmode %<CR>
 
 " Run current line in bash (Bash This)
 map <leader>bt :.w !bash<CR>
