@@ -280,32 +280,28 @@ filetype plugin indent on
 " YouCompleteMe
 """"""""""""""""""""
 let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
-"let g:ycm_path_to_python_interpreter = '/usr/bin/python'
-"let g:ycm_server_use_vim_stdout = 1
-"let g:ycm_server_log_level = 'debug'
-"let g:ycm_server_keep_logfiles = 1
 
-"function! g:UltiSnips_Complete()
-  "call UltiSnips#ExpandSnippetOrJump()
-  "if g:ulti_expand_or_jump_res == 0
-    "if pumvisible()
-      "return "\<C-N>"
-    "else
-      "return "\<TAB>"
-    "endif
-  "endif
+function! g:UltiSnips_Complete()
+  call UltiSnips#ExpandSnippetOrJump()
+  if g:ulti_expand_or_jump_res == 0
+    if pumvisible()
+      return "\<C-N>"
+    else
+      return "\<TAB>"
+    endif
+  endif
 
-  "return ""
-  "endif
-"endfunction
+  return ""
+  endif
+endfunction
 
-"au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
-"let g:UltiSnipsJumpForwardTrigger="<tab>"
-"let g:UltiSnipsListSnippets="<c-e>"
+au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsListSnippets="<c-e>"
  "this mapping Enter key to <C-y> to chose the current highlight item
  "and close the selection list, same as other IDEs.
  "CONFLICT with some plugins like tpope/Endwise
-"inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
 """"""""""""""""""""
 " Ultisnips
