@@ -197,23 +197,17 @@ map <leader>h :silent! noh<Bar> call clearmatches()<Bar> echo<cr>
 let mapleader=","
 let g:mapleader=","
 
-" Open and jump to new split window
-map <leader>nw :vne<cr><C-l>
+" Split window mappings
+map <leader>nw :vne<cr><C-l> " New split buffer
+map <leader>ev :vsp ~/.vimrc<cr> " Open the vimrc
+map <leader>em :vsp makefile<cr> " Open current makefile
 
-" Open vimrc
-map <leader>ev :vsp ~/.vimrc<cr>
-
-" Shortcuts to call :make
-" save and Make Project
-map <leader>mp :wa<CR>:make<CR>
-" save and Make This
-map <leader>mt :w<CR>:make %:r<CR><CR>
-" Make Run (custom make target)
-map <leader>mr :make run<CR>
-" Run this file (make script)
-map <leader>ms :w<CR>:!./%<CR>
-" Make LaTeX
-map <leader>ml :w<CR>:!pdflatex -synctex=1 -interaction=nonstopmode %<CR>
+" Make Shortcuts
+map <leader>ml :w<CR>:!pdflatex -synctex=1 -interaction=nonstopmode %<CR> " Make LaTeX
+map <leader>mp :wa<CR>:make<CR> " Make Project
+map <leader>mr :make run<CR> " Make Run (custom target)
+map <leader>ms :w<CR>:!./%<CR> " Make Script (run this file)
+map <leader>mt :w<CR>:make %:r<CR><CR>  " Make This
 
 " Run current line in bash (Bash This)
 map <leader>bt :.w !bash<CR>
