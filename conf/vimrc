@@ -207,7 +207,7 @@ map <leader>ml :w<CR>:!pdflatex -synctex=1 -interaction=nonstopmode %<CR> " Make
 map <leader>mp :wa<CR>:make<CR> " Make Project
 map <leader>mr :make run<CR> " Make Run (custom target)
 map <leader>ms :w<CR>:!./%<CR> " Make Script (run this file)
-map <leader>mt :w<CR>:make %:r<CR><CR>  " Make This
+map <leader>mt :w<CR>:make %:r<CR>  " Make This
 
 " Run current line in bash (Bash This)
 map <leader>bt :.w !bash<CR>
@@ -315,6 +315,13 @@ set diffopt=vertical
 let g:ctrlp_clear_cache_on_exit = 0
 "let g:ctrlp_use_caching = 100
 let g:ctrlp_open_multiple_files = '2vjr'
+
+""""""""""""""""""""
+" Vim-Gist
+""""""""""""""""""""
+let g:gist_clip_command = 'xclip -selection clipboard'
+let g:gist_open_browser_after_post = 1
+let g:gist_browser_command = 'firefox %URL% &'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Autocommands
