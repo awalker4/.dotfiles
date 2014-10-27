@@ -1,6 +1,7 @@
 # General shell
 alias realias='vim ~/.dotfiles/share/aliases; source ~/.dotfiles/share/aliases'
 alias vi='vim'
+alias em='emacs'
 alias h='history'
 alias grep='grep --color'
 
