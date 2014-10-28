@@ -1,4 +1,5 @@
 # Ignore settings for this machine
-.emacs.d/elpa
-.emacs.d/tmp
-.emacs.d/url
+emacs.d/elpa
+emacs.d/tmp
+emacs.d/url
+emacs.d/auto-save-list

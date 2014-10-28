@@ -44,3 +44,5 @@
 
 (savehist-mode 1)
 (setq savehist-file "~/.emacs.d/tmp/savehist")
+
+(add-hook 'after-init-hook #'global-flycheck-mode)
