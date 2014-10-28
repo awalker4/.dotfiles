@@ -31,7 +31,7 @@ if [[ -f ~/.dircolors/dircolors.ansi-dark ]]; then
 fi
 
 # Get aliases from file
-source ~/.dotfiles/share/aliases
+source ~/.dotfiles/aliases
 
 #Greeting
 echo

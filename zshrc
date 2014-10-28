@@ -40,7 +40,7 @@ export PATH=$PATH:$HOME/bin:/usr/local/bin
 
 export EDITOR='vim'
 
-source ~/.dotfiles/share/aliases
+source ~/.dotfiles/aliases
 
 # Get ls to play nicely with solarized
 if [[ ! -d ~/.dircolors ]]; then
