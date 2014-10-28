@@ -1,4 +1,5 @@
 ;;; Personal functions
+;;; Mostly copied from this guy - https://github.com/hans/dotfiles
 
 ;; Thanks http://thorne.posterous.com/load-a-directory-full-of-emacs-lisp-files-in
 (defvar file-loadable-regexp
