@@ -1,3 +1,5 @@
+# This file is used to keep all my aliases between bash and zsh
+
 # General shell
 alias realias='vim ~/.dotfiles/share/aliases; source ~/.dotfiles/share/aliases'
 alias vi='vim'
