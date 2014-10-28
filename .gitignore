@@ -1,2 +1,4 @@
 # Ignore settings for this machine
-local
+.emacs.d/elpa
+.emacs.d/tmp
+.emacs.d/url
