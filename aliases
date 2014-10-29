@@ -29,6 +29,8 @@ alias gpll='git pull'
 alias gst='git status'
 alias gco='git checkout'
 alias glog='git log --oneline --decorate --color --graph'
+# Get deleted files out of the repo
+alias grm="git status | grep deleted | awk '{print \$3}' | xargs git rm"
 
 alias off='sudo shutdown 0'
 alias reboot='sudo reboot'
