@@ -129,93 +129,50 @@ PACKAGE is installed and the current version is deleted."
 ;;    configurations are also dependent on them).
 
 (when (and do-package-update-on-init
-              (y-or-n-p "Update all packages?"))
-     (package-refresh-contents)
+           (y-or-n-p "Update all packages?"))
+  (package-refresh-contents)
 
-     (let* ((packages
-             '(ac-geiser         ; Auto-complete backend for geiser
-               ac-slime          ; An auto-complete source using slime completions
-               ace-jump-mode     ; quick cursor location minor mode
-               auto-compile      ; automatically compile Emacs Lisp libraries
-               auto-complete     ; auto completion
-               centered-window   ; Center the text when there's only one window
-               elscreen          ; window session manager
-               expand-region     ; Increase selected region by semantic units
-               flx-ido           ; flx integration for ido
-               idle-require      ; load elisp libraries while Emacs is idle
-               ido-vertical-mode ; Makes ido-mode display vertically.
-               geiser            ; GNU Emacs and Scheme talk to each other
-               haskell-mode      ; A Haskell editing mode
-               jedi              ; Python auto-completion for Emacs
-               js2-mode          ; Improved JavaScript editing mode
-               magit             ; control Git from Emacs
-               markdown-mode     ; Emacs Major mode for Markdown-formatted files.
-               matlab-mode       ; MATLAB integration with Emacs.
-               monokai-theme     ; A fruity color theme for Emacs.
-               move-text         ; Move current line or region with M-up or M-down
-               multiple-cursors  ; Multiple cursors for Emacs.
-               org               ; Outline-based notes management and organizer
-               paredit           ; minor mode for editing parentheses
-               powerline         ; Rewrite of Powerline
-               pretty-lambdada   ; the word `lambda' as the Greek letter.
-               slime             ; Superior Lisp Interaction Mode for Emacs
-               smex              ; M-x interface with Ido-style fuzzy matching.
-               undo-tree))       ; Treat undo history as a tree
-            ;; Fetch dependencies from all packages.
-            (reqs (mapcar 'dependencies packages))
-            ;; Append these to the original list, and remove any duplicates.
-            (packages (delete-dups (apply 'append packages reqs))))
+  (let* ((packages
+          '(ac-geiser         ; Auto-complete backend for geiser
+            ac-slime          ; An auto-complete source using slime completions
+            ace-jump-mode     ; quick cursor location minor mode
+            auto-compile      ; automatically compile Emacs Lisp libraries
+            auto-complete     ; auto completion
+            centered-window   ; Center the text when there's only one window
+            elscreen          ; window session manager
+            expand-region     ; Increase selected region by semantic units
+            flx-ido           ; flx integration for ido
+            idle-require      ; load elisp libraries while Emacs is idle
+            ido-vertical-mode ; Makes ido-mode display vertically.
+            geiser            ; GNU Emacs and Scheme talk to each other
+            haskell-mode      ; A Haskell editing mode
+            jedi              ; Python auto-completion for Emacs
+            js2-mode          ; Improved JavaScript editing mode
+            magit             ; control Git from Emacs
+            markdown-mode     ; Emacs Major mode for Markdown-formatted files.
+            matlab-mode       ; MATLAB integration with Emacs.
+            monokai-theme     ; A fruity color theme for Emacs.
+            move-text         ; Move current line or region with M-up or M-down
+            multiple-cursors  ; Multiple cursors for Emacs.
+            org               ; Outline-based notes management and organizer
+            paredit           ; minor mode for editing parentheses
+            powerline         ; Rewrite of Powerline
+            ;;pretty-lambdada   ; the word `lambda' as the Greek letter.
+            slime             ; Superior Lisp Interaction Mode for Emacs
+            smex              ; M-x interface with Ido-style fuzzy matching.
+            undo-tree))       ; Treat undo history as a tree
+         ;; Fetch dependencies from all packages.
+         (reqs (mapcar 'dependencies packages))
+         ;; Append these to the original list, and remove any duplicates.
+         (packages (delete-dups (apply 'append packages reqs))))
 
-       (dolist (package packages)
-         (upgrade-or-install-package package)))
+    (dolist (package packages)
+      (upgrade-or-install-package package)))
 
-;; This package is only relevant for Mac OS X.
-(when (memq window-system '(mac ns))
-  (upgrade-or-install-package 'exec-path-from-shell))
-(package-initialize))
-
-;; Mac OS X
-
-;;    I run this configuration mostly on Mac OS X, so we need a couple of
-;;    settings to make things work smoothly. In the package section
-;;    =exec-path-from-shell= is included (only if you're running OS X), this is
-;;    to include environment-variables from the shell. It makes useing Emacs
-;;    along with external processes a lot simpler. I also prefer using the
-;;    =Command=-key as the =Meta=-key.
-
-(when (memq window-system '(mac ns))
-  (setq mac-option-modifier nil
-        mac-command-modifier 'meta
-        x-select-enable-clipboard t)
-  (exec-path-from-shell-initialize))
-
-;; Require
-
-;;    Some features are not loaded by default to minimize initialization time,
-;;    so they have to be required (or loaded, if you will). =require=-calls
-;;    tends to lead to the largest bottleneck's in a
-;;    configuration. =idle-require= delays the =require=-calls to a time where
-;;    Emacs is in idle. So this is great for stuff you eventually want to load,
-;;    but is not a high priority.
-
-# (require 'idle-require)             ; Need in order to use idle-require
-# (require 'auto-complete-config)     ; a configuration for auto-complete-mode
-
-# (dolist (feature
-#          '(auto-compile             ; auto-compile .el files
-#            jedi                     ; auto-completion for python
-#            matlab                   ; matlab-mode
-#            ob-matlab                ; org-babel matlab
-#            ox-latex                 ; the latex-exporter (from org)
-#            ox-md                    ; Markdown exporter (from org)
-#            pretty-lambdada          ; show 'lambda' as the greek letter.
-#            recentf                  ; recently opened files
-#            smex                     ; M-x interface Ido-style.
-#            tex-mode))               ; TeX, LaTeX, and SliTeX mode commands
-#   (idle-require feature))
-
-# (setq idle-require-idle-delay 5)
-# (idle-require-mode 1)
+  ;; This package is only relevant for Mac OS X.
+  (when (memq window-system '(mac ns))
+    (upgrade-or-install-package 'exec-path-from-shell))
+  (package-initialize))
 
 ;; Sane defaults
 
@@ -322,8 +279,7 @@ PACKAGE is installed and the current version is deleted."
            delete-selection-mode      ; Replace selected text.
            dirtrack-mode              ; directory tracking in *shell*
            recentf-mode               ; Recently opened files.
-           show-paren-mode            ; Highlight matching parentheses.
-           global-undo-tree-mode))    ; Undo as a tree.
+           show-paren-mode))          ; Highlight matching parentheses.
   (funcall mode 1))
 
 (when (version< emacs-version "24.4")
@@ -338,7 +294,7 @@ PACKAGE is installed and the current version is deleted."
 
 ;;    Change the color-theme to =monokai= (downloaded using =package=).
 
-(load-theme 'monokai t)
+;;(load-theme 'monokai t)
 
 ;; Use the [[http://www.levien.com/type/myfonts/inconsolata.html][Inconsolata]] font if it's installed on the system.
 
@@ -727,18 +683,18 @@ the buffer is buried."
 ;;    can add some extra lisp-modes. We run the =pretty-lambda-for-modes=
 ;;    function to activate =pretty-lambda-mode= in lisp modes.
 
-(dolist (mode '(slime-repl-mode geiser-repl-mode ielm-mode clojure-mode
-                                cider-repl-mode))
-  (add-to-list 'pretty-lambda-auto-modes mode))
+;;(dolist (mode '(slime-repl-mode geiser-repl-mode ielm-mode clojure-mode
+                                ;;cider-repl-mode))
+  ;;(add-to-list 'pretty-lambda-auto-modes mode))
 
-(pretty-lambda-for-modes)
+;;(pretty-lambda-for-modes)
 
 ;; I use =Paredit= when editing lisp code, we enable this for all lisp-modes
 ;;    in the =pretty-lambda-auto-modes= list.
 
-(dolist (mode pretty-lambda-auto-modes)
+;;(dolist (mode pretty-lambda-auto-modes)
   ;; add paredit-mode to all mode-hooks
-  (add-hook (intern (concat (symbol-name mode) "-hook")) 'paredit-mode))
+ ;; (add-hook (intern (concat (symbol-name mode) "-hook")) 'paredit-mode))
 
 ;; Emacs Lisp
 
