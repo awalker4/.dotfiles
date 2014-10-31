@@ -39,7 +39,6 @@ tangled, and the tangled file is compiled."
 
 (setq package-archives
       '(("gnu" . "http://elpa.gnu.org/packages/")
-        ("org" . "http://orgmode.org/elpa/")
         ("MELPA" . "http://stable.melpa.org/packages/")))
 
 ;; We can define a predicate that tells us whether or not the newest version
@@ -294,7 +293,7 @@ PACKAGE is installed and the current version is deleted."
 
 ;;    Change the color-theme to =monokai= (downloaded using =package=).
 
-;;(load-theme 'monokai t)
+(load-theme 'zenburn t)
 
 ;; Use the [[http://www.levien.com/type/myfonts/inconsolata.html][Inconsolata]] font if it's installed on the system.
 
@@ -365,50 +364,6 @@ PACKAGE is installed and the current version is deleted."
       calendar-latitude 60.0
       calendar-longitude 10.7
       calendar-location-name "Oslo, Norway")
-
-;; Mail
-
-;;    I use [[http://www.djcbsoftware.nl/code/mu/mu4e.html][mu4e]] (which is a part of [[http://www.djcbsoftware.nl/code/mu/][mu]]) along with [[http://docs.offlineimap.org/en/latest/][offlineimap]] on one of my
-;;    computers. Because the mail-setup wont work without these programs
-;;    installed we bind =load-mail-setup= to =nil=. If the value is changed to
-;;    a =non-nil= value mail is setup.
-
-(defvar load-mail-setup nil)
-
-(when load-mail-setup
-  (eval-after-load 'mu4e
-    '(progn
-       ;; Some basic mu4e settings.
-       (setq mu4e-maildir           "~/.ifimail"     ; top-level Maildir
-             mu4e-sent-folder       "/INBOX.Sent"    ; folder for sent messages
-             mu4e-drafts-folder     "/INBOX.Drafts"  ; unfinished messages
-             mu4e-trash-folder      "/INBOX.Trash"   ; trashed messages
-             mu4e-refile-folder     "/INBOX.Archive" ; saved messages
-             mu4e-get-mail-command  "offlineimap"    ; offlineimap to fetch mail
-             mu4e-compose-signature "- Lars"         ; Sign my name
-             mu4e-update-interval   (* 5 60)         ; update every 5 min
-             mu4e-confirm-quit      nil              ; just quit
-             mu4e-view-show-images  t                ; view images
-             mu4e-html2text-command
-             "html2text -utf8")                      ; use utf-8
-
-       ;; Setup for sending mail.
-       (setq user-full-name
-             "Lars Tveito"                        ; Your full name
-             user-mail-address
-             "larstvei@ifi.uio.no"                ; And email-address
-             smtpmail-smtp-server
-             "smtp.uio.no"                        ; Host to mail-server
-             smtpmail-smtp-service 465            ; Port to mail-server
-             smtpmail-stream-type 'ssl            ; Protocol used for sending
-             send-mail-function 'smtpmail-send-it ; Use smpt to send
-             mail-user-agent 'mu4e-user-agent)    ; Use mu4e!
-
-       ;; Register file types that can be handled by ImageMagick.
-       (when (fboundp 'imagemagick-register-types)
-         (imagemagick-register-types))))
-  (autoload 'mu4e "mu4e" nil t)
-  (global-set-key (kbd "C-x m") 'mu4e))
 
 ;; Flyspell
 
