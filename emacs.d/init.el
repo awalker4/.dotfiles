@@ -39,7 +39,8 @@ tangled, and the tangled file is compiled."
 
 (setq package-archives
       '(("gnu" . "http://elpa.gnu.org/packages/")
-        ("MELPA" . "http://stable.melpa.org/packages/")))
+        ("Marmalade" . "http://marmalade-repo.org/packages/")
+        ("MELPA" . "http://melpa.org/packages/")))
 
 ;; We can define a predicate that tells us whether or not the newest version
 ;;    of a package is installed.
@@ -132,8 +133,7 @@ PACKAGE is installed and the current version is deleted."
   (package-refresh-contents)
 
   (let* ((packages
-          '(ac-geiser         ; Auto-complete backend for geiser
-            ac-slime          ; An auto-complete source using slime completions
+          '(ac-slime          ; An auto-complete source using slime completions
             ace-jump-mode     ; quick cursor location minor mode
             auto-compile      ; automatically compile Emacs Lisp libraries
             auto-complete     ; auto completion
@@ -156,10 +156,11 @@ PACKAGE is installed and the current version is deleted."
             org               ; Outline-based notes management and organizer
             paredit           ; minor mode for editing parentheses
             powerline         ; Rewrite of Powerline
-            ;;pretty-lambdada   ; the word `lambda' as the Greek letter.
             slime             ; Superior Lisp Interaction Mode for Emacs
             smex              ; M-x interface with Ido-style fuzzy matching.
-            undo-tree))       ; Treat undo history as a tree
+            undo-tree         ; Treat undo history as a tree
+            ya-snippet        ; Code snippets
+            ya-snippet-bundle))
          ;; Fetch dependencies from all packages.
          (reqs (mapcar 'dependencies packages))
          ;; Append these to the original list, and remove any duplicates.
@@ -167,10 +168,6 @@ PACKAGE is installed and the current version is deleted."
 
     (dolist (package packages)
       (upgrade-or-install-package package)))
-
-  ;; This package is only relevant for Mac OS X.
-  (when (memq window-system '(mac ns))
-    (upgrade-or-install-package 'exec-path-from-shell))
   (package-initialize))
 
 ;; Sane defaults
@@ -569,7 +566,7 @@ the buffer is buried."
 ;;    enabled themes.
 
 (defadvice load-theme
-  (before disable-before-load (theme &optional no-confirm no-enable) activate) 
+  (before disable-before-load (theme &optional no-confirm no-enable) activate)
   (mapc 'disable-theme custom-enabled-themes))
 
 ;; Presentation-mode
@@ -630,77 +627,6 @@ the buffer is buried."
 ;;    buffer), but the =clear-shell= should only affect =shell-mode=.
 
 (add-hook 'shell-mode-hook (lambda () (local-set-key (kbd "C-l") 'clear-shell)))
-
-;; Lisp
-
-;;    =Pretty-lambda= provides a customizable variable
-;;    =pretty-lambda-auto-modes= that is a list of common lisp modes. Here we
-;;    can add some extra lisp-modes. We run the =pretty-lambda-for-modes=
-;;    function to activate =pretty-lambda-mode= in lisp modes.
-
-;;(dolist (mode '(slime-repl-mode geiser-repl-mode ielm-mode clojure-mode
-                                ;;cider-repl-mode))
-  ;;(add-to-list 'pretty-lambda-auto-modes mode))
-
-;;(pretty-lambda-for-modes)
-
-;; I use =Paredit= when editing lisp code, we enable this for all lisp-modes
-;;    in the =pretty-lambda-auto-modes= list.
-
-;;(dolist (mode pretty-lambda-auto-modes)
-  ;; add paredit-mode to all mode-hooks
- ;; (add-hook (intern (concat (symbol-name mode) "-hook")) 'paredit-mode))
-
-;; Emacs Lisp
-
-;;     In =emacs-lisp-mode= we can enable =eldoc-mode= to display information
-;;     about a function or a variable in the echo area.
-
-(add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
-(add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
-
-;; Common lisp
-
-;;     I use [[http://www.common-lisp.net/project/slime/][Slime]] along with =lisp-mode= to edit Common Lisp code. Slime
-;;     provides code evaluation and other great features, a must have for a
-;;     Common Lisp developer. [[http://www.quicklisp.org/beta/][Quicklisp]] is a library manager for Common Lisp,
-;;     and you can install Slime following the instructions from the site along
-;;     with this snippet.
-
-(when (file-exists-p "~/.quicklisp/slime-helper.el")
-  (load (expand-file-name "~/.quicklisp/slime-helper.el")))
-
-;; We can specify what Common Lisp program Slime should use (I use SBCL).
-
-(setq inferior-lisp-program "sbcl")
-
-;; To improve auto completion for Common Lisp editing we can use =ac-slime=
-;;     which uses slime completions as a source.
-
-(add-hook 'slime-mode-hook 'set-up-slime-ac)
-(add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
-
-(eval-after-load "auto-complete"
-  '(add-to-list 'ac-modes 'slime-repl-mode))
-
-;; More sensible =loop= indentation, borrowed from [[https://github.com/simenheg][simenheg]].
-
-(setq lisp-loop-forms-indentation   2
-      lisp-simple-loop-indentation  2
-      lisp-loop-keyword-indentation 6)
-
-;; Scheme
-
-;;     [[http://www.nongnu.org/geiser/][Geiser]] provides features similar to Slime for Scheme editing. Everything
-;;     works pretty much out of the box, we only need to add auto completion,
-;;     and specify which scheme-interpreter we prefer.
-
-(add-hook 'geiser-mode-hook 'ac-geiser-setup)
-(add-hook 'geiser-repl-mode-hook 'ac-geiser-setup)
-(eval-after-load "auto-complete"
-  '(add-to-list 'ac-modes 'geiser-repl-mode))
-(eval-after-load "geiser"
-  '(add-to-list 'geiser-active-implementations 'plt-r5rs)) ;'(racket))
 
 ;; Java and C
 
@@ -801,6 +727,20 @@ math-block around the region."
             (auto-fill-mode 0)
             (ispell-change-dictionary "norsk")
             (local-set-key (kbd "C-c b") 'insert-markdown-inline-math-block)) t)
+
+;; Python
+
+;;     [[http://tkf.github.io/emacs-jedi/released/][Jedi]] offers very nice auto completion for =python-mode=. Mind that it is
+;;     dependent on some python programs as well, so make sure you follow the
+;;     instructions from the site.
+
+(require 'jedi)
+(add-hook 'python-mode-hook 'jedi:setup)
+(setq jedi:server-command
+     (cons "python3" (cdr jedi:server-command))
+     python-shell-interpreter "python3")
+(setq jedi:complete-on-dot t)
+;;(add-hook 'python-mode-hook 'jedi:ac-setup)
 
 ;; Haskell
 

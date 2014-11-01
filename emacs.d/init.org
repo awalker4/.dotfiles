@@ -1,4 +1,3 @@
-
 #+BABEL: :cache yes
 #+LATEX_HEADER: \usepackage{parskip}
 #+LATEX_HEADER: \usepackage{inconsolata}
@@ -10,9 +9,9 @@
 * About
 
   This is an Emacs configuration file written in [[http://orgmode.org][Org mode]]. It began as a
-  clone of [[https://github/com/larstvei/dot-emacs][larstvei's setup]], and now I'm slowly tweaking it to my
+  clone of [[https://github.com/larstvei/dot-emacs][larstvei's setup]], and now I'm slowly tweaking it to my
   needs. Every time this file is saved, all snippets of elisp code will get
-  pulled into init.el thanks to the wonders of ==org-babel==.
+  pulled into init.el thanks to the wonders of =org-babel=.
 
 * Configurations
 ** Meta
@@ -38,7 +37,7 @@
 
      (add-hook 'after-save-hook 'tangle-init)
    #+END_SRC
-   
+
 ** Package
 
    Managing extensions for Emacs is simplified using =package= which is
@@ -60,7 +59,8 @@
    #+BEGIN_SRC emacs-lisp
      (setq package-archives
            '(("gnu" . "http://elpa.gnu.org/packages/")
-             ("MELPA" . "http://stable.melpa.org/packages/")))
+             ("Marmalade" . "http://marmalade-repo.org/packages/")
+             ("MELPA" . "http://melpa.org/packages/")))
    #+END_SRC
 
    We can define a predicate that tells us whether or not the newest version
@@ -165,8 +165,7 @@
        (package-refresh-contents)
 
        (let* ((packages
-               '(ac-geiser         ; Auto-complete backend for geiser
-                 ac-slime          ; An auto-complete source using slime completions
+               '(ac-slime          ; An auto-complete source using slime completions
                  ace-jump-mode     ; quick cursor location minor mode
                  auto-compile      ; automatically compile Emacs Lisp libraries
                  auto-complete     ; auto completion
@@ -189,10 +188,11 @@
                  org               ; Outline-based notes management and organizer
                  paredit           ; minor mode for editing parentheses
                  powerline         ; Rewrite of Powerline
-                 ;;pretty-lambdada   ; the word `lambda' as the Greek letter.
                  slime             ; Superior Lisp Interaction Mode for Emacs
                  smex              ; M-x interface with Ido-style fuzzy matching.
-                 undo-tree))       ; Treat undo history as a tree
+                 undo-tree         ; Treat undo history as a tree
+                 ya-snippet        ; Code snippets
+                 ya-snippet-bundle))
               ;; Fetch dependencies from all packages.
               (reqs (mapcar 'dependencies packages))
               ;; Append these to the original list, and remove any duplicates.
@@ -200,10 +200,6 @@
 
          (dolist (package packages)
            (upgrade-or-install-package package)))
-
-       ;; This package is only relevant for Mac OS X.
-       (when (memq window-system '(mac ns))
-         (upgrade-or-install-package 'exec-path-from-shell))
        (package-initialize))
    #+END_SRC
 
@@ -366,7 +362,7 @@
    #+END_SRC
 
    # [[https://github.com/milkypostman/powerline][Powerline]] is an extension to customize the mode line. This is modified
-   # version =powerline-nano-theme=. 
+   # version =powerline-nano-theme=.
 
    # #+BEGIN_SRC emacs-lisp
    # (setq-default
@@ -395,7 +391,7 @@
    # #+END_SRC
 
    # This is what it looks like:
-   
+
    # [[./powerline.png]]
 
 ** Ido
@@ -711,11 +707,11 @@
    When interactively changing the theme (using =M-x load-theme=), the
    current custom theme is not disabled. This often gives weird-looking
    results; we can advice =load-theme= to always disable themes currently
-   enabled themes. 
+   enabled themes.
 
    #+BEGIN_SRC emacs-lisp
      (defadvice load-theme
-       (before disable-before-load (theme &optional no-confirm no-enable) activate) 
+       (before disable-before-load (theme &optional no-confirm no-enable) activate)
        (mapc 'disable-theme custom-enabled-themes))
    #+END_SRC
 
@@ -746,7 +742,7 @@
        text-scale-mode
        (lambda () (text-scale-mode 1)))
    #+END_SRC
-   
+
 * Mode specific
 ** Shell
 
@@ -755,7 +751,7 @@
    =~/.emacs_bash=, to make the transition between my standard terminal and
    the shell as small as possible. To be able to quickly switch back and
    forth between a shell I make use of this little function.
-   
+
    #+BEGIN_SRC emacs-lisp
    (defun toggle-shell ()
      "Jumps to eshell or back."
@@ -780,100 +776,13 @@
        (let ((comint-buffer-maximum-size 0))
         (comint-truncate-buffer)))
    #+END_SRC
-   
+
    Lastly we should bind our functions. The =toggle-shell= should be a
    global binding (because we want to be able to switch to a shell from any
    buffer), but the =clear-shell= should only affect =shell-mode=.
 
    #+BEGIN_SRC emacs-lisp
      (add-hook 'shell-mode-hook (lambda () (local-set-key (kbd "C-l") 'clear-shell)))
-   #+END_SRC
-
-** Lisp
-
-   =Pretty-lambda= provides a customizable variable
-   =pretty-lambda-auto-modes= that is a list of common lisp modes. Here we
-   can add some extra lisp-modes. We run the =pretty-lambda-for-modes=
-   function to activate =pretty-lambda-mode= in lisp modes.
-
-   #+BEGIN_SRC emacs-lisp
-     ;;(dolist (mode '(slime-repl-mode geiser-repl-mode ielm-mode clojure-mode
-                                     ;;cider-repl-mode))
-       ;;(add-to-list 'pretty-lambda-auto-modes mode))
-
-     ;;(pretty-lambda-for-modes)
-   #+END_SRC
-
-   I use =Paredit= when editing lisp code, we enable this for all lisp-modes
-   in the =pretty-lambda-auto-modes= list.
-
-   #+BEGIN_SRC emacs-lisp
-   ;;(dolist (mode pretty-lambda-auto-modes)
-     ;; add paredit-mode to all mode-hooks
-    ;; (add-hook (intern (concat (symbol-name mode) "-hook")) 'paredit-mode))
-   #+END_SRC
-
-*** Emacs Lisp
-
-    In =emacs-lisp-mode= we can enable =eldoc-mode= to display information
-    about a function or a variable in the echo area.
-
-    #+BEGIN_SRC emacs-lisp
-    (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
-    (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
-    #+END_SRC
-
-*** Common lisp
-
-    I use [[http://www.common-lisp.net/project/slime/][Slime]] along with =lisp-mode= to edit Common Lisp code. Slime
-    provides code evaluation and other great features, a must have for a
-    Common Lisp developer. [[http://www.quicklisp.org/beta/][Quicklisp]] is a library manager for Common Lisp,
-    and you can install Slime following the instructions from the site along
-    with this snippet.
-
-    #+BEGIN_SRC emacs-lisp
-    (when (file-exists-p "~/.quicklisp/slime-helper.el")
-      (load (expand-file-name "~/.quicklisp/slime-helper.el")))
-    #+END_SRC
-
-    We can specify what Common Lisp program Slime should use (I use SBCL).
-
-    #+BEGIN_SRC emacs-lisp
-    (setq inferior-lisp-program "sbcl")
-    #+END_SRC
-
-    To improve auto completion for Common Lisp editing we can use =ac-slime=
-    which uses slime completions as a source.
-
-    #+BEGIN_SRC emacs-lisp
-    (add-hook 'slime-mode-hook 'set-up-slime-ac)
-    (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)
-
-    (eval-after-load "auto-complete"
-      '(add-to-list 'ac-modes 'slime-repl-mode))
-    #+END_SRC
-
-    More sensible =loop= indentation, borrowed from [[https://github.com/simenheg][simenheg]].
-
-    #+BEGIN_SRC emacs-lisp
-      (setq lisp-loop-forms-indentation   2
-            lisp-simple-loop-indentation  2
-            lisp-loop-keyword-indentation 6)
-    #+END_SRC
-
-*** Scheme
-
-    [[http://www.nongnu.org/geiser/][Geiser]] provides features similar to Slime for Scheme editing. Everything
-    works pretty much out of the box, we only need to add auto completion,
-    and specify which scheme-interpreter we prefer.
-
-   #+BEGIN_SRC emacs-lisp
-     (add-hook 'geiser-mode-hook 'ac-geiser-setup)
-     (add-hook 'geiser-repl-mode-hook 'ac-geiser-setup)
-     (eval-after-load "auto-complete"
-       '(add-to-list 'ac-modes 'geiser-repl-mode))
-     (eval-after-load "geiser"
-       '(add-to-list 'geiser-active-implementations 'plt-r5rs)) ;'(racket))
    #+END_SRC
 
 ** Java and C
@@ -996,18 +905,19 @@
 
 ** Python
 
-   # [[http://tkf.github.io/emacs-jedi/released/][Jedi]] offers very nice auto completion for =python-mode=. Mind that it is
-   # dependent on some python programs as well, so make sure you follow the
-   # instructions from the site.
+    [[http://tkf.github.io/emacs-jedi/released/][Jedi]] offers very nice auto completion for =python-mode=. Mind that it is
+    dependent on some python programs as well, so make sure you follow the
+    instructions from the site.
 
-   # #+BEGIN_SRC emacs-lisp
-   # ;; (setq jedi:server-command
-   # ;;       (cons "python3" (cdr jedi:server-command))
-   # ;;       python-shell-interpreter "python3")
-   # (add-hook 'python-mode-hook 'jedi:setup)
-   # (setq jedi:complete-on-dot t)
-   # (add-hook 'python-mode-hook 'jedi:ac-setup)
-   # #+END_SRC
+    #+BEGIN_SRC emacs-lisp
+    (require 'jedi)
+    (add-hook 'python-mode-hook 'jedi:setup)
+    (setq jedi:server-command
+         (cons "python3" (cdr jedi:server-command))
+         python-shell-interpreter "python3")
+    (setq jedi:complete-on-dot t)
+    ;;(add-hook 'python-mode-hook 'jedi:ac-setup)
+    #+END_SRC
 
 ** Haskell
 
@@ -1123,16 +1033,16 @@
   My Emacs configurations written in Org mode.
 
   Copyright (c) 2013 - 2014 Lars Tveito
-  
+
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
-  
+
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.

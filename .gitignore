@@ -4,3 +4,10 @@ emacs.d/elpa
 emacs.d/eshell
 emacs.d/tmp
 emacs.d/url
+/emacs.d/abbrev_defs
+/emacs.d/ido.last
+/emacs.d/recentf
+/emacs.d/autosaves/
+/emacs.d/.package-last-update
+/emacs.d/.python-environments/
+/emacs.d/ac-comphist.dat
