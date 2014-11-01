@@ -10,4 +10,7 @@ emacs.d/url
 /emacs.d/autosaves/
 /emacs.d/.package-last-update
 /emacs.d/.python-environments/
-/emacs.d/ac-comphist.dat
+/emacs.d/smex-items
+
+*.elc
+*.dat

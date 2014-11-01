@@ -10,16 +10,16 @@
 ;;    =org=-document after changes.
 
 (defun tangle-init ()
-  "If the current buffer is 'init.org' the code-blocks are
-tangled, and the tangled file is compiled."
-  (when (equal (buffer-file-name)
-               (expand-file-name (concat user-emacs-directory "init.org")))
-    ;; Avoid running hooks when tangling.
-    (let ((prog-mode-hook nil))
-      (org-babel-tangle)
-      (byte-compile-file (concat user-emacs-directory "init.el")))))
+   "If the current buffer is 'init.org' the code-blocks are
+ tangled, and the tangled file is compiled."
+   (when (equal (buffer-file-name)
+                "/home/austin/.dotfiles/emacs.d/init.org")
+     ;; Avoid running hooks when tangling.
+     (let ((prog-mode-hook nil))
+       (org-babel-tangle)
+       (byte-compile-file (concat user-emacs-directory "init.el")))))
 
-(add-hook 'after-save-hook 'tangle-init)
+ (add-hook 'after-save-hook 'tangle-init)
 
 ;; Package
 
@@ -418,7 +418,7 @@ the languages in ISPELL-LANGUAGES when invoked."
 ;;    Start yasnippet
 
 (require 'yasnippet)
-(yas-global-mode 1)
+;;(yas-global-mode 1)
 
 ;; Org
 
@@ -725,15 +725,13 @@ math-block around the region."
     (insert (concat "$math$ " body " $/math$"))
     (search-backward " $/math$")))
 
-;; Most of my writing in this markup is in Norwegian, so the dictionary is
-;;    set accordingly. The markup is also sensitive to line breaks, so
+;; The markup is also sensitive to line breaks, so
 ;;    =auto-fill-mode= is disabled. Of course we want to bind our lovely
 ;;    function to a key!
 
 (add-hook 'markdown-mode-hook
           (lambda ()
             (auto-fill-mode 0)
-            (ispell-change-dictionary "norsk")
             (local-set-key (kbd "C-c b") 'insert-markdown-inline-math-block)) t)
 
 ;; Python
