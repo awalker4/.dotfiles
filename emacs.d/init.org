@@ -37,7 +37,7 @@
 
      (add-hook 'after-save-hook 'tangle-init)
    #+END_SRC
-
+   
 ** Package
 
    Managing extensions for Emacs is simplified using =package= which is
@@ -166,6 +166,7 @@
 
        (let* ((packages
                '(ac-slime          ; An auto-complete source using slime completions
+                 ac-octave         ; Auto-completion for octave
                  ace-jump-mode     ; quick cursor location minor mode
                  auto-compile      ; automatically compile Emacs Lisp libraries
                  auto-complete     ; auto completion
@@ -533,6 +534,15 @@
          (local-set-key (kbd "C-c l") (cycle-languages))))
    #+END_SRC
 
+** Snippets
+
+   Start yasnippet
+   
+   #+BEGIN_SRC emacs-lisp
+     (require 'yasnippet)
+     (yas-global-mode 1)        
+   #+END_SRC
+
 ** Org
 
    I use =org-agenda= for appointments and such.
@@ -742,7 +752,7 @@
        text-scale-mode
        (lambda () (text-scale-mode 1)))
    #+END_SRC
-
+   
 * Mode specific
 ** Shell
 
@@ -938,6 +948,16 @@
    #+BEGIN_SRC emacs-lisp
      (eval-after-load 'matlab
        '(add-to-list 'matlab-shell-command-switches "-nosplash"))
+   #+END_SRC
+
+** Octave
+
+   Make it so =.m= files are loaded in =octave-mode=.
+  
+   #+BEGIN_SRC emacs-lisp 
+     (autoload 'octave-mode "octave-mod" nil t)
+     (setq auto-mode-alist
+           (cons '("\\.m$" . octave-mode) auto-mode-alist))
    #+END_SRC
 * Key bindings
 

@@ -134,6 +134,7 @@ PACKAGE is installed and the current version is deleted."
 
   (let* ((packages
           '(ac-slime          ; An auto-complete source using slime completions
+            ac-octave         ; Auto-completion for octave
             ace-jump-mode     ; quick cursor location minor mode
             auto-compile      ; automatically compile Emacs Lisp libraries
             auto-complete     ; auto completion
@@ -411,6 +412,13 @@ the languages in ISPELL-LANGUAGES when invoked."
   "Turns on flyspell only if a spell-checking tool is installed."
   (when (executable-find ispell-program-name)
     (local-set-key (kbd "C-c l") (cycle-languages))))
+
+;; Snippets
+
+;;    Start yasnippet
+
+(require 'yasnippet)
+(yas-global-mode 1)
 
 ;; Org
 
@@ -758,6 +766,14 @@ math-block around the region."
 
 (eval-after-load 'matlab
   '(add-to-list 'matlab-shell-command-switches "-nosplash"))
+
+;; Octave
+
+;;    Make it so =.m= files are loaded in =octave-mode=.
+
+(autoload 'octave-mode "octave-mod" nil t)
+(setq auto-mode-alist
+      (cons '("\\.m$" . octave-mode) auto-mode-alist))
 
 ;; Key bindings
 
