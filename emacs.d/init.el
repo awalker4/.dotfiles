@@ -206,16 +206,6 @@ PACKAGE is installed and the current version is deleted."
               split-width-threshold 100         ; Split verticly by default.
               auto-fill-function 'do-auto-fill) ; Auto-fill-mode everywhere.
 
-;; The =load-path= specifies where Emacs should look for =.el=-files (or
-;;    Emacs lisp files). I have a directory called =site-lisp= where I keep all
-;;    extensions that have been installed manually (these are mostly my own
-;;    projects).
-
-(let ((default-directory (concat user-emacs-directory "site-lisp/")))
-  (when (file-exists-p default-directory)
-    (normal-top-level-add-to-load-path '("."))
-    (normal-top-level-add-subdirs-to-load-path)))
-
 ;; Answering /yes/ and /no/ to each question from Emacs can be tedious, a
 ;;    single /y/ or /n/ will suffice.
 
