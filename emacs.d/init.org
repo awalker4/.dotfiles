@@ -536,9 +536,9 @@
    I use =org-agenda= for appointments and such.
 
    #+BEGIN_SRC emacs-lisp
-   (setq org-agenda-start-on-weekday nil              ; Show agenda from today.
-         org-agenda-files '("~/Dropbox/life.org")     ; A list of agenda files.
-         org-agenda-default-appointment-duration 120) ; 2 hours appointments.
+     (setq org-agenda-start-on-weekday nil              ; Show agenda from today.
+           org-agenda-files '("~/Dropbox/org")     ; A list of agenda files.
+           org-agenda-default-appointment-duration 60) ; 1 hour appointments.
    #+END_SRC
 
    When editing org-files with source-blocks, we want the source blocks to
@@ -959,19 +959,24 @@
        "A keymap for custom bindings.")
    #+END_SRC
 
+   Binding to use Ibuffer over BufferMenu
+
+   #+BEGIN_SRC emacs-lisp
+     (define-key custom-bindings-map (kbd "C-x C-b")  'ibuffer)
+   #+END_SRC
+
    Bindings for [[https://github.com/magnars/expand-region.el][expand-region]].
 
    #+BEGIN_SRC emacs-lisp
-   (define-key custom-bindings-map (kbd "C-'")  'er/expand-region)
-   (define-key custom-bindings-map (kbd "C-;")  'er/contract-region)
+     (define-key custom-bindings-map (kbd "C-'")  'er/expand-region)
+     (define-key custom-bindings-map (kbd "C-;")  'er/contract-region)
    #+END_SRC
 
    Bindings for [[https://github.com/magnars/multiple-cursors.el][multiple-cursors]].
 
    #+BEGIN_SRC emacs-lisp
-   (define-key custom-bindings-map (kbd "C-c e")  'mc/edit-lines)
-   (define-key custom-bindings-map (kbd "C-c a")  'mc/mark-all-like-this)
-   (define-key custom-bindings-map (kbd "C-c n")  'mc/mark-next-like-this)
+     (define-key custom-bindings-map (kbd "C-c e")  'mc/edit-lines)
+     (define-key custom-bindings-map (kbd "C-c n")  'mc/mark-next-like-this)
    #+END_SRC
 
    Bindings for [[http://magit.github.io][Magit]].
@@ -1001,8 +1006,8 @@
    Bindings for =move-text=.
 
    #+BEGIN_SRC emacs-lisp
-   (define-key custom-bindings-map (kbd "<M-S-up>")    'move-text-up)
-   (define-key custom-bindings-map (kbd "<M-S-down>")  'move-text-down)
+     (define-key custom-bindings-map (kbd "<M-S-up>")    'move-text-up)
+     (define-key custom-bindings-map (kbd "<M-S-down>")  'move-text-down)
    #+END_SRC
 
    Bind some native Emacs functions.
@@ -1015,7 +1020,7 @@
    #+END_SRC
 
    Bind the functions defined [[sec:defuns][above]].
-
+   
    #+BEGIN_SRC emacs-lisp
      (define-key custom-bindings-map (kbd "M-,")     'jump-to-previous-like-this)
      (define-key custom-bindings-map (kbd "M-.")     'jump-to-next-like-this)

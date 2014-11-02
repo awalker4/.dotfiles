@@ -415,8 +415,8 @@ the languages in ISPELL-LANGUAGES when invoked."
 ;;    I use =org-agenda= for appointments and such.
 
 (setq org-agenda-start-on-weekday nil              ; Show agenda from today.
-      org-agenda-files '("~/Dropbox/life.org")     ; A list of agenda files.
-      org-agenda-default-appointment-duration 120) ; 2 hours appointments.
+      org-agenda-files '("~/Dropbox/org")     ; A list of agenda files.
+      org-agenda-default-appointment-duration 60) ; 1 hour appointments.
 
 ;; When editing org-files with source-blocks, we want the source blocks to
 ;;    be themed as they would in their native mode.
@@ -775,6 +775,10 @@ math-block around the region."
 (defvar custom-bindings-map (make-keymap)
   "A keymap for custom bindings.")
 
+;; Binding to use Ibuffer over BufferMenu
+
+(define-key custom-bindings-map (kbd "C-x C-b")  'ibuffer)
+
 ;; Bindings for [[https://github.com/magnars/expand-region.el][expand-region]].
 
 (define-key custom-bindings-map (kbd "C-'")  'er/expand-region)
@@ -783,7 +787,6 @@ math-block around the region."
 ;; Bindings for [[https://github.com/magnars/multiple-cursors.el][multiple-cursors]].
 
 (define-key custom-bindings-map (kbd "C-c e")  'mc/edit-lines)
-(define-key custom-bindings-map (kbd "C-c a")  'mc/mark-all-like-this)
 (define-key custom-bindings-map (kbd "C-c n")  'mc/mark-next-like-this)
 
 ;; Bindings for [[http://magit.github.io][Magit]].
