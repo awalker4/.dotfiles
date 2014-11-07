@@ -137,8 +137,8 @@ PACKAGE is installed and the current version is deleted."
             ac-octave         ; Auto-completion for octave
             ace-jump-mode     ; quick cursor location minor mode
             auto-compile      ; automatically compile Emacs Lisp libraries
-            auto-complete     ; auto completion
             centered-window   ; Center the text when there's only one window
+            company           ; Completion
             elscreen          ; window session manager
             expand-region     ; Increase selected region by semantic units
             flx-ido           ; flx integration for ido
@@ -276,6 +276,10 @@ PACKAGE is installed and the current version is deleted."
 ;; This makes =.md=-files open in =markdown-mode=.
 
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+
+;; We want to have autocompletion by default. Load company mode everywhere.
+
+(add-hook 'after-init-hook 'global-company-mode)
 
 ;; Visual
 
@@ -604,7 +608,7 @@ the buffer is buried."
   (interactive)
   (if (string= (buffer-name) "*shell*")
       (switch-to-prev-buffer)
-    (shell)))
+    (eshell)))
 
 ;; I'd like the =C-l= to work more like the standard terminal (which works
 ;;    like running =clear=), and resolve this by simply removing the
@@ -814,7 +818,7 @@ math-block around the region."
 
 (define-key custom-bindings-map (kbd "C-j")      'newline-and-indent)
 (define-key custom-bindings-map (kbd "C-c s")    'ispell-word)
-(define-key custom-bindings-map (kbd "C-c t")    'org-agenda-list)
+(define-key custom-bindings-map (kbd "C-c a")    'org-agenda-list)
 (define-key custom-bindings-map (kbd "C-x C-r")  'recentf-ido-find-file)
 
 ;; Bind the functions defined [[sec:defuns][above]].
