@@ -34,7 +34,7 @@
 (setq package-enable-at-startup nil)
 (package-initialize)
 
-;; Packages can be fetched from different mirrors, [[http://melpa.milkbox.net/#/][melpa]] is the largest
+;; Packages can be fetched from different mirrors, [[http://melpa.org][melpa]] is the largest
 ;;    archive and is well maintained.
 
 (setq package-archives
@@ -128,15 +128,11 @@ PACKAGE is installed and the current version is deleted."
 ;;    up to date. Here are some packages I find useful (some of these
 ;;    configurations are also dependent on them).
 
-(package-refresh-contents)
-
-(when (not package-archive-contents)
- (package-refresh-contents))
-
 (defvar required-packages
   '(ac-octave         ; Auto-completion for octave
     auto-compile      ; Automatically compile Emacs Lisp libraries
     company           ; Auto-completion engine
+    csharp-mode       ; Major mode for editing C#
     evil              ; Vi and Emacs, in harmony
     expand-region     ; Increase selected region by semantic units
     flx-ido           ; flx integration for ido
@@ -162,9 +158,13 @@ PACKAGE is installed and the current version is deleted."
     )
  "Packages which should be installed upon launch")
 
-(dolist (p required-packages)
- (when (not (package-installed-p p))
-   (package-install p)))
+(when (and do-package-update-on-init
+           (y-or-n-p "Update all packages?"))
+  (package-refresh-contents)
+  
+  (dolist (p required-packages)
+    (when (not (package-installed-p p))
+      (package-install p))))
 
 ;; Sane defaults
 
@@ -187,10 +187,6 @@ PACKAGE is installed and the current version is deleted."
       (let ((undo-dir (concat user-emacs-directory "undo")))
         (and (file-exists-p undo-dir)
              (list (cons "." undo-dir)))))
-
-;; Some mac-bindings interfere with Emacs bindings.
-(when (boundp 'mac-pass-command-to-system)
-  (setq mac-pass-command-to-system nil))
 
 ;; Some variables are buffer-local, so changing them using =setq= will only
 ;;    change them in a single buffer. Using =setq-default= we change the
