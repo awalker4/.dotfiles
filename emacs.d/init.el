@@ -128,14 +128,14 @@ PACKAGE is installed and the current version is deleted."
 ;;    up to date. Here are some packages I find useful (some of these
 ;;    configurations are also dependent on them).
 
-(package-refresh-contents)
-
 (when (not package-archive-contents)
  (package-refresh-contents))
 
 (defvar required-packages
   '(ac-octave         ; Auto-completion for octave
     auto-compile      ; Automatically compile Emacs Lisp libraries
+    cider             ; Clojure repl
+    clojure-mode      ; Mode for .clj files
     company           ; Auto-completion engine
     evil              ; Vi and Emacs, in harmony
     expand-region     ; Increase selected region by semantic units
@@ -414,8 +414,8 @@ the languages in ISPELL-LANGUAGES when invoked."
 ;;    I use =org-agenda= for appointments and such.
 
 (setq org-agenda-start-on-weekday nil              ; Show agenda from today.
-      org-agenda-files '("~/Dropbox/org")     ; A list of agenda files.
-      org-agenda-default-appointment-duration 60) ; 1 hour appointments.
+      org-agenda-files '("~/Dropbox/org")          ; A list of agenda files.
+      org-agenda-default-appointment-duration 60)  ; 1 hour appointments.
 
 ;; When editing org-files with source-blocks, we want the source blocks to
 ;;    be themed as they would in their native mode.
@@ -429,6 +429,17 @@ the languages in ISPELL-LANGUAGES when invoked."
 (require 'org)
 (setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
 (custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))
+
+;; OrgMobile
+;;     OrgMobile will let me sync my agenda to my phone, which will then sync
+;;     with my calendar
+
+;; Set to the location of your Org files on your local system
+(setq org-directory "~/Dropbox/org")
+;; Set to the name of the file where new notes will be stored
+(setq org-mobile-inbox-for-pull "~/Dropbox/org/flagged.org")
+;; Set to <your Dropbox root directory>/MobileOrg.
+(setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
 
 ;; Interactive functions
 ;;    <<sec:defuns>>
