@@ -448,6 +448,7 @@ the languages in ISPELL-LANGUAGES when invoked."
      (global-set-key (kbd "C-x C-f") 'helm-find-files)
      (global-set-key (kbd "M-x") 'helm-M-x)
      (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
+     (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
      
      (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)))
 
@@ -780,6 +781,23 @@ the buffer is buried."
 (autoload 'octave-mode "octave-mod" nil t)
 (setq auto-mode-alist
       (cons '("\\.m$" . octave-mode) auto-mode-alist))
+
+;; FSP
+
+;;    FSP (Finite state processes) is a notation that formally describes concurrent
+;;    systems as described in the book Concurrency by Magee and Kramer. Someday
+;;    I want to make a fully featured mode for FSP. Someone by the name of
+;;    Esben Andreasen made a mode with basic syntax highlighting, so that will
+;;    have to do for now. 
+
+;;    We'll add it manually until I have time to play around with it.
+
+;; Load fsp-mode.el from its own directory
+(add-to-list 'load-path "~/.emacs.d/fsp/")
+(require 'fsp-mode)
+
+;; Load lts files in fsp mode automatically
+(add-to-list 'auto-mode-alist '("\\.lts\\'" . fsp-mode))
 
 ;; Key bindings
 
