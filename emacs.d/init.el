@@ -276,7 +276,7 @@ PACKAGE is installed and the current version is deleted."
 
 ;; Visual
 
-;;    Change the color-theme to =monokai= (downloaded using =package=).
+;;    Change the color-theme to =zenburn=
 
 (load-theme 'zenburn t)
 
@@ -314,41 +314,10 @@ PACKAGE is installed and the current version is deleted."
 
 ;; To make =M-x= behave more like =ido-mode= we can use the =smex=
 ;;    package. It needs to be initialized, and we can replace the binding to
-;;    the standard =execute-extended-command= with =smex=.
+;;    the standard =execute-extended-command= with =smex=. Commented out until
+;;    I get tired of helm.
 
-(smex-initialize)
-
-;; Calendar
-
-;;    Define a function to display week numbers in =calender-mode=. The snippet
-;;    is from [[http://www.emacswiki.org/emacs/CalendarWeekNumbers][EmacsWiki]].
-
-(defun calendar-show-week (arg)
-  "Displaying week number in calendar-mode."
-  (interactive "P")
-  (copy-face font-lock-constant-face 'calendar-iso-week-face)
-  (set-face-attribute
-   'calendar-iso-week-face nil :height 0.7)
-  (setq calendar-intermonth-text
-        (and arg
-             '(propertize
-               (format
-                "%2d"
-                (car (calendar-iso-from-absolute
-                      (calendar-absolute-from-gregorian
-                       (list month day year)))))
-               'font-lock-face 'calendar-iso-week-face))))
-
-;; Evaluate the =calendar-show-week= function.
-
-(calendar-show-week t)
-
-;; Set Monday as the first day of the week, and set my location.
-
-(setq calendar-week-start-day 1
-      calendar-latitude 60.0
-      calendar-longitude 10.7
-      calendar-location-name "Oslo, Norway")
+;; (smex-initialize)
 
 ;; Flyspell
 
@@ -468,18 +437,16 @@ the languages in ISPELL-LANGUAGES when invoked."
 
 ;; Helm
 
-;;    Keybindings
+;;    Helm is an amazing completion tool for finding almost anything. We can
+;;    replace many default functions with the helm equivalent.
 
 (eval-after-load 'helm
   '(progn
-;;     (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to do persistent action
-;;     (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
-;;     (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
-
      (global-set-key (kbd "M-y") 'helm-show-kill-ring)
      (global-set-key (kbd "C-x b") 'helm-mini)
      (global-set-key (kbd "C-x C-f") 'helm-find-files)
-
+     (global-set-key (kbd "M-x") 'helm-M-x)
+     
      (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)))
 
 (require 'helm-config)
@@ -489,10 +456,6 @@ the languages in ISPELL-LANGUAGES when invoked."
 ;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
 (global-set-key (kbd "C-c h") 'helm-command-prefix)
 (global-unset-key (kbd "C-x c"))
-
-;;(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
-;;(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
-;;(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
 
 (when (executable-find "curl")
   (setq helm-google-suggest-use-curl-p t))
@@ -744,18 +707,6 @@ the buffer is buried."
 (eval-after-load 'company
   '(add-to-list 'company-backends 'company-omnisharp))
 
-;; Assembler
-
-;;    When writing assembler code I use =#= for comments. By defining
-;;    =comment-start= we can add comments using =M-;= like in other programming
-;;    modes. Also in assembler should one be able to compile using =C-c C-c=.
-
-(defun asm-setup ()
-  (setq comment-start "#")
-  (local-set-key (kbd "C-c C-c") 'compile))
-
-(add-hook 'asm-mode-hook 'asm-setup)
-
 ;; LaTeX
 
 ;;    =.tex=-files should be associated with =latex-mode= instead of
@@ -787,33 +738,6 @@ the buffer is buried."
 (eval-after-load 'tex-mode
   '(setcar (cdr (cddaar tex-compile-commands)) " -shell-escape "))
 
-;; Markdown
-
-;;    I sometimes use a specialized markdown format, where inline math-blocks
-;;    can be achieved by surrounding a LaTeX formula with =$math$= and
-;;    =$/math$=. Writing these out became tedious, so I wrote a small function.
-
-(defun insert-markdown-inline-math-block ()
-  "Inserts an empty math-block if no region is active, otherwise wrap a
-math-block around the region."
-  (interactive)
-  (let* ((beg (region-beginning))
-         (end (region-end))
-         (body (if (region-active-p) (buffer-substring beg end) "")))
-    (when (region-active-p)
-      (delete-region beg end))
-    (insert (concat "$math$ " body " $/math$"))
-    (search-backward " $/math$")))
-
-;; The markup is also sensitive to line breaks, so
-;;    =auto-fill-mode= is disabled. Of course we want to bind our lovely
-;;    function to a key!
-
-(add-hook 'markdown-mode-hook
-          (lambda ()
-            (auto-fill-mode 0)
-            (local-set-key (kbd "C-c b") 'insert-markdown-inline-math-block)) t)
-
 ;; Python
 
 ;;     [[http://tkf.github.io/emacs-jedi/released/][Jedi]] offers very nice auto completion for =python-mode=. Mind that it is
@@ -827,15 +751,6 @@ math-block around the region."
      python-shell-interpreter "python3")
 (setq jedi:complete-on-dot t)
 ;;(add-hook 'python-mode-hook 'jedi:ac-setup)
-
-;; Haskell
-
-;;    =haskell-doc-mode= is similar to =eldoc=, it displays documentation in
-;;    the echo area. Haskell has several indentation modes - I prefer using
-;;    =haskell-indent=.
-
-(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
 
 ;; Matlab
 
@@ -890,11 +805,6 @@ math-block around the region."
 ;; Bindings for [[http://emacs-helm.github.io/helm/][Helm]].
 
 (define-key custom-bindings-map (kbd "C-c h g") 'helm-google-suggest)
-
-;; Bindings for [[https://github.com/nonsequitur/smex][smex]]. This overrides the standard =M-x=. Currently commented
-;;    out in favor of helm.
-
-(define-key custom-bindings-map (kbd "M-x") 'helm-M-x)
 
 ;; Bindings for =move-text=.
 
