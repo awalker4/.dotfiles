@@ -40,7 +40,7 @@
 (setq package-archives
       '(("gnu" . "http://elpa.gnu.org/packages/")
         ("Marmalade" . "http://marmalade-repo.org/packages/")
-        ("MELPA" . "http://melpa.org/packages/")))
+        ("MELPA" . "http://stable.melpa.org/packages/")))
 
 ;; Keep a list of packages we want to have installed.
 
@@ -55,7 +55,8 @@
          expand-region     ; Increase selected region by semantic units
          flx-ido           ; flx integration for ido
          flycheck          ; On-the-fly syntax checking
-         helm              ; 
+         helm              ;
+         helm-projectile   ; Projectile as a helm completion source
          idle-require      ; load elisp libraries while Emacs is idle
          ido-vertical-mode ; Makes ido-mode display vertically.
          jedi              ; Python auto-completion for Emacs
@@ -446,6 +447,7 @@ the languages in ISPELL-LANGUAGES when invoked."
      (global-set-key (kbd "C-x b") 'helm-mini)
      (global-set-key (kbd "C-x C-f") 'helm-find-files)
      (global-set-key (kbd "M-x") 'helm-M-x)
+     (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
      
      (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)))
 
@@ -469,6 +471,17 @@ the languages in ISPELL-LANGUAGES when invoked."
       helm-ff-file-name-history-use-recentf t)
 
 (helm-mode 1)
+
+;; Projectile
+
+;;    Projectile makes it easy to navigate files in a single project. A project
+;;    is defined as any directory containing a .git/ or other VCS
+;;    repository. We can manually define a project by adding an empty
+;;    =.projectile= file to our directory.
+
+(projectile-global-mode) ; Load Projectile everywhere
+
+(setq projectile-completion-system 'helm)
 
 ;; Interactive functions
 ;;    <<sec:defuns>>
