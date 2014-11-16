@@ -797,9 +797,6 @@ the buffer is buried."
 (add-to-list 'load-path "~/.emacs.d/fsp/")
 (require 'fsp-mode)
 
-;; Load lts files in fsp mode automatically
-(add-to-list 'auto-mode-alist '("\\.lts\\'" . fsp-mode))
-
 ;; Key bindings
 
 ;;    Inspired by [[http://stackoverflow.com/questions/683425/globally-override-key-binding-in-emacs][this StackOverflow post]] I keep a =custom-bindings-map= that
