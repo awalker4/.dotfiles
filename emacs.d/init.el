@@ -383,7 +383,8 @@ the languages in ISPELL-LANGUAGES when invoked."
 
 (setq org-agenda-start-on-weekday nil              ; Show agenda from today.
       org-agenda-files '("~/Dropbox/org")          ; A list of agenda files.
-      org-agenda-default-appointment-duration 60)  ; 1 hour appointments.
+      org-agenda-default-appointment-duration 60   ; 1 hour appointments
+      org-agenda-span 1)                           ; Show only today by default
 
 ;; When editing org-files with source-blocks, we want the source blocks to
 ;;    be themed as they would in their native mode.

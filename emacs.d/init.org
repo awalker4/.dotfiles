@@ -469,7 +469,8 @@
    #+BEGIN_SRC emacs-lisp
      (setq org-agenda-start-on-weekday nil              ; Show agenda from today.
            org-agenda-files '("~/Dropbox/org")          ; A list of agenda files.
-           org-agenda-default-appointment-duration 60)  ; 1 hour appointments.
+           org-agenda-default-appointment-duration 60   ; 1 hour appointments
+           org-agenda-span 1)                           ; Show only today by default
    #+END_SRC
 
    When editing org-files with source-blocks, we want the source blocks to
@@ -480,6 +481,7 @@
            org-confirm-babel-evaluate nil)
 
    #+END_SRC
+
 
    This is quite an ugly fix for allowing code markup for expressions like
    ="this string"=, because the quotation marks causes problems.
