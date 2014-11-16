@@ -63,7 +63,6 @@
          key-chord         ; Run commands with multiple key strokes (Helpful for Evil)
          magit             ; Git integration for Emacs
          markdown-mode     ; Emacs Major mode for Markdown-formatted files.
-         matlab-mode       ; MATLAB integration with Emacs.
          move-text         ; Move current line or region with M-up or M-down
          multiple-cursors  ; Multiple cursors for Emacs.
          paredit           ; minor mode for editing parentheses
@@ -794,7 +793,7 @@ the buffer is buried."
 ;;    We'll add it manually until I have time to play around with it.
 
 ;; Load fsp-mode.el from its own directory
-(add-to-list 'load-path "~/.emacs.d/fsp/")
+(add-to-list 'load-path "~/Dropbox/fsp-mode/")
 (require 'fsp-mode)
 
 ;; Key bindings
