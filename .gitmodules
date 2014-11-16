@@ -1,0 +1,3 @@
+[submodule "emacs.d/fsp"]
+	path = emacs.d/fsp
+	url = git@github.com:awalker4/fsp-mode.git
