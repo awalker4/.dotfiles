@@ -178,6 +178,7 @@ PACKAGE is installed and the current version is deleted."
       echo-keystrokes 0.1           ; Show keystrokes asap.
       inhibit-startup-message t     ; No splash screen please.
       initial-scratch-message nil   ; Clean scratch buffer.
+      electric-pair-mode 1          ; Insert brackets, parentheses in pairs
       ring-bell-function 'ignore    ; Quiet.
       ;; Save undo history between sessions, if you have an undo-dir
       undo-tree-auto-save-history
@@ -258,7 +259,6 @@ PACKAGE is installed and the current version is deleted."
            delete-selection-mode      ; Replace selected text.
            dirtrack-mode              ; directory tracking in *shell*
            recentf-mode               ; Recently opened files.
-           semantic-mode              ; Programmer friendly
            show-paren-mode))          ; Highlight matching parentheses.
   (funcall mode 1))
 
@@ -473,6 +473,32 @@ the languages in ISPELL-LANGUAGES when invoked."
 
 (helm-mode 1)
 
+;; Helm-gtags
+
+(setq
+ helm-gtags-ignore-case t
+ helm-gtags-auto-update t
+ helm-gtags-use-input-at-cursor t
+ helm-gtags-pulse-at-cursor t
+ helm-gtags-prefix-key "\C-cg"
+ helm-gtags-suggested-key-mapping t
+ )
+
+(require 'helm-gtags)
+;; Enable helm-gtags-mode
+(add-hook 'dired-mode-hook 'helm-gtags-mode)
+(add-hook 'eshell-mode-hook 'helm-gtags-mode)
+(add-hook 'c-mode-hook 'helm-gtags-mode)
+(add-hook 'c++-mode-hook 'helm-gtags-mode)
+(add-hook 'asm-mode-hook 'helm-gtags-mode)
+
+(define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
+(define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
+(define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
+(define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
+(define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+(define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
+
 ;; Projectile
 
 ;;    Projectile makes it easy to navigate files in a single project. A project
@@ -483,6 +509,25 @@ the languages in ISPELL-LANGUAGES when invoked."
 (projectile-global-mode) ; Load Projectile everywhere
 
 (setq projectile-completion-system 'helm)
+
+;; Semantic
+
+(require 'cc-mode)
+(require 'semantic)
+
+(global-semanticdb-minor-mode 1)
+(global-semantic-idle-scheduler-mode 1)
+
+(semantic-mode 1)
+
+;; Function-args
+
+(require 'function-args)
+(fa-config-default)
+(define-key c-mode-map  [(contrl tab)] 'moo-complete)
+(define-key c++-mode-map  [(control tab)] 'moo-complete)
+(define-key c-mode-map (kbd "M-o")  'fa-show)
+(define-key c++-mode-map (kbd "M-o")  'fa-show)
 
 ;; Interactive functions
 ;;    <<sec:defuns>>
