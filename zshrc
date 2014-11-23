@@ -35,7 +35,7 @@ source $ZSH/oh-my-zsh.sh
 setopt no_rm_star_silent
 
 export TERM=xterm-256color
-export PATH=$PATH:$HOME/bin:/usr/local/bin
+export PATH=$PATH:$HOME/bin:/usr/local/bin:$HOME/.gem/ruby/2.1.0/bin
 
 export EDITOR='vim'
 
