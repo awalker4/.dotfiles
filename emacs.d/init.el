@@ -180,6 +180,7 @@ PACKAGE is installed and the current version is deleted."
       initial-scratch-message nil   ; Clean scratch buffer.
       electric-pair-mode 1          ; Insert brackets, parentheses in pairs
       ring-bell-function 'ignore    ; Quiet.
+      byte-compile-warnings nil     ; Don't show warnings when compiling elisp
       ;; Save undo history between sessions, if you have an undo-dir
       undo-tree-auto-save-history
       (file-exists-p
