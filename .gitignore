@@ -1,7 +1,8 @@
 # Ignore settings for this machine
 emacs.d/auto-save-list
 emacs.d/elpa
-emacs.d/eshell
+emacs.d/eshell/*
+!emacs.d/eshell/alias
 emacs.d/tmp
 emacs.d/url
 /emacs.d/abbrev_defs
