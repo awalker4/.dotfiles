@@ -55,7 +55,7 @@
          expand-region     ; Increase selected region by semantic units
          flx-ido           ; flx integration for ido
          flycheck          ; On-the-fly syntax checking
-         helm              ;
+         helm              ; Super powerful completion tool
          helm-projectile   ; Projectile as a helm completion source
          idle-require      ; load elisp libraries while Emacs is idle
          ido-vertical-mode ; Makes ido-mode display vertically.
@@ -162,7 +162,7 @@ PACKAGE is installed and the current version is deleted."
 (when (and do-package-update-on-init
            (y-or-n-p "Update all packages?"))
   (package-refresh-contents)
-  
+
   (dolist (p required-packages)
     (when (not (package-installed-p p))
       (package-install p))))
@@ -195,9 +195,10 @@ PACKAGE is installed and the current version is deleted."
 ;;    change them in a single buffer. Using =setq-default= we change the
 ;;    buffer-local variable's default value.
 
-(setq-default fill-column 76                    ; Maximum line width.
+(setq-default fill-column 80                    ; Maximum line width.
               indent-tabs-mode nil              ; Use spaces instead of tabs.
               split-width-threshold 100         ; Split verticly by default.
+              compilation-scroll-output 1       ; Follow compilation buffer
               auto-fill-function 'do-auto-fill) ; Auto-fill-mode everywhere.
 
 ;; Answering /yes/ and /no/ to each question from Emacs can be tedious, a
@@ -399,9 +400,9 @@ the languages in ISPELL-LANGUAGES when invoked."
 (setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
 (custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))
 
-;; OrgMobile
-;;     OrgMobile will let me sync my agenda to my phone, which will then sync
-;;     with my calendar
+;; MobileOrg
+;;     MobileOrg will let me sync my agenda to my phone, which will then sync
+;;     with my calendar.
 
 ;; Set to the location of your Org files on your local system
 (setq org-directory "~/Dropbox/org")
@@ -450,7 +451,7 @@ the languages in ISPELL-LANGUAGES when invoked."
      (global-set-key (kbd "M-x") 'helm-M-x)
      (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
      (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
-     
+
      (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)))
 
 (require 'helm-config)
@@ -692,11 +693,7 @@ the buffer is buried."
 
 ;; Shell
 
-;;    I use =shell= whenever i want to use access the command line in Emacs. I
-;;    keep a symlink between my =~/.bash_profile= (because I run OS X) and
-;;    =~/.emacs_bash=, to make the transition between my standard terminal and
-;;    the shell as small as possible. To be able to quickly switch back and
-;;    forth between a shell I make use of this little function.
+;;    To be able to quickly switch back and forth between a shell I make use of this little function.
 
 (defun toggle-shell ()
   "Jumps to eshell or back."
@@ -834,7 +831,7 @@ the buffer is buried."
 ;;    systems as described in the book Concurrency by Magee and Kramer. Someday
 ;;    I want to make a fully featured mode for FSP. Someone by the name of
 ;;    Esben Andreasen made a mode with basic syntax highlighting, so that will
-;;    have to do for now. 
+;;    have to do for now.
 
 ;;    We'll add it manually until I have time to play around with it.
 
@@ -844,12 +841,12 @@ the buffer is buried."
 
 ;; Key bindings
 
-;;    Inspired by [[http://stackoverflow.com/questions/683425/globally-override-key-binding-in-emacs][this StackOverflow post]] I keep a =custom-bindings-map= that
-;;    holds all my custom bindings. This map can be activated by toggling a
-;;    simple =minor-mode= that does nothing more than activating the map. This
-;;    inhibits other =major-modes= to override these bindings. I keep this at
-;;    the end of the init-file to make sure that all functions are actually
-;;    defined.
+;;   Inspired by [[http://stackoverflow.com/questions/683425/globally-override-key-binding-in-emacs][this StackOverflow post]] I keep a =custom-bindings-map= that
+;;   holds all my custom bindings. This map can be activated by toggling a
+;;   simple =minor-mode= that does nothing more than activating the map. This
+;;   inhibits other =major-modes= to override these bindings. I keep this at
+;;   the end of the init-file to make sure that all functions are actually
+;;   defined.
 
 (defvar custom-bindings-map (make-keymap)
   "A keymap for custom bindings.")
@@ -903,7 +900,7 @@ the buffer is buried."
 (define-key custom-bindings-map (kbd "<C-tab>") 'tidy)
 
 ;; Lastly we need to activate the map by creating and activating the
-;;    =minor-mode=.
+;;   =minor-mode=.
 
 (define-minor-mode custom-bindings-mode
   "A mode that activates custom-bindings."

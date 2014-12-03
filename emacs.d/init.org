@@ -37,7 +37,7 @@
 
      (add-hook 'after-save-hook 'tangle-init)
    #+END_SRC
-   
+
 ** Package
 
    Managing extensions for Emacs is simplified using =package= which is
@@ -77,7 +77,7 @@
               expand-region     ; Increase selected region by semantic units
               flx-ido           ; flx integration for ido
               flycheck          ; On-the-fly syntax checking
-              helm              ;
+              helm              ; Super powerful completion tool
               helm-projectile   ; Projectile as a helm completion source
               idle-require      ; load elisp libraries while Emacs is idle
               ido-vertical-mode ; Makes ido-mode display vertically.
@@ -98,7 +98,6 @@
               zenburn-theme     ; Nice looking low-contrast theme
               )
            "Packages which should be installed upon launch")
-
    #+END_SRC
 
    We can define a predicate that tells us whether or not the newest version
@@ -115,7 +114,7 @@
               (version-list-= (package-desc-vers (cdr local-pkg-desc))
                               (package-desc-vers (cdr newest-pkg-desc)))))))
    #+END_SRC
-   
+
    Let's write a function to install a package if it is not installed or
    upgrades it if a new version has been released. Here our predicate comes
    in handy.
@@ -197,7 +196,7 @@
      (when (and do-package-update-on-init
                 (y-or-n-p "Update all packages?"))
        (package-refresh-contents)
-       
+
        (dolist (p required-packages)
          (when (not (package-installed-p p))
            (package-install p))))
@@ -234,9 +233,10 @@
    buffer-local variable's default value.
 
    #+BEGIN_SRC emacs-lisp
-     (setq-default fill-column 76                    ; Maximum line width.
+     (setq-default fill-column 80                    ; Maximum line width.
                    indent-tabs-mode nil              ; Use spaces instead of tabs.
                    split-width-threshold 100         ; Split verticly by default.
+                   compilation-scroll-output 1       ; Follow compilation buffer
                    auto-fill-function 'do-auto-fill) ; Auto-fill-mode everywhere.
    #+END_SRC
 
@@ -456,10 +456,10 @@
 ** Snippets
 
    Start yasnippet
-   
+
    #+BEGIN_SRC emacs-lisp
      (require 'yasnippet)
-     ;;(yas-global-mode 1)        
+     ;;(yas-global-mode 1)
    #+END_SRC
 
 ** Org
@@ -492,18 +492,18 @@
      (custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))
    #+END_SRC
 
-*** OrgMobile
-    OrgMobile will let me sync my agenda to my phone, which will then sync
-    with my calendar
+*** MobileOrg
+    MobileOrg will let me sync my agenda to my phone, which will then sync
+    with my calendar.
 
-   #+BEGIN_SRC emacs-lisp
+    #+BEGIN_SRC emacs-lisp
      ;; Set to the location of your Org files on your local system
      (setq org-directory "~/Dropbox/org")
      ;; Set to the name of the file where new notes will be stored
      (setq org-mobile-inbox-for-pull "~/Dropbox/org/flagged.org")
      ;; Set to <your Dropbox root directory>/MobileOrg.
      (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
-   #+END_SRC
+    #+END_SRC
 
     We can use =idle-timer= to push and pull to MobileOrg when there's no
     other activity.
@@ -548,7 +548,7 @@
           (global-set-key (kbd "M-x") 'helm-M-x)
           (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
           (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
-          
+
           (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)))
    #+END_SRC
 
@@ -819,15 +819,11 @@
        text-scale-mode
        (lambda () (text-scale-mode 1)))
    #+END_SRC
-   
+
 * Mode specific
 ** Shell
 
-   I use =shell= whenever i want to use access the command line in Emacs. I
-   keep a symlink between my =~/.bash_profile= (because I run OS X) and
-   =~/.emacs_bash=, to make the transition between my standard terminal and
-   the shell as small as possible. To be able to quickly switch back and
-   forth between a shell I make use of this little function.
+   To be able to quickly switch back and forth between a shell I make use of this little function.
 
    #+BEGIN_SRC emacs-lisp
    (defun toggle-shell ()
@@ -861,6 +857,7 @@
    #+BEGIN_SRC emacs-lisp
      (add-hook 'shell-mode-hook (lambda () (local-set-key (kbd "C-l") 'clear-shell)))
    #+END_SRC
+
 ** Java and C
 
    The =c-mode-common-hook= is a general hook that work on all C-like
@@ -977,8 +974,8 @@
 ** Octave
 
    Make it so =.m= files are loaded in =octave-mode=.
-  
-   #+BEGIN_SRC emacs-lisp 
+
+   #+BEGIN_SRC emacs-lisp
      (autoload 'octave-mode "octave-mod" nil t)
      (setq auto-mode-alist
            (cons '("\\.m$" . octave-mode) auto-mode-alist))
@@ -990,7 +987,7 @@
    systems as described in the book Concurrency by Magee and Kramer. Someday
    I want to make a fully featured mode for FSP. Someone by the name of
    Esben Andreasen made a mode with basic syntax highlighting, so that will
-   have to do for now. 
+   have to do for now.
 
    We'll add it manually until I have time to play around with it.
 
@@ -1001,75 +998,75 @@
    #+END_SRC
 * Key bindings
 
-   Inspired by [[http://stackoverflow.com/questions/683425/globally-override-key-binding-in-emacs][this StackOverflow post]] I keep a =custom-bindings-map= that
-   holds all my custom bindings. This map can be activated by toggling a
-   simple =minor-mode= that does nothing more than activating the map. This
-   inhibits other =major-modes= to override these bindings. I keep this at
-   the end of the init-file to make sure that all functions are actually
-   defined.
-
-   #+BEGIN_SRC emacs-lisp
+  Inspired by [[http://stackoverflow.com/questions/683425/globally-override-key-binding-in-emacs][this StackOverflow post]] I keep a =custom-bindings-map= that
+  holds all my custom bindings. This map can be activated by toggling a
+  simple =minor-mode= that does nothing more than activating the map. This
+  inhibits other =major-modes= to override these bindings. I keep this at
+  the end of the init-file to make sure that all functions are actually
+  defined.
+  
+  #+BEGIN_SRC emacs-lisp
      (defvar custom-bindings-map (make-keymap)
        "A keymap for custom bindings.")
-   #+END_SRC
+  #+END_SRC
 
-   Binding to use Ibuffer over BufferMenu
+  Binding to use Ibuffer over BufferMenu
 
-   #+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
      (define-key custom-bindings-map (kbd "C-x C-b")  'ibuffer)
-   #+END_SRC
+  #+END_SRC
 
-   Bindings for [[https://github.com/magnars/expand-region.el][expand-region]].
+  Bindings for [[https://github.com/magnars/expand-region.el][expand-region]].
 
-   #+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
      (define-key custom-bindings-map (kbd "C-'")  'er/expand-region)
      (define-key custom-bindings-map (kbd "C-;")  'er/contract-region)
-   #+END_SRC
+  #+END_SRC
 
-   Bindings for [[https://github.com/magnars/multiple-cursors.el][multiple-cursors]].
+  Bindings for [[https://github.com/magnars/multiple-cursors.el][multiple-cursors]].
 
-   #+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
      (define-key custom-bindings-map (kbd "C-c e")  'mc/edit-lines)
      (define-key custom-bindings-map (kbd "C-c n")  'mc/mark-next-like-this)
-   #+END_SRC
+  #+END_SRC
 
-   Bindings for [[http://magit.github.io][Magit]].
+  Bindings for [[http://magit.github.io][Magit]].
 
-   #+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
    (define-key custom-bindings-map (kbd "C-c m") 'magit-status)
-   #+END_SRC
+  #+END_SRC
 
-   Bindings for [[https://github.com/winterTTr/ace-jump-mode][ace-jump-mode]].
+  Bindings for [[https://github.com/winterTTr/ace-jump-mode][ace-jump-mode]].
 
-   #+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
    (define-key custom-bindings-map (kbd "C-c SPC") 'ace-jump-mode)
-   #+END_SRC
+  #+END_SRC
 
-   Bindings for [[http://emacs-helm.github.io/helm/][Helm]].
+  Bindings for [[http://emacs-helm.github.io/helm/][Helm]].
 
-   #+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
      (define-key custom-bindings-map (kbd "C-c h g") 'helm-google-suggest)
-   #+END_SRC
+  #+END_SRC
 
-   Bindings for =move-text=.
+  Bindings for =move-text=.
 
-   #+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
      (define-key custom-bindings-map (kbd "<M-S-up>")    'move-text-up)
      (define-key custom-bindings-map (kbd "<M-S-down>")  'move-text-down)
-   #+END_SRC
+  #+END_SRC
 
-   Bind some native Emacs functions.
+  Bind some native Emacs functions.
 
-   #+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
      (define-key custom-bindings-map (kbd "C-j")      'newline-and-indent)
      (define-key custom-bindings-map (kbd "C-c s")    'ispell-word)
      (define-key custom-bindings-map (kbd "C-c a")    'org-agenda-list)
      (define-key custom-bindings-map (kbd "C-x C-r")  'recentf-ido-find-file)
-   #+END_SRC
+  #+END_SRC
 
-   Bind the functions defined [[sec:defuns][above]].
-   
-   #+BEGIN_SRC emacs-lisp
+  Bind the functions defined [[sec:defuns][above]].
+
+  #+BEGIN_SRC emacs-lisp
      (define-key custom-bindings-map (kbd "M-,")     'jump-to-previous-like-this)
      (define-key custom-bindings-map (kbd "M-.")     'jump-to-next-like-this)
      (define-key custom-bindings-map (kbd "C-x k")   'kill-this-buffer-unless-scratch)
@@ -1077,16 +1074,16 @@
      (define-key custom-bindings-map (kbd "C-c j")   'cycle-spacing-delete-newlines)
      (define-key custom-bindings-map (kbd "C-c d")   'duplicate-thing)
      (define-key custom-bindings-map (kbd "<C-tab>") 'tidy)
-   #+END_SRC
+  #+END_SRC
 
-   Lastly we need to activate the map by creating and activating the
-   =minor-mode=.
+  Lastly we need to activate the map by creating and activating the
+  =minor-mode=.
 
-   #+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
      (define-minor-mode custom-bindings-mode
        "A mode that activates custom-bindings."
        t nil custom-bindings-map)
-   #+END_SRC
+  #+END_SRC
 * License
 
   My Emacs configurations written in Org mode.
