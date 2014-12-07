@@ -342,10 +342,10 @@
    #+END_SRC
 ** Visual
 
-   Change the color-theme to =zenburn=
+   Change the color-theme to =solarized=
 
    #+BEGIN_SRC emacs-lisp
-     (load-theme 'zenburn t)
+     (load-theme 'solarized-dark t)
    #+END_SRC
 
    Use the [[http://www.levien.com/type/myfonts/inconsolata.html][Inconsolata]] font if it's installed on the system.
@@ -422,7 +422,7 @@
 
    #+BEGIN_SRC emacs-lisp
      (require 'yasnippet)
-     ;;(yas-global-mode 1)
+     (yas-global-mode 1)
    #+END_SRC
 
 ** Org

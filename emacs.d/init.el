@@ -283,9 +283,9 @@ PACKAGE is installed and the current version is deleted."
 
 ;; Visual
 
-;;    Change the color-theme to =zenburn=
+;;    Change the color-theme to =solarized=
 
-(load-theme 'zenburn t)
+(load-theme 'solarized-dark t)
 
 ;; Use the [[http://www.levien.com/type/myfonts/inconsolata.html][Inconsolata]] font if it's installed on the system.
 
@@ -347,7 +347,7 @@ the languages in ISPELL-LANGUAGES when invoked."
 ;;    Start yasnippet
 
 (require 'yasnippet)
-;;(yas-global-mode 1)
+(yas-global-mode 1)
 
 ;; Org
 
