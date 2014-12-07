@@ -65,41 +65,43 @@
    Keep a list of packages we want to have installed.
 
    #+BEGIN_SRC emacs-lisp
-          (defvar required-packages
-                 '(ac-octave         ; Auto-completion for octave
-                   auto-compile      ; Automatically compile Emacs Lisp libraries
-                   cider             ; Clojure repl
-                   clojure-mode      ; Mode for .clj files
-                   csharp-mode       ; Mode for C# files
-                   company           ; Auto-completion engine
-                   evil              ; Vi and Emacs, in harmony
-                   evil-leader       ; Bring back the leader key
-                   expand-region     ; Increase selected region by semantic units
-                   flx-ido           ; flx integration for ido
-                   flycheck          ; On-the-fly syntax checking
-                   helm              ; Super powerful completion tool
-                   helm-gtags        ; Use gtags for semantic completion
-                   helm-projectile   ; Projectile as a helm completion source
-                   idle-require      ; load elisp libraries while Emacs is idle
-                   ido-vertical-mode ; Makes ido-mode display vertically.
-                   jedi              ; Python auto-completion for Emacs
-                   key-chord         ; Run commands with multiple key strokes (Helpful for Evil)
-                   magit             ; Git integration for Emacs
-                   markdown-mode     ; Emacs Major mode for Markdown-formatted files.
-                   move-text         ; Move current line or region with M-up or M-down
-                   multiple-cursors  ; Multiple cursors for Emacs.
-                   paredit           ; minor mode for editing parentheses
-                   powerline         ; Rewrite of Powerline
-                   projectile        ; Easy navigation for files in a project
-                   slime             ; Superior Lisp Interaction Mode for Emacs
-                   solarized-theme   ; Great color theme
-                   smex              ; M-x interface with Ido-style fuzzy matching.
-                   undo-tree         ; Treat undo history as a tree
-                   yasnippet         ; Snippet engine
-                   yasnippet-bundle  ; The actual snippets
-                   zenburn-theme     ; Nice looking low-contrast theme
-                   )
-                "Packages which should be installed upon launch")
+     (defvar required-packages
+            '(ac-octave           ; Auto-completion for octave
+              auto-compile        ; Automatically compile Emacs Lisp libraries
+              cider               ; Clojure repl
+              clojure-mode        ; Mode for .clj files
+              csharp-mode         ; Mode for C# files
+              company             ; Auto-completion engine
+              evil                ; Vi and Emacs, in harmony
+              evil-leader         ; Bring back the leader key
+              evil-nerd-commenter ; Quickly comment out lines
+              evil-surround       ; Tim Pope's vim plugin to surround objects
+              expand-region       ; Increase selected region by semantic units
+              flx-ido             ; flx integration for ido
+              flycheck            ; On-the-fly syntax checking
+              helm                ; Super powerful completion tool
+              helm-gtags          ; Use gtags for semantic completion
+              helm-projectile     ; Projectile as a helm completion source
+              idle-require        ; load elisp libraries while Emacs is idle
+              ido-vertical-mode   ; Makes ido-mode display vertically.
+              jedi                ; Python auto-completion for Emacs
+              key-chord           ; Run commands with multiple key strokes (Helpful for Evil)
+              magit               ; Git integration for Emacs
+              markdown-mode       ; Emacs Major mode for Markdown-formatted files.
+              move-text           ; Move current line or region with M-up or M-down
+              multiple-cursors    ; Multiple cursors for Emacs.
+              paredit             ; minor mode for editing parentheses
+              powerline           ; Rewrite of Powerline
+              projectile          ; Easy navigation for files in a project
+              slime               ; Superior Lisp Interaction Mode for Emacs
+              solarized-theme     ; Great color theme
+              smex                ; M-x interface with Ido-style fuzzy matching.
+              undo-tree           ; Treat undo history as a tree
+              yasnippet           ; Snippet engine
+              yasnippet-bundle    ; The actual snippets
+              zenburn-theme       ; Nice looking low-contrast theme
+              )
+           "Packages which should be installed upon launch")
    #+END_SRC
 
    We can define a predicate that tells us whether or not the newest version
@@ -589,128 +591,15 @@
       (semantic-mode 1)
     #+END_SRC
 ** Interactive functions
-   <<sec:defuns>>
-
-   To search recent files useing =ido-mode= we add this snippet from
-   [[http://www.emacswiki.org/emacs/CalendarWeekNumbers][EmacsWiki]].
-
+   
+   I want to be able to quickly jump back to certain files in just a few key
+   presses. The following wrappers to find-file will make it so I can call these
+   functions using evil-leader later on.
+   
    #+BEGIN_SRC emacs-lisp
-   (defun recentf-ido-find-file ()
-     "Find a recent file using Ido."
-     (interactive)
-     (let ((f (ido-completing-read "Choose recent file: " recentf-list nil t)))
-       (when f
-         (find-file f))))
-   #+END_SRC
-
-   =just-one-space= removes all whitespace around a point - giving it a
-   negative argument it removes newlines as well. We wrap a interactive
-   function around it to be able to bind it to a key. In Emacs 24.4
-   =cycle-spacing= was introduced, and it works like just one space, but
-   when run in succession it cycles between one, zero and the original
-   number of spaces.
-
-   #+BEGIN_SRC emacs-lisp
-     (defun cycle-spacing-delete-newlines ()
-       "Removes whitespace before and after the point."
+     (defun my-edit-init-org ()
        (interactive)
-       (if (version< emacs-version "24.4")
-           (just-one-space -1)
-         (cycle-spacing -1)))
-   #+END_SRC
-
-   Often I want to find other occurrences of a word I'm at, or more
-   specifically the symbol (or tag) I'm at. The
-   =isearch-forward-symbol-at-point= in Emacs 24.4 works well for this, but
-   I don't want to be bothered with the =isearch= interface. Rather jump
-   quickly between occurrences of a symbol, or if non is found, don't do
-   anything.
-
-   #+BEGIN_SRC emacs-lisp
-     (defun jump-to-symbol-internal (&optional backwardp)
-       "Jumps to the next symbol near the point if such a symbol
-     exists. If BACKWARDP is non-nil it jumps backward."
-       (let* ((point (point))
-              (bounds (find-tag-default-bounds))
-              (beg (car bounds)) (end (cdr bounds))
-              (str (isearch-symbol-regexp (find-tag-default)))
-              (search (if backwardp 'search-backward-regexp
-                        'search-forward-regexp)))
-         (goto-char (if backwardp beg end))
-         (funcall search str nil t)
-         (cond ((<= beg (point) end) (goto-char point))
-               (backwardp (forward-char (- point beg)))
-               (t  (backward-char (- end point))))))
-
-     (defun jump-to-previous-like-this ()
-       "Jumps to the previous occurrence of the symbol at point."
-       (interactive)
-       (jump-to-symbol-internal t))
-
-     (defun jump-to-next-like-this ()
-       "Jumps to the next occurrence of the symbol at point."
-       (interactive)
-       (jump-to-symbol-internal))
-   #+END_SRC
-
-   I sometimes regret killing the =*scratch*=-buffer, and have realized I
-   never want to actually kill it. I just want to get it out of the way, and
-   clean it up. The function below does just this for the
-   =*scratch*=-buffer, and works like =kill-this-buffer= for any other
-   buffer. It removes all buffer content and buries the buffer (this means
-   making it the least likely candidate for =other-buffer=).
-
-   #+BEGIN_SRC emacs-lisp
-     (defun kill-this-buffer-unless-scratch ()
-       "Works like `kill-this-buffer' unless the current buffer is the
-     ,*scratch* buffer. In witch case the buffer content is deleted and
-     the buffer is buried."
-       (interactive)
-       (if (not (string= (buffer-name) "*scratch*"))
-           (kill-this-buffer)
-         (delete-region (point-min) (point-max))
-         (switch-to-buffer (other-buffer))
-         (bury-buffer "*scratch*")))
-   #+END_SRC
-
-   To duplicate either selected text or a line we define this interactive
-   function.
-
-   #+BEGIN_SRC emacs-lisp
-     (defun duplicate-thing ()
-       "Duplicates the current line, or the region if active."
-       (interactive)
-       (save-excursion
-         (let ((start (if (region-active-p) (region-beginning) (point-at-bol)))
-               (end   (if (region-active-p) (region-end) (point-at-eol))))
-           (goto-char end)
-           (unless (region-active-p)
-             (newline))
-           (insert (buffer-substring start end)))))
-   #+END_SRC
-
-   To tidy up a buffer we define this function borrowed from [[https://github.com/simenheg][simenheg]].
-
-   #+BEGIN_SRC emacs-lisp
-   (defun tidy ()
-     "Ident, untabify and unwhitespacify current buffer, or region if active."
-     (interactive)
-     (let ((beg (if (region-active-p) (region-beginning) (point-min)))
-           (end (if (region-active-p) (region-end) (point-max))))
-       (indent-region beg end)
-       (whitespace-cleanup)
-       (untabify beg (if (< end (point-max)) end (point-max)))))
-   #+END_SRC
-
-   If you have a link to a raw =.el=-file, run =M-x try= and yank an URL
-   into the minibuffer, and the file will be evaluated.
-
-   #+BEGIN_SRC emacs-lisp
-     (defun try (url)
-       "Takes an URL to a .el-file, and evaluates it."
-       (interactive (list (read-from-minibuffer "url: ")))
-       (with-current-buffer (url-retrieve-synchronously url)
-         (eval-region (search-forward-regexp "^$") (point-max))))
+       (find-file (concat user-emacs-directory "init.org")))
    #+END_SRC
 
 ** Advice
@@ -742,59 +631,44 @@
        (mapc 'disable-theme custom-enabled-themes))
    #+END_SRC
 
-** Presentation-mode
+** Key-chord-mode
 
-   When giving talks it's nice to be able to scale the text
-   globally. =text-scale-mode= works great for a single buffer, this advice
-   makes this work globally.
-
+   =key-chord-mode= allows me to use sequences of key presses to do things. It
+   will come in handy when setting up =evil-mode=
+   
    #+BEGIN_SRC emacs-lisp
-     (defadvice text-scale-mode (around all-buffers (arg) activate)
-       (if (not global-text-scale-mode)
-           ad-do-it
-         (setq-default text-scale-mode-amount text-scale-mode-amount)
-         (dolist (buffer (buffer-list))
-           (with-current-buffer buffer
-             ad-do-it))))
+     (setq key-chord-two-keys-delay 2)
+     (key-chord-mode 1)
    #+END_SRC
-
-   We don't want this to be default behavior, so we can make a global mode
-   from the =text-scale-mode=, using =define-globalized-minor-mode=.
-
-   #+BEGIN_SRC emacs-lisp
-     (require 'face-remap)
-
-     (define-globalized-minor-mode
-       global-text-scale-mode
-       text-scale-mode
-       (lambda () (text-scale-mode 1)))
-   #+END_SRC
-
+   
 ** Evil Mode
 
    Evil mode makes it possible to use Vi's modal editing within Emacs. It's a
    home away from home for me.
 
-   #+BEGIN_SRC emacs-lisp
-     ;;Exit insert mode by pressing j and then j quickly
-     (setq key-chord-two-keys-delay 0.5)
-     (key-chord-define evil-insert-state-map "jj" 'evil-normal-state)
-     (key-chord-mode 1)
-   #+END_SRC
-
 *** Evil-leader
    
    We can bring back the leader key with the =evil-leader= package. I've always
-   been a fan of =,= for my leader.
-
+   been a fan of , for my leader.
+   
    #+BEGIN_SRC emacs-lisp
      (global-evil-leader-mode)
      (evil-leader/set-leader ",")
      (evil-leader/set-key
        "b" 'helm-mini
        "c" 'compile
+       "ei" 'my-edit-init-org
        "x" 'helm-M-x)
    #+END_SRC
+
+*** Evil-surround
+
+    This awesome Vim plugin will let you surround text objects with various
+    items. Luckily, there's an Emacs port.
+    
+    #+BEGIN_SRC emacs-lisp
+      (global-evil-surround-mode 1)
+    #+END_SRC
 
 *** Initialization
 
@@ -802,7 +676,9 @@
 
    #+BEGIN_SRC emacs-lisp
      (evil-mode 1)
+     (key-chord-define evil-insert-state-map "jj" 'evil-normal-state)
    #+END_SRC
+   
 * Mode specific
 ** Shell
 
