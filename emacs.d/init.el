@@ -730,7 +730,9 @@ the buffer is buried."
 ;;    using =C-c C-c= (instead of =M-x compile=), a habit from =latex-mode=.
 
 (defun c-setup ()
-  (local-set-key (kbd "C-c C-c") 'compile))
+  (local-set-key (kbd "C-c C-c") 'compile)
+  (setq c-default-style "linux"
+        c-basic-offset 4))
 
 (add-hook 'c-mode-common-hook 'c-setup)
 
