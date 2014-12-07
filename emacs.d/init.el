@@ -199,6 +199,7 @@ PACKAGE is installed and the current version is deleted."
               indent-tabs-mode nil              ; Use spaces instead of tabs.
               split-width-threshold 100         ; Split verticly by default.
               compilation-scroll-output 1       ; Follow compilation buffer
+              compilation-ask-about-save nil    ; Automatically save when compiling
               auto-fill-function 'do-auto-fill) ; Auto-fill-mode everywhere.
 
 ;; Answering /yes/ and /no/ to each question from Emacs can be tedious, a
