@@ -25,7 +25,7 @@
 
 ;;    Managing extensions for Emacs is simplified using =package= which is
 ;;    built in to Emacs 24 and newer. To load downloaded packages we need to
-;;    initialize =package=. =cl= is a library that contains many functions from
+;;   d initialize =package=. =cl= is a library that contains many functions from
 ;;    Common Lisp, and comes in handy quite often, so we want to make sure it's
 ;;    loaded, along with =package=, which is obviously needed.
 
@@ -39,8 +39,7 @@
 
 (setq package-archives
       '(("gnu" . "http://elpa.gnu.org/packages/")
-        ("Marmalade" . "http://marmalade-repo.org/packages/")
-        ("MELPA" . "http://stable.melpa.org/packages/")))
+        ("MELPA" . "http://melpa.org/packages/")))
 
 ;; Keep a list of packages we want to have installed.
 
@@ -52,10 +51,12 @@
          csharp-mode       ; Mode for C# files
          company           ; Auto-completion engine
          evil              ; Vi and Emacs, in harmony
+         evil-leader       ; Bring back the leader key
          expand-region     ; Increase selected region by semantic units
          flx-ido           ; flx integration for ido
          flycheck          ; On-the-fly syntax checking
          helm              ; Super powerful completion tool
+         helm-gtags        ; Use gtags for semantic completion
          helm-projectile   ; Projectile as a helm completion source
          idle-require      ; load elisp libraries while Emacs is idle
          ido-vertical-mode ; Makes ido-mode display vertically.
@@ -69,6 +70,7 @@
          powerline         ; Rewrite of Powerline
          projectile        ; Easy navigation for files in a project
          slime             ; Superior Lisp Interaction Mode for Emacs
+         solarized-theme   ; Great color theme
          smex              ; M-x interface with Ido-style fuzzy matching.
          undo-tree         ; Treat undo history as a tree
          yasnippet         ; Snippet engine
@@ -288,40 +290,6 @@ PACKAGE is installed and the current version is deleted."
 (when (member "Inconsolata-g" (font-family-list))
   (set-face-attribute 'default nil :font "Inconsolata-g-11"))
 
-;; Ido
-
-;;    Interactive do (or =ido-mode=) changes the way you switch buffers and
-;;    open files/directories. Instead of writing complete file paths and buffer
-;;    names you can write a part of it and select one from a list of
-;;    possibilities. Using =ido-vertical-mode= changes the way possibilities
-;;    are displayed, and =flx-ido-mode= enables fuzzy matching.
-
-(dolist (mode
-         '(ido-mode                   ; Interactivly do.
-           ido-everywhere             ; Use Ido for all buffer/file reading.
-           ido-vertical-mode          ; Makes ido-mode display vertically.
-           flx-ido-mode))             ; Toggle flx ido mode.
-  (funcall mode 1))
-
-;; We can set the order of file selections in =ido=. I prioritize source
-;;    files along with =org=- and =tex=-files.
-
-(setq ido-file-extensions-order
-      '(".el" ".scm" ".lisp" ".java" ".c" ".h" ".org" ".tex"))
-
-;; Sometimes when using =ido-switch-buffer= the =*Messages*= buffer get in
-;;    the way, so we set it to be ignored (it can be accessed using =C-h e=, so
-;;    there is really no need for it in the buffer list).
-
-(add-to-list 'ido-ignore-buffers "*Messages*")
-
-;; To make =M-x= behave more like =ido-mode= we can use the =smex=
-;;    package. It needs to be initialized, and we can replace the binding to
-;;    the standard =execute-extended-command= with =smex=. Commented out until
-;;    I get tired of helm.
-
-;; (smex-initialize)
-
 ;; Flyspell
 
 ;;    Flyspell offers on-the-fly spell checking. We can enable flyspell for all
@@ -523,15 +491,6 @@ the languages in ISPELL-LANGUAGES when invoked."
 
 (semantic-mode 1)
 
-;; Function-args
-
-(require 'function-args)
-(fa-config-default)
-(define-key c-mode-map  [(contrl tab)] 'moo-complete)
-(define-key c++-mode-map  [(control tab)] 'moo-complete)
-(define-key c-mode-map (kbd "M-o")  'fa-show)
-(define-key c++-mode-map (kbd "M-o")  'fa-show)
-
 ;; Interactive functions
 ;;    <<sec:defuns>>
 
@@ -691,6 +650,33 @@ the buffer is buried."
   global-text-scale-mode
   text-scale-mode
   (lambda () (text-scale-mode 1)))
+
+;; Evil Mode
+
+;;    Evil mode makes it possible to use Vi's modal editing within Emacs. It's a
+;;    home away from home for me.
+
+;;Exit insert mode by pressing j and then j quickly
+(setq key-chord-two-keys-delay 0.5)
+(key-chord-define evil-insert-state-map "jj" 'evil-normal-state)
+(key-chord-mode 1)
+
+;; Evil-leader
+   
+;;    We can bring back the leader key with the =evil-leader= package. I've always
+;;    been a fan of =,= for my leader.
+
+(global-evil-leader-mode)
+(evil-leader/set-leader ",")
+(evil-leader/set-key
+  "b" 'helm-mini
+  "x" 'helm-M-x)
+
+;; Initialization
+
+;;    Once everything is set up, we can start evil-mode.
+
+(evil-mode 1)
 
 ;; Shell
 
