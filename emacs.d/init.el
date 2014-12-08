@@ -670,6 +670,7 @@ the buffer is buried."
 (evil-leader/set-leader ",")
 (evil-leader/set-key
   "b" 'helm-mini
+  "c" 'compile
   "x" 'helm-M-x)
 
 ;; Initialization
