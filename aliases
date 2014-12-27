@@ -11,7 +11,8 @@ alias grep='grep --color'
 alias cp='cp -iv'
 alias mv='mv -v'
 alias rm='rm -v'
-alias mkdir='mkdir -pv'
+alias md='mkdir -pv'
+alias rd='rmdir'
 alias pu='pushd'
 alias po='popd'
 
@@ -56,6 +57,8 @@ fi
 # Various programs
 alias open='xdg-open'
 alias ff='firefox 2>/dev/null &'
+alias userctl='systemctl --user'
+alias psg='ps -aux | grep'
 
 ## Functions ##
 
