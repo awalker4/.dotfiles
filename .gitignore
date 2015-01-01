@@ -1,17 +1,8 @@
 # Ignore settings for this machine
-emacs.d/auto-save-list
-emacs.d/elpa
-emacs.d/eshell/*
+emacs.d/
+!emacs.d/init.org
+!emacs.d/init.el
 !emacs.d/eshell/alias
-emacs.d/tmp
-emacs.d/url
-/emacs.d/abbrev_defs
-/emacs.d/ido.last
-/emacs.d/recentf
-/emacs.d/autosaves/
-/emacs.d/.package-last-update
-/emacs.d/.python-environments/
-/emacs.d/smex-items
 
 *.elc
 *.dat
