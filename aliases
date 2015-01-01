@@ -59,6 +59,8 @@ alias open='xdg-open'
 alias ff='firefox 2>/dev/null &'
 alias userctl='systemctl --user'
 alias psg='ps -aux | grep'
+# Redshift will toggle on the USR1 signal
+alias redkill='pkill -USR1 redshift'
 
 ## Functions ##
 
