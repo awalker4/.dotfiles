@@ -5,6 +5,12 @@ Constantly a work in progress. Feel free to look around and take what you like. 
 
 Future plans
 ============
-* Completely integrate evil mode into my emacs workflow
-* Stop using Oh-my-zsh so I can discover features for myself
-* Start moving vimrc stuff to Neovim
+
+emacs
+* Improve integration with evil mode
+
+vim
+* clean up nvimrc
+
+zsh
+* Try new prompts
