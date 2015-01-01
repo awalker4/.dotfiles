@@ -1,45 +1,105 @@
 ########################################
 # ~/.zshrc
-# Settings for zsh
+# Zsh settings
 #
 # Sections:
 #   -> Start-up
-#   -> General
-#   -> Aliases, shortcuts
-#   -> Functions
+#   -> Directories
+#   -> Completion
+#   -> History
+#   -> Variables
+#   -> Colors
+#   -> Keybindings
+#   -> Prompt
 ########################################
 
+# TODO: Clean things up a bit
 
 ########################################
-# => Start-up
+# Start-up
 ########################################
-# Load and run compinit
-autoload -U compinit
-compinit -i -d "${ZSH_COMPDUMP}"
 
-# Path to your oh-my-zsh installation.
-export ZSH=$HOME/.oh-my-zsh
+# The zsh completion system is called compsys
+# We can start it up with the compinit function
+autoload -Uz compinit
+compinit
 
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
-ENABLE_CORRECTION="true"
-DISABLE_UNTRACKED_FILES_DIRTY="true"
-source $ZSH/oh-my-zsh.sh
+########################################
+# Directories
+########################################
+# When given a directory instead of a command, assume I meant cd
+setopt auto_cd
+# When a variable is a directory, use it as a shortcut for cd
+setopt cdable_vars
+# Ignore duplicates on the directory stack
+setopt pushd_ignore_dups
 
-# User configuration
+########################################
+# Completion
+########################################
+# After completing in the middle of a word, take me to the end of the word
+setopt always_to_end
+# Pressing multiple tabs shows me a menu of completions to choose from
+setopt auto_menu
+zstyle ':completion:*' menu select
+# 
+setopt auto_name_dirs
+# When completing a directory name, add a trailing slash
+setopt auto_param_slash
+# When listing files as completions, show the file type as a symbol
+setopt list_types
+
+# Ignore case when completing
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+
+########################################
+# History
+########################################
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+# Show command timestamps and durations
+setopt extended_history
+# Use fcntl to lock the history file
+setopt hist_fcntl_lock
+# When trimming history, dups are the first to go
+setopt hist_expire_dups_first
+# Use a leading space to use a command without leaving history
+setopt hist_ignore_space
+# Remove extra blanks before adding to history
+setopt hist_reduce_blanks
+# Add to history file incrementally, instead of on exit
+setopt inc_append_history
+# Don't save the history command
+setopt hist_no_store
+
+########################################
+# Job Control
+########################################
+# Immediately report the status of background jobs
+setopt notify
+
+# Other
+
+# Don't beep at me
+unsetopt beep
+setopt extendedglob
 
 # Don't prompt when using rm
 # That's what rm -i is for
 setopt no_rm_star_silent
 
-export TERM=xterm-256color
+########################################
+# Variables
+########################################
+export EDITOR=vim
 export PATH=$PATH:$HOME/bin:/usr/local/bin:$HOME/.gem/ruby/2.1.0/bin
 
-export EDITOR='vim'
-
 source ~/.dotfiles/aliases
+########################################
+# Colors
+########################################
+export TERM=xterm-256color
 
 # Get ls to play nicely with solarized
 if [[ ! -d ~/.dircolors ]]; then
@@ -48,6 +108,11 @@ if [[ ! -d ~/.dircolors ]]; then
 fi
     eval $(dircolors ~/.dircolors/dircolors.ansi-dark)
 
+########################################
+# Functions
+########################################
+
+# User configuration
 # Fast switching to a background task
 # Credit goes to http://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
 fancy-ctrl-z () {
@@ -62,10 +127,79 @@ fancy-ctrl-z () {
 zle -N fancy-ctrl-z
 bindkey '^Z' fancy-ctrl-z
 
-##########################
-# Zsh prompt
-# Modified from the Steeef theme from oh-my-zshell
-##########################
+########################################
+# Keybindings
+########################################
+
+bindkey -e
+bindkey '\e[A' history-search-backward
+bindkey '\e[B' history-search-forward
+
+bindkey '\ew' kill-region                             # [Esc-w] - Kill from the cursor to the mark
+bindkey -s '\el' 'ls\n'                               # [Esc-l] - run command: ls
+bindkey '^r' history-incremental-search-backward      # [Ctrl-r] - Search backward incrementally for a specified string. The string may begin with ^ to anchor the search to the beginning of the line.
+if [[ "${terminfo[kpp]}" != "" ]]; then
+  bindkey "${terminfo[kpp]}" up-line-or-history       # [PageUp] - Up a line of history
+fi
+if [[ "${terminfo[knp]}" != "" ]]; then
+  bindkey "${terminfo[knp]}" down-line-or-history     # [PageDown] - Down a line of history
+fi
+
+if [[ "${terminfo[kcuu1]}" != "" ]]; then
+  bindkey "${terminfo[kcuu1]}" up-line-or-search      # start typing + [Up-Arrow] - fuzzy find history forward
+fi
+if [[ "${terminfo[kcud1]}" != "" ]]; then
+  bindkey "${terminfo[kcud1]}" down-line-or-search    # start typing + [Down-Arrow] - fuzzy find history backward
+fi
+
+if [[ "${terminfo[khome]}" != "" ]]; then
+  bindkey "${terminfo[khome]}" beginning-of-line      # [Home] - Go to beginning of line
+fi
+if [[ "${terminfo[kend]}" != "" ]]; then
+  bindkey "${terminfo[kend]}"  end-of-line            # [End] - Go to end of line
+fi
+
+bindkey ' ' magic-space                               # [Space] - do history expansion
+
+bindkey '^[[1;5C' forward-word                        # [Ctrl-RightArrow] - move forward one word
+bindkey '^[[1;5D' backward-word                       # [Ctrl-LeftArrow] - move backward one word
+
+if [[ "${terminfo[kcbt]}" != "" ]]; then
+  bindkey "${terminfo[kcbt]}" reverse-menu-complete   # [Shift-Tab] - move through the completion menu backwards
+fi
+
+bindkey '^?' backward-delete-char                     # [Backspace] - delete backward
+if [[ "${terminfo[kdch1]}" != "" ]]; then
+  bindkey "${terminfo[kdch1]}" delete-char            # [Delete] - delete forward
+else
+  bindkey "^[[3~" delete-char
+  bindkey "^[3;5~" delete-char
+  bindkey "\e[3~" delete-char
+fi
+
+# Edit the current command line in $EDITOR
+autoload -U edit-command-line
+zle -N edit-command-line
+bindkey '\C-x\C-e' edit-command-line
+
+bindkey '^[[A' up-line-or-search
+bindkey '^[[B' down-line-or-search
+bindkey '^[^[[C' emacs-forward-word
+bindkey '^[^[[D' emacs-backward-word
+
+bindkey -s '^X^Z' '%-^M'
+bindkey '^[e' expand-cmd-path
+bindkey '^[^I' reverse-menu-complete
+bindkey '^X^N' accept-and-infer-next-history
+bindkey '^W' kill-region
+bindkey '^I' complete-word
+# Fix weird sequence that rxvt produces
+bindkey -s '^[[Z' '\t'
+
+########################################
+# Prompt
+# Right now this is all lifted from oh-my-zsh
+########################################
 
 # prompt style and colors based on Steve Losh's Prose theme:
 # http://github.com/sjl/oh-my-zsh/blob/master/themes/prose.zsh-theme
@@ -167,3 +301,4 @@ add-zsh-hook precmd steeef_precmd
 PROMPT=$'
 %{$purple%}%n%{$reset_color%} at %{$orange%}%m%{$reset_color%} in %{$limegreen%}%~%{$reset_color%} $vcs_info_msg_0_$(virtualenv_info)%{$reset_color%}%(1j.%j.)
 $ '
+
