@@ -1,4 +1,5 @@
 #+BABEL: :cache yes
+
 #+LATEX_HEADER: \usepackage{parskip}
 #+LATEX_HEADER: \usepackage{inconsolata}
 #+PROPERTY: header-args :tangle yes :comments org
@@ -340,81 +341,22 @@
 
    #+BEGIN_SRC emacs-lisp
      (add-hook 'after-init-hook 'global-company-mode)
+     (setq company-idle-delay 0)
    #+END_SRC
 ** Visual
 
-   Change the color-theme to =solarized=
+   Change the color-theme to =solarized=. Keep everything the same size, though.
 
    #+BEGIN_SRC emacs-lisp
+     (setq solarized-scale-org-headlines nil)
      (load-theme 'solarized-dark t)
    #+END_SRC
 
    Use the [[http://www.levien.com/type/myfonts/inconsolata.html][Inconsolata]] font if it's installed on the system.
 
    #+BEGIN_SRC emacs-lisp
-     (when (member "Inconsolata-g" (font-family-list))
-       (set-face-attribute 'default nil :font "Inconsolata-g-11"))
-
-   #+END_SRC
-
-** Flyspell
-
-   Flyspell offers on-the-fly spell checking. We can enable flyspell for all
-   text-modes with this snippet.
-
-   #+BEGIN_SRC emacs-lisp
-   (add-hook 'text-mode-hook 'turn-on-flyspell)
-   #+END_SRC
-
-   To use flyspell for programming there is =flyspell-prog-mode=, that only
-   enables spell checking for comments and strings. We can enable it for all
-   programming modes using the =prog-mode-hook=. Flyspell interferes with
-   auto-complete mode, but there is a workaround provided by auto complete.
-
-   #+BEGIN_SRC emacs-lisp
-     (add-hook 'prog-mode-hook 'flyspell-prog-mode)
-     (eval-after-load 'auto-complete
-       '(ac-flyspell-workaround))
-   #+END_SRC
-
-   When working with several languages, we should be able to cycle through
-   the languages we most frequently use. Every buffer should have a separate
-   cycle of languages, so that cycling in one buffer does not change the
-   state in a different buffer (this problem occurs if you only have one
-   global cycle). We can implement this by using a [[http://www.gnu.org/software/emacs/manual/html_node/elisp/Closures.html][closure]].
-
-   #+BEGIN_SRC emacs-lisp
-     (defun cycle-languages ()
-       "Changes the ispell dictionary to the first element in
-     ISPELL-LANGUAGES, and returns an interactive function that cycles
-     the languages in ISPELL-LANGUAGES when invoked."
-       (lexical-let ((ispell-languages '#1=("american" "norsk" . #1#)))
-         (ispell-change-dictionary (car ispell-languages))
-         (lambda ()
-           (interactive)
-           ;; Rotates the languages cycle and changes the ispell dictionary.
-           (ispell-change-dictionary
-            (car (setq ispell-languages (cdr ispell-languages)))))))
-   #+END_SRC
-
-   =Flyspell= signals an error if there is no spell-checking tool is
-   installed. We can advice =turn-on-flyspell= and =flyspell-prog-mode= to
-   only try to enable =flyspell= if a spell-checking tool is available. Also
-   we want to enable cycling the languages by typing =C-c l=, so we bind the
-   function returned from =cycle-languages=.
-
-   #+BEGIN_SRC emacs-lisp
-     (defadvice turn-on-flyspell (before check nil activate)
-       "Turns on flyspell only if a spell-checking tool is installed."
-       (when (executable-find ispell-program-name)
-         (local-set-key (kbd "C-c l") (cycle-languages))))
-   #+END_SRC
-
-   #+BEGIN_SRC emacs-lisp
-     (defadvice flyspell-prog-mode (before check nil activate)
-       "Turns on flyspell only if a spell-checking tool is installed."
-       (when (executable-find ispell-program-name)
-         (local-set-key (kbd "C-c l") (cycle-languages))))
+     (when (member "Inconsolata" (font-family-list))
+       (set-face-attribute 'default nil :font "Inconsolata-12"))
    #+END_SRC
 
 ** Snippets
@@ -443,9 +385,7 @@
    #+BEGIN_SRC emacs-lisp
      (setq org-src-fontify-natively t
            org-confirm-babel-evaluate nil)
-
    #+END_SRC
-
 
    This is quite an ugly fix for allowing code markup for expressions like
    ="this string"=, because the quotation marks causes problems.
@@ -694,8 +634,11 @@
      (evil-leader/set-leader ",")
      (evil-leader/set-key
        "b" 'helm-mini
-       "c" 'compile
+       "f" 'find-file
+       "m" 'compile
+       "p" 'projectile-find-file
        "ei" 'my-edit-init-org
+       "es" 'my-switch-to-scratch
        "x" 'helm-M-x)
    #+END_SRC
 
@@ -878,6 +821,23 @@
      (autoload 'octave-mode "octave-mod" nil t)
      (setq auto-mode-alist
            (cons '("\\.m$" . octave-mode) auto-mode-alist))
+   #+END_SRC
+
+** Emacs Lisp
+
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'emacs-lisp-mode-hook
+               (lambda ()
+                 ;; Use spaces, not tabs.
+                 (setq indent-tabs-mode nil)
+                 ;; Pretty-print eval'd expressions.
+                 (define-key emacs-lisp-mode-map
+                   "\C-x\C-e" 'pp-eval-last-sexp)
+                 (define-key emacs-lisp-mode-map
+                   "\r" 'reindent-then-newline-and-indent)))
+     (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+     (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
+     (add-hook 'emacs-lisp-mode-hook 'flyspell-prog-mode) ;; Requires Ispell  
    #+END_SRC
 
 ** FSP
