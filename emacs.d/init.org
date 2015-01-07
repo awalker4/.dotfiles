@@ -89,6 +89,7 @@
               magit               ; Git integration for Emacs
               markdown-mode       ; Emacs Major mode for Markdown-formatted files.
               move-text           ; Move current line or region with M-up or M-down
+              multi-term          ; Better terminals
               multiple-cursors    ; Multiple cursors for Emacs.
               paredit             ; minor mode for editing parentheses
               powerline           ; Rewrite of Powerline
@@ -590,16 +591,53 @@
 
       (semantic-mode 1)
     #+END_SRC
+** Term
+   
+   Multi-term makes working with many terminals a bit nicer. I can easily create
+   and cycle through any number of terminals. There's also a "dedicated terminal"
+   that I can pop up when needed. I'll make use of this all in the key bindings section.
+   
+   From the emacs wiki:
+
+   #+BEGIN_SRC emacs-lisp
+     (defun last-term-buffer (l)
+       "Return most recently used term buffer."
+       (when l
+         (if (eq 'term-mode (with-current-buffer (car l) major-mode))
+             (car l) (last-term-buffer (cdr l)))))
+
+     (defun get-term ()
+       "Switch to the term buffer last used, or create a new one if
+         none exists, or if the current buffer is already a term."
+       (interactive)
+       (let ((b (last-term-buffer (buffer-list))))
+         (if (or (not b) (eq 'term-mode major-mode))
+             (multi-term)
+           (switch-to-buffer b))))
+   #+END_SRC
+
+   #+BEGIN_SRC emacs-lisp
+     (setq multi-term-dedicated-select-after-open-p t) 
+   #+END_SRC
+
+   Some modes don't need to be in the terminal.
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'term-mode-hook (lambda()
+                                 (yas-minor-mode -1)))
+   #+END_SRC
 ** Interactive functions
    
-   I want to be able to quickly jump back to certain files in just a few key
-   presses. The following wrappers to find-file will make it so I can call these
-   functions using evil-leader later on.
+   I want to be able to quickly jump back to certain files or buffers in just a few key
+   presses. I'll call these interactive functions with =evil=leader= later on.
    
    #+BEGIN_SRC emacs-lisp
      (defun my-edit-init-org ()
        (interactive)
        (find-file (concat user-emacs-directory "init.org")))
+
+     (defun my-switch-to-scratch ()
+       (interactive)
+       (switch-to-buffer "*scratch*"))
    #+END_SRC
 
 ** Advice
@@ -884,23 +922,19 @@
      (define-key custom-bindings-map (kbd "C-;")  'er/contract-region)
   #+END_SRC
 
-  Bindings for [[https://github.com/magnars/multiple-cursors.el][multiple-cursors]].
+  Bindings for multi-term
 
   #+BEGIN_SRC emacs-lisp
-     (define-key custom-bindings-map (kbd "C-c e")  'mc/edit-lines)
-     (define-key custom-bindings-map (kbd "C-c n")  'mc/mark-next-like-this)
+     (define-key custom-bindings-map (kbd "C-c t")  'multi-term-dedicated-toggle)
+     (define-key custom-bindings-map (kbd "C-c T")  'get-term)
+     (define-key custom-bindings-map (kbd "C-c n")  'multi-term-next)
+     (define-key custom-bindings-map (kbd "C-c p")  'multi-term-prev)
   #+END_SRC
 
   Bindings for [[http://magit.github.io][Magit]].
 
   #+BEGIN_SRC emacs-lisp
    (define-key custom-bindings-map (kbd "C-c m") 'magit-status)
-  #+END_SRC
-
-  Bindings for [[https://github.com/winterTTr/ace-jump-mode][ace-jump-mode]].
-
-  #+BEGIN_SRC emacs-lisp
-   (define-key custom-bindings-map (kbd "C-c SPC") 'ace-jump-mode)
   #+END_SRC
 
   Bindings for [[http://emacs-helm.github.io/helm/][Helm]].
@@ -920,21 +954,10 @@
 
   #+BEGIN_SRC emacs-lisp
      (define-key custom-bindings-map (kbd "C-j")      'newline-and-indent)
+     (define-key custom-bindings-map (kbd "C-c r")    'rename-buffer)
      (define-key custom-bindings-map (kbd "C-c s")    'ispell-word)
      (define-key custom-bindings-map (kbd "C-c a")    'org-agenda-list)
      (define-key custom-bindings-map (kbd "C-x C-r")  'recentf-ido-find-file)
-  #+END_SRC
-
-  Bind the functions defined [[sec:defuns][above]].
-
-  #+BEGIN_SRC emacs-lisp
-     (define-key custom-bindings-map (kbd "M-,")     'jump-to-previous-like-this)
-     (define-key custom-bindings-map (kbd "M-.")     'jump-to-next-like-this)
-     (define-key custom-bindings-map (kbd "C-x k")   'kill-this-buffer-unless-scratch)
-     (define-key custom-bindings-map (kbd "C-x t")   'toggle-shell)
-     (define-key custom-bindings-map (kbd "C-c j")   'cycle-spacing-delete-newlines)
-     (define-key custom-bindings-map (kbd "C-c d")   'duplicate-thing)
-     (define-key custom-bindings-map (kbd "<C-tab>") 'tidy)
   #+END_SRC
 
   Lastly we need to activate the map by creating and activating the
