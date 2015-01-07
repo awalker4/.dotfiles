@@ -67,6 +67,7 @@
          magit               ; Git integration for Emacs
          markdown-mode       ; Emacs Major mode for Markdown-formatted files.
          move-text           ; Move current line or region with M-up or M-down
+         multi-term          ; Better terminals
          multiple-cursors    ; Multiple cursors for Emacs.
          paredit             ; minor mode for editing parentheses
          powerline           ; Rewrite of Powerline
@@ -280,67 +281,19 @@ PACKAGE is installed and the current version is deleted."
 ;; We want to have autocompletion by default. Load company mode everywhere.
 
 (add-hook 'after-init-hook 'global-company-mode)
+(setq company-idle-delay 0)
 
 ;; Visual
 
-;;    Change the color-theme to =solarized=
+;;    Change the color-theme to =solarized=. Keep everything the same size, though.
 
+(setq solarized-scale-org-headlines nil)
 (load-theme 'solarized-dark t)
 
 ;; Use the [[http://www.levien.com/type/myfonts/inconsolata.html][Inconsolata]] font if it's installed on the system.
 
-(when (member "Inconsolata-g" (font-family-list))
-  (set-face-attribute 'default nil :font "Inconsolata-g-11"))
-
-;; Flyspell
-
-;;    Flyspell offers on-the-fly spell checking. We can enable flyspell for all
-;;    text-modes with this snippet.
-
-(add-hook 'text-mode-hook 'turn-on-flyspell)
-
-;; To use flyspell for programming there is =flyspell-prog-mode=, that only
-;;    enables spell checking for comments and strings. We can enable it for all
-;;    programming modes using the =prog-mode-hook=. Flyspell interferes with
-;;    auto-complete mode, but there is a workaround provided by auto complete.
-
-(add-hook 'prog-mode-hook 'flyspell-prog-mode)
-(eval-after-load 'auto-complete
-  '(ac-flyspell-workaround))
-
-;; When working with several languages, we should be able to cycle through
-;;    the languages we most frequently use. Every buffer should have a separate
-;;    cycle of languages, so that cycling in one buffer does not change the
-;;    state in a different buffer (this problem occurs if you only have one
-;;    global cycle). We can implement this by using a [[http://www.gnu.org/software/emacs/manual/html_node/elisp/Closures.html][closure]].
-
-(defun cycle-languages ()
-  "Changes the ispell dictionary to the first element in
-ISPELL-LANGUAGES, and returns an interactive function that cycles
-the languages in ISPELL-LANGUAGES when invoked."
-  (lexical-let ((ispell-languages '#1=("american" "norsk" . #1#)))
-    (ispell-change-dictionary (car ispell-languages))
-    (lambda ()
-      (interactive)
-      ;; Rotates the languages cycle and changes the ispell dictionary.
-      (ispell-change-dictionary
-       (car (setq ispell-languages (cdr ispell-languages)))))))
-
-;; =Flyspell= signals an error if there is no spell-checking tool is
-;;    installed. We can advice =turn-on-flyspell= and =flyspell-prog-mode= to
-;;    only try to enable =flyspell= if a spell-checking tool is available. Also
-;;    we want to enable cycling the languages by typing =C-c l=, so we bind the
-;;    function returned from =cycle-languages=.
-
-(defadvice turn-on-flyspell (before check nil activate)
-  "Turns on flyspell only if a spell-checking tool is installed."
-  (when (executable-find ispell-program-name)
-    (local-set-key (kbd "C-c l") (cycle-languages))))
-
-(defadvice flyspell-prog-mode (before check nil activate)
-  "Turns on flyspell only if a spell-checking tool is installed."
-  (when (executable-find ispell-program-name)
-    (local-set-key (kbd "C-c l") (cycle-languages))))
+(when (member "Inconsolata" (font-family-list))
+  (set-face-attribute 'default nil :font "Inconsolata-12"))
 
 ;; Snippets
 
@@ -493,15 +446,48 @@ the languages in ISPELL-LANGUAGES when invoked."
 
 (semantic-mode 1)
 
+;; Term
+   
+;;    Multi-term makes working with many terminals a bit nicer. I can easily create
+;;    and cycle through any number of terminals. There's also a "dedicated terminal"
+;;    that I can pop up when needed. I'll make use of this all in the key bindings section.
+   
+;;    From the emacs wiki:
+
+(defun last-term-buffer (l)
+  "Return most recently used term buffer."
+  (when l
+    (if (eq 'term-mode (with-current-buffer (car l) major-mode))
+        (car l) (last-term-buffer (cdr l)))))
+
+(defun get-term ()
+  "Switch to the term buffer last used, or create a new one if
+    none exists, or if the current buffer is already a term."
+  (interactive)
+  (let ((b (last-term-buffer (buffer-list))))
+    (if (or (not b) (eq 'term-mode major-mode))
+        (multi-term)
+      (switch-to-buffer b))))
+
+(setq multi-term-dedicated-select-after-open-p t)
+
+;; Some modes don't need to be in the terminal.
+
+(add-hook 'term-mode-hook (lambda()
+                            (yas-minor-mode -1)))
+
 ;; Interactive functions
    
-;;    I want to be able to quickly jump back to certain files in just a few key
-;;    presses. The following wrappers to find-file will make it so I can call these
-;;    functions using evil-leader later on.
+;;    I want to be able to quickly jump back to certain files or buffers in just a few key
+;;    presses. I'll call these interactive functions with =evil=leader= later on.
 
 (defun my-edit-init-org ()
   (interactive)
   (find-file (concat user-emacs-directory "init.org")))
+
+(defun my-switch-to-scratch ()
+  (interactive)
+  (switch-to-buffer "*scratch*"))
 
 ;; Advice
 
@@ -545,8 +531,11 @@ the languages in ISPELL-LANGUAGES when invoked."
 (evil-leader/set-leader ",")
 (evil-leader/set-key
   "b" 'helm-mini
-  "c" 'compile
+  "f" 'find-file
+  "m" 'compile
+  "p" 'projectile-find-file
   "ei" 'my-edit-init-org
+  "es" 'my-switch-to-scratch
   "x" 'helm-M-x)
 
 ;; Evil-surround
@@ -699,6 +688,21 @@ the languages in ISPELL-LANGUAGES when invoked."
 (setq auto-mode-alist
       (cons '("\\.m$" . octave-mode) auto-mode-alist))
 
+;; Emacs Lisp
+
+(add-hook 'emacs-lisp-mode-hook
+          (lambda ()
+            ;; Use spaces, not tabs.
+            (setq indent-tabs-mode nil)
+            ;; Pretty-print eval'd expressions.
+            (define-key emacs-lisp-mode-map
+              "\C-x\C-e" 'pp-eval-last-sexp)
+            (define-key emacs-lisp-mode-map
+              "\r" 'reindent-then-newline-and-indent)))
+(add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+(add-hook 'emacs-lisp-mode-hook 'paredit-mode)
+(add-hook 'emacs-lisp-mode-hook 'flyspell-prog-mode) ;; Requires Ispell
+
 ;; FSP
 
 ;;    FSP (Finite state processes) is a notation that formally describes concurrent
@@ -734,18 +738,16 @@ the languages in ISPELL-LANGUAGES when invoked."
 (define-key custom-bindings-map (kbd "C-'")  'er/expand-region)
 (define-key custom-bindings-map (kbd "C-;")  'er/contract-region)
 
-;; Bindings for [[https://github.com/magnars/multiple-cursors.el][multiple-cursors]].
+;; Bindings for multi-term
 
-(define-key custom-bindings-map (kbd "C-c e")  'mc/edit-lines)
-(define-key custom-bindings-map (kbd "C-c n")  'mc/mark-next-like-this)
+(define-key custom-bindings-map (kbd "C-c t")  'multi-term-dedicated-toggle)
+(define-key custom-bindings-map (kbd "C-c T")  'get-term)
+(define-key custom-bindings-map (kbd "C-c n")  'multi-term-next)
+(define-key custom-bindings-map (kbd "C-c p")  'multi-term-prev)
 
 ;; Bindings for [[http://magit.github.io][Magit]].
 
 (define-key custom-bindings-map (kbd "C-c m") 'magit-status)
-
-;; Bindings for [[https://github.com/winterTTr/ace-jump-mode][ace-jump-mode]].
-
-(define-key custom-bindings-map (kbd "C-c SPC") 'ace-jump-mode)
 
 ;; Bindings for [[http://emacs-helm.github.io/helm/][Helm]].
 
@@ -759,19 +761,10 @@ the languages in ISPELL-LANGUAGES when invoked."
 ;; Bind some native Emacs functions.
 
 (define-key custom-bindings-map (kbd "C-j")      'newline-and-indent)
+(define-key custom-bindings-map (kbd "C-c r")    'rename-buffer)
 (define-key custom-bindings-map (kbd "C-c s")    'ispell-word)
 (define-key custom-bindings-map (kbd "C-c a")    'org-agenda-list)
 (define-key custom-bindings-map (kbd "C-x C-r")  'recentf-ido-find-file)
-
-;; Bind the functions defined [[sec:defuns][above]].
-
-(define-key custom-bindings-map (kbd "M-,")     'jump-to-previous-like-this)
-(define-key custom-bindings-map (kbd "M-.")     'jump-to-next-like-this)
-(define-key custom-bindings-map (kbd "C-x k")   'kill-this-buffer-unless-scratch)
-(define-key custom-bindings-map (kbd "C-x t")   'toggle-shell)
-(define-key custom-bindings-map (kbd "C-c j")   'cycle-spacing-delete-newlines)
-(define-key custom-bindings-map (kbd "C-c d")   'duplicate-thing)
-(define-key custom-bindings-map (kbd "<C-tab>") 'tidy)
 
 ;; Lastly we need to activate the map by creating and activating the
 ;;   =minor-mode=.
