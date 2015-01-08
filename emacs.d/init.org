@@ -470,7 +470,9 @@
 
      (setq helm-quick-update                     t ; do not display invisible candidates
            helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
+           helm-M-x-fuzzy-match                  t ; fuzzy matching M-x
            helm-buffers-fuzzy-matching           t ; fuzzy matching buffer names when non--nil
+           helm-recentf-fuzzy-match              t ; fuzzy matching recent files
            helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
            helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
            helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
@@ -515,9 +517,9 @@
 
    #+BEGIN_SRC emacs-lisp
      (projectile-global-mode) ; Load Projectile everywhere
-
      (setq projectile-completion-system 'helm)
-
+     (setq projectile-enable-caching t)
+     (helm-projectile-on)
    #+END_SRC
 ** CEDET
 *** Semantic
@@ -884,8 +886,6 @@
   #+BEGIN_SRC emacs-lisp
      (define-key custom-bindings-map (kbd "C-c t")  'multi-term-dedicated-toggle)
      (define-key custom-bindings-map (kbd "C-c T")  'get-term)
-     (define-key custom-bindings-map (kbd "C-c n")  'multi-term-next)
-     (define-key custom-bindings-map (kbd "C-c p")  'multi-term-prev)
   #+END_SRC
 
   Bindings for [[http://magit.github.io][Magit]].
