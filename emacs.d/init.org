@@ -322,6 +322,11 @@
    #+BEGIN_SRC emacs-lisp
    (add-hook 'doc-view-mode-hook 'auto-revert-mode)
    #+END_SRC
+   
+   #+BEGIN_SRC emacs-lisp
+     (when (fboundp 'windmove-default-keybindings)
+       (windmove-default-keybindings))
+   #+END_SRC
 
 ** Modes
 
@@ -461,6 +466,20 @@
         (cancel-timer my-org-mobile-sync-timer))
 
       (my-org-mobile-sync-start)
+    #+END_SRC
+
+*** Keybindings
+
+    Org-mode uses Shift + arrow keys to change things like timestamps, TODO
+    keywords, priorities, and so on. This is nice, but it gets in the way of
+    windmove. The following hooks will allow shift+<arrow> to use windmove if
+    there are no special org-mode contexts under the point.
+
+    #+BEGIN_SRC emacs-lisp
+      (add-hook 'org-shiftup-final-hook 'windmove-up)
+      (add-hook 'org-shiftleft-final-hook 'windmove-left)
+      (add-hook 'org-shiftdown-final-hook 'windmove-down)
+      (add-hook 'org-shiftright-final-hook 'windmove-right)
     #+END_SRC
 
 ** Helm
