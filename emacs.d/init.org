@@ -30,13 +30,25 @@
        "If the current buffer is 'init.org' the code-blocks are
      tangled, and the tangled file is compiled."
        (when (equal (buffer-file-name)
-                    "/home/austin/.dotfiles/emacs.d/init.org")
+                    (concat user-emacs-directory "init.org"))
          ;; Avoid running hooks when tangling.
          (let ((prog-mode-hook nil))
            (org-babel-tangle)
            (byte-compile-file (concat user-emacs-directory "init.el")))))
 
      (add-hook 'after-save-hook 'tangle-init)
+   #+END_SRC
+   
+   I'm adding code blocks to this file all the time. Org-mode provides a few
+   [[http://orgmode.org/manual/Easy-Templates.html][structure templates]] for quickly adding new blocks, but I can make it even
+   better. Everything in here is Emacs lisp, so let's alter the source code
+   template a bit when I'm in this file.
+   
+   #+BEGIN_SRC emacs-lisp
+     (when (equal (buffer-file-name)
+                  (concat user-emacs-directory "init.org"))
+       (setq-local org-structure-template-alist
+                     '(("s" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC" "<src lang="emacs lisp">\n?\n</src>"))))
    #+END_SRC
 
 ** Package
