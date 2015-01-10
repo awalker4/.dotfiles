@@ -13,7 +13,7 @@
    "If the current buffer is 'init.org' the code-blocks are
  tangled, and the tangled file is compiled."
    (when (equal (buffer-file-name)
-                (concat user-emacs-directory "init.org"))
+                "/home/austin/.dotfiles/emacs.d/init.org")
      ;; Avoid running hooks when tangling.
      (let ((prog-mode-hook nil))
        (org-babel-tangle)
@@ -27,9 +27,9 @@
 ;;    template a bit when I'm in this file.
 
 (when (equal (buffer-file-name)
-             (concat user-emacs-directory "init.org"))
+             "/home/austin/.dotfiles/emacs.d/init.org")
   (setq-local org-structure-template-alist
-                '(("s" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC" "<src lang="emacs lisp">\n?\n</src>"))))
+              '(("s" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC" "<src lang="emacs lisp">\n?\n</src>"))))
 
 ;; Package
 
@@ -249,13 +249,13 @@ PACKAGE is installed and the current version is deleted."
 
 (defun load-persistent-scratch ()
   "Reload the scratch buffer"
-  (let (scratch-file (concat user-emacs-directory "scratch"))
+  (let ((scratch-file (concat user-emacs-directory "scratch")))
     (if (file-exists-p scratch-file)
         (with-current-buffer (get-buffer "*scratch*")
           (delete-region (point-min) (point-max))
           (insert-file-contents scratch-file)))))
 
-(add-hook 'after-init-hook 'load-persistent-scratch)
+(add-hook 'emacs-startup-hook 'load-persistent-scratch)
 (add-hook 'kill-emacs-hook 'save-persistent-scratch)
 
 (run-with-idle-timer 300 t 'save-persistent-scratch)
@@ -281,6 +281,18 @@ PACKAGE is installed and the current version is deleted."
 
 (when (fboundp 'windmove-default-keybindings)
   (windmove-default-keybindings))
+
+;; Visual
+
+;;    Change the color-theme to =solarized=. Keep everything the same size, though.
+
+(setq solarized-scale-org-headlines nil)
+(load-theme 'solarized-dark t)
+
+;; Use the [[http://www.levien.com/type/myfonts/inconsolata.html][Inconsolata]] font if it's installed on the system.
+
+(when (member "Inconsolata" (font-family-list))
+  (set-face-attribute 'default nil :font "Inconsolata-12"))
 
 ;; Modes
 
@@ -318,18 +330,6 @@ PACKAGE is installed and the current version is deleted."
 
 (add-hook 'after-init-hook 'global-company-mode)
 (setq company-idle-delay 0)
-
-;; Visual
-
-;;    Change the color-theme to =solarized=. Keep everything the same size, though.
-
-(setq solarized-scale-org-headlines nil)
-(load-theme 'solarized-dark t)
-
-;; Use the [[http://www.levien.com/type/myfonts/inconsolata.html][Inconsolata]] font if it's installed on the system.
-
-(when (member "Inconsolata" (font-family-list))
-  (set-face-attribute 'default nil :font "Inconsolata-12"))
 
 ;; Snippets
 
@@ -582,9 +582,10 @@ PACKAGE is installed and the current version is deleted."
 (evil-leader/set-leader ",")
 (evil-leader/set-key
   "b" 'helm-mini
-  "f" 'find-file
+  "f" 'helm-find-files
   "m" 'compile
   "p" 'projectile-find-file
+  "t" 'multi-term-dedicated-toggle
   "ei" 'my-edit-init-org
   "es" 'my-switch-to-scratch
   "x" 'helm-M-x)
@@ -601,7 +602,139 @@ PACKAGE is installed and the current version is deleted."
 ;;    Once everything is set up, we can start evil-mode.
 
 (evil-mode 1)
-(key-chord-define evil-insert-state-map "jj" 'evil-normal-state)
+(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+(key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
+
+;; Java and C
+
+;;     The =c-mode-common-hook= is a general hook that work on all C-like
+;;     languages (C, C++, Java, etc...). I like being able to quickly compile
+;;     using =C-c C-c= (instead of =M-x compile=), a habit from =latex-mode=.
+
+(defun c-setup ()
+  (local-set-key (kbd "C-c C-c") 'compile)
+  (setq c-default-style "linux"
+        c-basic-offset 4))
+
+(add-hook 'c-mode-common-hook 'c-setup)
+
+;; Some statements in Java appear often, and become tedious to write
+;;     out. We can use abbrevs to speed this up.
+
+(define-abbrev-table 'java-mode-abbrev-table
+  '(("psv" "public static void main(String[] args) {" nil 0)
+    ("sopl" "System.out.println" nil 0)
+    ("sop" "System.out.printf" nil 0)))
+
+;; To be able to use the abbrev table defined above, =abbrev-mode= must be
+;;     activated.
+
+(defun java-setup ()
+  (abbrev-mode t)
+  (setq-local compile-command (concat "javac " (buffer-name))))
+
+(add-hook 'java-mode-hook 'java-setup)
+
+;; C#
+
+;;     Omnisharp gives us IDE capabilities for C#. Let's enable it for
+;;     =csharp-mode=
+
+(add-hook 'csharp-mode-hook 'omnisharp-mode)
+
+;;(omnisharp-imenu-support t)
+
+;; Allow company to use OmniSharp for autocompletion.
+
+(eval-after-load 'company
+  '(add-to-list 'company-backends 'company-omnisharp))
+
+;; LaTeX
+
+;;     =.tex=-files should be associated with =latex-mode= instead of
+;;     =tex-mode=.
+
+(add-to-list 'auto-mode-alist '("\\.tex\\'" . latex-mode))
+
+;; I like using the [[https://code.google.com/p/minted/][Minted]] package for source blocks in LaTeX. To make org
+;;     use this we add the following snippet.
+
+(eval-after-load 'org
+  '(add-to-list 'org-latex-packages-alist '("" "minted")))
+(setq org-latex-listings 'minted)
+
+;; Because [[https://code.google.com/p/minted/][Minted]] uses [[http://pygments.org][Pygments]] (an external process), we must add the
+;;     =-shell-escape= option to the =org-latex-pdf-process= commands. The
+;;     =tex-compile-commands= variable controls the default compile command for
+;;     Tex- and LaTeX-mode, we can add the flag with a rather dirty statement
+;;     (if anyone finds a nicer way to do this, please let me know).
+
+(eval-after-load 'ox-latex
+  '(setq org-latex-pdf-process
+         (mapcar
+          (lambda (str)
+            (concat "pdflatex -shell-escape "
+                    (substring str (string-match "-" str))))
+          org-latex-pdf-process)))
+
+(eval-after-load 'tex-mode
+  '(setcar (cdr (cddaar tex-compile-commands)) " -shell-escape "))
+
+;; Python
+
+;;      [[http://tkf.github.io/emacs-jedi/released/][Jedi]] offers very nice auto completion for =python-mode=. Mind that it is
+;;      dependent on some python programs as well, so make sure you follow the
+;;      instructions from the site.
+
+(require 'jedi)
+(add-hook 'python-mode-hook 'jedi:setup)
+(setq jedi:server-command
+     (cons "python3" (cdr jedi:server-command))
+     python-shell-interpreter "python3")
+(setq jedi:complete-on-dot t)
+;;(add-hook 'python-mode-hook 'jedi:ac-setup)
+
+;; Matlab
+
+;;     =Matlab-mode= works pretty good out of the box, but we can do without the
+;;     splash screen.
+
+(eval-after-load 'matlab
+  '(add-to-list 'matlab-shell-command-switches "-nosplash"))
+
+;; Octave
+
+;;     Make it so =.m= files are loaded in =octave-mode=.
+
+(autoload 'octave-mode "octave-mod" nil t)
+(setq auto-mode-alist
+      (cons '("\\.m$" . octave-mode) auto-mode-alist))
+
+;; Emacs Lisp
+
+(add-hook 'emacs-lisp-mode-hook
+          (lambda ()
+            ;; Use spaces, not tabs.
+            (setq indent-tabs-mode nil)
+            (define-key emacs-lisp-mode-map
+              "\r" 'reindent-then-newline-and-indent)))
+(add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+(add-hook 'emacs-lisp-mode-hook 'paredit-mode)
+(add-hook 'emacs-lisp-mode-hook 'flyspell-prog-mode) ;; Requires Ispell
+
+;; FSP
+
+;;     FSP (Finite state processes) is a notation that formally describes concurrent
+;;     systems as described in the book Concurrency by Magee and Kramer. Someday
+;;     I want to make a fully featured mode for FSP. Someone by the name of
+;;     Esben Andreasen made a mode with basic syntax highlighting, so that will
+;;     have to do for now.
+
+;;     We'll add it manually until I have time to play around with it.
+
+;; Load fsp-mode.el from its own directory
+(add-to-list 'load-path "~/Dropbox/fsp-mode/")
+(require 'fsp-mode)
 
 ;; Shell
 
@@ -634,136 +767,25 @@ PACKAGE is installed and the current version is deleted."
 
 (add-hook 'shell-mode-hook (lambda () (local-set-key (kbd "C-l") 'clear-shell)))
 
-;; Java and C
+;; Config files
+   
+;;    Let's add some color to these files.
 
-;;    The =c-mode-common-hook= is a general hook that work on all C-like
-;;    languages (C, C++, Java, etc...). I like being able to quickly compile
-;;    using =C-c C-c= (instead of =M-x compile=), a habit from =latex-mode=.
+(add-to-list 'auto-mode-alist '("\\.service\\'" . conf-unix-mode))
+(add-to-list 'auto-mode-alist '("\\.timer\\'" . conf-unix-mode))
+(add-to-list 'auto-mode-alist '("\\.target\\'" . conf-unix-mode))
+(add-to-list 'auto-mode-alist '("\\.mount\\'" . conf-unix-mode))
+(add-to-list 'auto-mode-alist '("\\.automount\\'" . conf-unix-mode))
+(add-to-list 'auto-mode-alist '("\\.slice\\'" . conf-unix-mode))
+(add-to-list 'auto-mode-alist '("\\.socket\\'" . conf-unix-mode))
+(add-to-list 'auto-mode-alist '("\\.path\\'" . conf-unix-mode))
 
-(defun c-setup ()
-  (local-set-key (kbd "C-c C-c") 'compile)
-  (setq c-default-style "linux"
-        c-basic-offset 4))
+;; Proced
 
-(add-hook 'c-mode-common-hook 'c-setup)
+(defun proced-settings ()
+  (proced-toggle-auto-update t))
 
-;; Some statements in Java appear often, and become tedious to write
-;;    out. We can use abbrevs to speed this up.
-
-(define-abbrev-table 'java-mode-abbrev-table
-  '(("psv" "public static void main(String[] args) {" nil 0)
-    ("sopl" "System.out.println" nil 0)
-    ("sop" "System.out.printf" nil 0)))
-
-;; To be able to use the abbrev table defined above, =abbrev-mode= must be
-;;    activated.
-
-(defun java-setup ()
-  (abbrev-mode t)
-  (setq-local compile-command (concat "javac " (buffer-name))))
-
-(add-hook 'java-mode-hook 'java-setup)
-
-;; C#
-
-;;    Omnisharp gives us IDE capabilities for C#. Let's enable it for
-;;    =csharp-mode=
-
-(add-hook 'csharp-mode-hook 'omnisharp-mode)
-
-;;(omnisharp-imenu-support t)
-
-;; Allow company to use OmniSharp for autocompletion.
-
-(eval-after-load 'company
-  '(add-to-list 'company-backends 'company-omnisharp))
-
-;; LaTeX
-
-;;    =.tex=-files should be associated with =latex-mode= instead of
-;;    =tex-mode=.
-
-(add-to-list 'auto-mode-alist '("\\.tex\\'" . latex-mode))
-
-;; I like using the [[https://code.google.com/p/minted/][Minted]] package for source blocks in LaTeX. To make org
-;;    use this we add the following snippet.
-
-(eval-after-load 'org
-  '(add-to-list 'org-latex-packages-alist '("" "minted")))
-(setq org-latex-listings 'minted)
-
-;; Because [[https://code.google.com/p/minted/][Minted]] uses [[http://pygments.org][Pygments]] (an external process), we must add the
-;;    =-shell-escape= option to the =org-latex-pdf-process= commands. The
-;;    =tex-compile-commands= variable controls the default compile command for
-;;    Tex- and LaTeX-mode, we can add the flag with a rather dirty statement
-;;    (if anyone finds a nicer way to do this, please let me know).
-
-(eval-after-load 'ox-latex
-  '(setq org-latex-pdf-process
-         (mapcar
-          (lambda (str)
-            (concat "pdflatex -shell-escape "
-                    (substring str (string-match "-" str))))
-          org-latex-pdf-process)))
-
-(eval-after-load 'tex-mode
-  '(setcar (cdr (cddaar tex-compile-commands)) " -shell-escape "))
-
-;; Python
-
-;;     [[http://tkf.github.io/emacs-jedi/released/][Jedi]] offers very nice auto completion for =python-mode=. Mind that it is
-;;     dependent on some python programs as well, so make sure you follow the
-;;     instructions from the site.
-
-(require 'jedi)
-(add-hook 'python-mode-hook 'jedi:setup)
-(setq jedi:server-command
-     (cons "python3" (cdr jedi:server-command))
-     python-shell-interpreter "python3")
-(setq jedi:complete-on-dot t)
-;;(add-hook 'python-mode-hook 'jedi:ac-setup)
-
-;; Matlab
-
-;;    =Matlab-mode= works pretty good out of the box, but we can do without the
-;;    splash screen.
-
-(eval-after-load 'matlab
-  '(add-to-list 'matlab-shell-command-switches "-nosplash"))
-
-;; Octave
-
-;;    Make it so =.m= files are loaded in =octave-mode=.
-
-(autoload 'octave-mode "octave-mod" nil t)
-(setq auto-mode-alist
-      (cons '("\\.m$" . octave-mode) auto-mode-alist))
-
-;; Emacs Lisp
-
-(add-hook 'emacs-lisp-mode-hook
-          (lambda ()
-            ;; Use spaces, not tabs.
-            (setq indent-tabs-mode nil)
-            (define-key emacs-lisp-mode-map
-              "\r" 'reindent-then-newline-and-indent)))
-(add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-(add-hook 'emacs-lisp-mode-hook 'paredit-mode)
-(add-hook 'emacs-lisp-mode-hook 'flyspell-prog-mode) ;; Requires Ispell
-
-;; FSP
-
-;;    FSP (Finite state processes) is a notation that formally describes concurrent
-;;    systems as described in the book Concurrency by Magee and Kramer. Someday
-;;    I want to make a fully featured mode for FSP. Someone by the name of
-;;    Esben Andreasen made a mode with basic syntax highlighting, so that will
-;;    have to do for now.
-
-;;    We'll add it manually until I have time to play around with it.
-
-;; Load fsp-mode.el from its own directory
-(add-to-list 'load-path "~/Dropbox/fsp-mode/")
-(require 'fsp-mode)
+(add-hook 'proced-mode-hook 'proced-settings)
 
 ;; Key bindings
 
@@ -807,6 +829,7 @@ PACKAGE is installed and the current version is deleted."
 ;; Bind some native Emacs functions.
 
 (define-key custom-bindings-map (kbd "C-j")      'newline-and-indent)
+(define-key custom-bindings-map (kbd "C-x p")    'proced)
 (define-key custom-bindings-map (kbd "C-c r")    'rename-buffer)
 (define-key custom-bindings-map (kbd "C-c s")    'ispell-word)
 (define-key custom-bindings-map (kbd "C-c a")    'org-agenda-list)
