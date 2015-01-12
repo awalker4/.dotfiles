@@ -142,8 +142,9 @@ nnoremap vv ^vg_
 " From insert mode, make the previous word uppercase
 inoremap <C-u> <esc>mzgUiw`za
 
-" Press jj to exit insert mode
-inoremap jj <Esc>
+" Press jk to exit insert mode
+inoremap jk <Esc>
+inoremap kj <Esc>
 
 " Better split panes
 
