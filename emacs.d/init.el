@@ -26,10 +26,13 @@
 ;;    better. Everything in here is Emacs lisp, so let's alter the source code
 ;;    template a bit when I'm in this file.
 
-(when (equal (buffer-file-name)
-             "/home/austin/.dotfiles/emacs.d/init.org")
-  (setq-local org-structure-template-alist
-              '(("s" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC" "<src lang="emacs lisp">\n?\n</src>"))))
+(defun aw/init-org-elisp-template ()
+    (when (equal (buffer-file-name)
+                 "/home/austin/.dotfiles/emacs.d/init.org")
+      (setq-local org-structure-template-alist
+                  '(("s" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC" "<src lang="emacs lisp">\n?\n</src>")))))
+
+(add-hook 'org-mode-hook 'aw/init-org-elisp-template)
 
 ;; Package
 
@@ -79,6 +82,7 @@
          move-text           ; Move current line or region with M-up or M-down
          multi-term          ; Better terminals
          multiple-cursors    ; Multiple cursors for Emacs.
+         org-trello
          paredit             ; minor mode for editing parentheses
          powerline           ; Rewrite of Powerline
          projectile          ; Easy navigation for files in a project
@@ -280,11 +284,11 @@ PACKAGE is installed and the current version is deleted."
 (add-hook 'doc-view-mode-hook 'auto-revert-mode)
 
 (when (fboundp 'windmove-default-keybindings)
-  (windmove-default-keybindings))
+   (windmove-default-keybindings))
 
 ;; Visual
 
-;;    Change the color-theme to =solarized=. Keep everything the same size, though.
+;;    Change the color-theme to =solarized=.
 
 (setq solarized-scale-org-headlines nil)
 (load-theme 'solarized-dark t)
@@ -331,84 +335,84 @@ PACKAGE is installed and the current version is deleted."
 (add-hook 'after-init-hook 'global-company-mode)
 (setq company-idle-delay 0)
 
+;; Evil-leader
+   
+;;    We can bring back the leader key with the =evil-leader= package. I've always
+;;    been a fan of , for my leader.
+
+(global-evil-leader-mode)
+(evil-leader/set-leader ",")
+(evil-leader/set-key
+  "0" 'delete-window
+  "1" 'delete-other-windows
+  "2" 'split-window-below
+  "3" 'split-window-right
+  "f" 'helm-find-files
+  "m" 'compile
+  "p" 'projectile-find-file
+  "t" 'multi-term-dedicated-toggle
+  "ei" 'my-edit-init-org
+  "es" 'my-switch-to-scratch
+  "x" 'helm-M-x)
+
+;; Buffer Stuff
+(evil-leader/set-key
+  "bb" 'helm-mini
+  "bk" 'kill-buffer
+  "bs" 'save-buffer
+  )
+
+;; Evil-surround
+
+;;     This awesome Vim plugin will let you surround text objects with various
+;;     items. Luckily, there's an Emacs port.
+
+(global-evil-surround-mode 1)
+
+;; Evil Functions
+
+(defun aw/open-line-above ()
+  (interactive)
+  (save-excursion
+    (previous-line)
+    (end-of-line)
+    (open-line 1)))
+
+(defun aw/open-line-below ()
+  (interactive)
+  (save-excursion
+    (end-of-line)
+    (open-line 1)))
+
+;; Initialization
+
+;;    Once everything is set up, we can start evil-mode.
+
+(evil-mode 1)
+
+(define-key evil-normal-state-map "H" 'windmove-left)
+(define-key evil-normal-state-map "J" 'windmove-down)
+(define-key evil-normal-state-map "K" 'windmove-up)
+(define-key evil-normal-state-map "L" 'windmove-right)
+
+(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+(key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
+
+;; I was really starting to miss some of these bindings from TPope's vim-unimpaired.
+
+(key-chord-define evil-normal-state-map "[e" 'move-text-up)
+(key-chord-define evil-normal-state-map "]e" 'move-text-down)
+(key-chord-define evil-normal-state-map "[ " 'aw/open-line-above)
+(key-chord-define evil-normal-state-map "] " 'aw/open-line-below)
+(key-chord-define evil-normal-state-map "[b" 'previous-buffer)
+(key-chord-define evil-normal-state-map "]b" 'next-buffer)
+
 ;; Snippets
 
 ;;    Start yasnippet
 
 (require 'yasnippet)
 (yas-global-mode 1)
-
-;; Org
-
-;;    I use =org-agenda= for appointments and such.
-
-(setq org-agenda-start-on-weekday nil              ; Show agenda from today.
-      org-agenda-files '("~/Dropbox/org")          ; A list of agenda files.
-      org-agenda-default-appointment-duration 60   ; 1 hour appointments
-      org-agenda-span 1)                           ; Show only today by default
-
-;; When editing org-files with source-blocks, we want the source blocks to
-;;    be themed as they would in their native mode.
-
-(setq org-src-fontify-natively t
-      org-confirm-babel-evaluate nil)
-
-;; This is quite an ugly fix for allowing code markup for expressions like
-;;    ="this string"=, because the quotation marks causes problems.
-
-(require 'org)
-(setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
-(custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))
-
-;; MobileOrg
-;;     MobileOrg will let me sync my agenda to my phone, which will then sync
-;;     with my calendar.
-
-;; Set to the location of your Org files on your local system
-(setq org-directory "~/Dropbox/org")
-;; Set to the name of the file where new notes will be stored
-(setq org-mobile-inbox-for-pull "~/Dropbox/org/flagged.org")
-;; Set to <your Dropbox root directory>/MobileOrg.
-(setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
-
-;; We can use =idle-timer= to push and pull to MobileOrg when there's no
-;;     other activity.
-
-(defvar my-org-mobile-sync-timer nil)
-
-(defvar my-org-mobile-sync-secs (* 60 20))
-
-(defun my-org-mobile-sync-pull-and-push ()
-  (org-mobile-pull)
-  (org-mobile-push)
-  (when (fboundp 'sauron-add-event)
-    (sauron-add-event 'my 3 "Called org-mobile-pull and org-mobile-push")))
-
-(defun my-org-mobile-sync-start ()
-  "Start automated `org-mobile-push'"
-  (interactive)
-  (setq my-org-mobile-sync-timer
-        (run-with-idle-timer my-org-mobile-sync-secs t
-                             'my-org-mobile-sync-pull-and-push)))
-
-(defun my-org-mobile-sync-stop ()
-  "Stop automated `org-mobile-push'"
-  (interactive)
-  (cancel-timer my-org-mobile-sync-timer))
-
-(my-org-mobile-sync-start)
-
-;; Keybindings
-
-;;     Org-mode uses Shift + arrow keys to change things like timestamps, TODO
-;;     keywords, priorities, and so on. This is nice, but it gets in the way of
-;;     windmove. The following hooks will allow shift+<arrow> to use windmove if
-;;     there are no special org-mode contexts under the point.
-
-(add-hook 'org-shiftup-final-hook 'windmove-up)
-(add-hook 'org-shiftleft-final-hook 'windmove-left)
-(add-hook 'org-shiftdown-final-hook 'windmove-down)
-(add-hook 'org-shiftright-final-hook 'windmove-right)
 
 ;; Helm
 
@@ -487,46 +491,6 @@ PACKAGE is installed and the current version is deleted."
 (setq projectile-enable-caching t)
 (helm-projectile-on)
 
-;; Semantic
-
-(require 'cc-mode)
-(require 'semantic)
-
-(global-semanticdb-minor-mode 1)
-(global-semantic-idle-scheduler-mode 1)
-
-(semantic-mode 1)
-
-;; Term
-   
-;;    Multi-term makes working with many terminals a bit nicer. I can easily create
-;;    and cycle through any number of terminals. There's also a "dedicated terminal"
-;;    that I can pop up when needed. I'll make use of this all in the key bindings section.
-   
-;;    From the emacs wiki:
-
-(defun last-term-buffer (l)
-  "Return most recently used term buffer."
-  (when l
-    (if (eq 'term-mode (with-current-buffer (car l) major-mode))
-        (car l) (last-term-buffer (cdr l)))))
-
-(defun get-term ()
-  "Switch to the term buffer last used, or create a new one if
-    none exists, or if the current buffer is already a term."
-  (interactive)
-  (let ((b (last-term-buffer (buffer-list))))
-    (if (or (not b) (eq 'term-mode major-mode))
-        (multi-term)
-      (switch-to-buffer b))))
-
-(setq multi-term-dedicated-select-after-open-p t)
-
-;; Some modes don't need to be in the terminal.
-
-(add-hook 'term-mode-hook (lambda()
-                            (yas-minor-mode -1)))
-
 ;; Interactive functions
    
 ;;    I want to be able to quickly jump back to certain files or buffers in just a few key
@@ -573,37 +537,15 @@ PACKAGE is installed and the current version is deleted."
 (setq key-chord-two-keys-delay 2)
 (key-chord-mode 1)
 
-;; Evil-leader
-   
-;;    We can bring back the leader key with the =evil-leader= package. I've always
-;;    been a fan of , for my leader.
+;; Semantic
 
-(global-evil-leader-mode)
-(evil-leader/set-leader ",")
-(evil-leader/set-key
-  "b" 'helm-mini
-  "f" 'helm-find-files
-  "m" 'compile
-  "p" 'projectile-find-file
-  "t" 'multi-term-dedicated-toggle
-  "ei" 'my-edit-init-org
-  "es" 'my-switch-to-scratch
-  "x" 'helm-M-x)
+(require 'cc-mode)
+(require 'semantic)
 
-;; Evil-surround
+(global-semanticdb-minor-mode 1)
+(global-semantic-idle-scheduler-mode 1)
 
-;;     This awesome Vim plugin will let you surround text objects with various
-;;     items. Luckily, there's an Emacs port.
-
-(global-evil-surround-mode 1)
-
-;; Initialization
-
-;;    Once everything is set up, we can start evil-mode.
-
-(evil-mode 1)
-(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
-(key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
+(semantic-mode 1)
 
 ;; Java and C
 
@@ -736,6 +678,36 @@ PACKAGE is installed and the current version is deleted."
 (add-to-list 'load-path "~/Dropbox/fsp-mode/")
 (require 'fsp-mode)
 
+;; Term
+   
+;;    Multi-term makes working with many terminals a bit nicer. I can easily create
+;;    and cycle through any number of terminals. There's also a "dedicated terminal"
+;;    that I can pop up when needed. I'll make use of this all in the key bindings section.
+   
+;;    From the emacs wiki:
+
+(defun last-term-buffer (l)
+  "Return most recently used term buffer."
+  (when l
+    (if (eq 'term-mode (with-current-buffer (car l) major-mode))
+        (car l) (last-term-buffer (cdr l)))))
+
+(defun get-term ()
+  "Switch to the term buffer last used, or create a new one if
+    none exists, or if the current buffer is already a term."
+  (interactive)
+  (let ((b (last-term-buffer (buffer-list))))
+    (if (or (not b) (eq 'term-mode major-mode))
+        (multi-term)
+      (switch-to-buffer b))))
+
+(setq multi-term-dedicated-select-after-open-p t)
+
+;; Some modes don't need to be in the terminal.
+
+(add-hook 'term-mode-hook (lambda()
+                            (yas-minor-mode -1)))
+
 ;; Shell
 
 ;;    To be able to quickly switch back and forth between a shell I make use of this little function.
@@ -787,6 +759,77 @@ PACKAGE is installed and the current version is deleted."
 
 (add-hook 'proced-mode-hook 'proced-settings)
 
+;; Task Tracking
+
+;;    I keep my schedule with =org=agenda=.
+
+(setq org-agenda-start-on-weekday nil              ; Show agenda from today.
+      org-agenda-files '("~/Dropbox/org")          ; A list of agenda files.
+      org-agenda-default-appointment-duration 60   ; 1 hour appointments
+      org-agenda-span 1)                           ; Show only today by default
+
+;; When editing org-files with source-blocks, we want the source blocks to
+;;    be themed as they would in their native mode.
+
+(setq org-src-fontify-natively t
+      org-confirm-babel-evaluate nil)
+
+;; This is quite an ugly fix for allowing code markup for expressions like
+;;    ="this string"=, because the quotation marks causes problems.
+
+(setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
+(custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))
+
+;; MobileOrg
+;;    MobileOrg will let me sync my agenda to my phone, which will then sync
+;;    with my calendar.
+
+;; Set to the location of your Org files on your local system
+(setq org-directory "~/Dropbox/org")
+;; Set to the name of the file where new notes will be stored
+(setq org-mobile-inbox-for-pull "~/Dropbox/org/flagged.org")
+;; Set to <your Dropbox root directory>/MobileOrg.
+(setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
+
+;; We can use =idle-timer= to push and pull to MobileOrg when there's no
+;;    other activity.
+
+(defvar my-org-mobile-sync-timer nil)
+
+(defvar my-org-mobile-sync-secs (* 60 20))
+
+(defun my-org-mobile-sync-pull-and-push ()
+  (org-mobile-pull)
+  (org-mobile-push)
+  (when (fboundp 'sauron-add-event)
+    (sauron-add-event 'my 3 "Called org-mobile-pull and org-mobile-push")))
+
+(defun my-org-mobile-sync-start ()
+  "Start automated `org-mobile-push'"
+  (interactive)
+  (setq my-org-mobile-sync-timer
+        (run-with-idle-timer my-org-mobile-sync-secs t
+                             'my-org-mobile-sync-pull-and-push)))
+
+(defun my-org-mobile-sync-stop ()
+  "Stop automated `org-mobile-push'"
+  (interactive)
+  (cancel-timer my-org-mobile-sync-timer))
+
+(my-org-mobile-sync-start)
+
+;; Keybindings
+
+;;    Org-mode uses Shift + arrow keys to change things like timestamps, TODO
+;;    keywords, priorities, and so on. This is nice, but it gets in the way of
+;;    windmove. The following hooks will allow shift+<arrow> to use windmove if
+;;    there are no special org-mode contexts under the point.
+
+(add-hook 'org-shiftup-final-hook 'windmove-up)
+(add-hook 'org-shiftleft-final-hook 'windmove-left)
+(add-hook 'org-shiftdown-final-hook 'windmove-down)
+(add-hook 'org-shiftright-final-hook 'windmove-right)
+
 ;; Key bindings
 
 ;;   Inspired by [[http://stackoverflow.com/questions/683425/globally-override-key-binding-in-emacs][this StackOverflow post]] I keep a =custom-bindings-map= that
@@ -821,19 +864,12 @@ PACKAGE is installed and the current version is deleted."
 
 (define-key custom-bindings-map (kbd "C-c h g") 'helm-google-suggest)
 
-;; Bindings for =move-text=.
-
-(define-key custom-bindings-map (kbd "<M-S-up>")    'move-text-up)
-(define-key custom-bindings-map (kbd "<M-S-down>")  'move-text-down)
-
 ;; Bind some native Emacs functions.
 
-(define-key custom-bindings-map (kbd "C-j")      'newline-and-indent)
 (define-key custom-bindings-map (kbd "C-x p")    'proced)
 (define-key custom-bindings-map (kbd "C-c r")    'rename-buffer)
 (define-key custom-bindings-map (kbd "C-c s")    'ispell-word)
 (define-key custom-bindings-map (kbd "C-c a")    'org-agenda-list)
-(define-key custom-bindings-map (kbd "C-x C-r")  'recentf-ido-find-file)
 
 ;; Lastly we need to activate the map by creating and activating the
 ;;   =minor-mode=.
