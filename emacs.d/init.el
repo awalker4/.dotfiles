@@ -91,7 +91,6 @@
          smex                ; M-x interface with Ido-style fuzzy matching.
          undo-tree           ; Treat undo history as a tree
          yasnippet           ; Snippet engine
-         yasnippet-bundle    ; The actual snippets
          zenburn-theme       ; Nice looking low-contrast theme
          )
       "Packages which should be installed upon launch")
