@@ -12,6 +12,9 @@
 # => General
 ########################################
 
+# Use C-o as the prefix
+escape ^oo
+
 startup_message off
 
 # Show all the current windows
