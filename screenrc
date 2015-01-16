@@ -13,7 +13,7 @@
 ########################################
 
 # Use C-o as the prefix
-escape ^oo
+escape ^bb
 
 startup_message off
 

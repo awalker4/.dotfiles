@@ -33,12 +33,6 @@ fi
 # Get aliases from file
 source ~/.dotfiles/aliases
 
-#Greeting
-echo
-echo Hello $USER
-echo It is $(date)
-echo
-
 ########################################
 # => General
 ########################################
@@ -47,4 +41,4 @@ export TERM=xterm-256color
 #Don't save duplicate lines
 export HISTCONTROL=erasedups
 
-alias ..='cd ..'
+shopt -s autocd
