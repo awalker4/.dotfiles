@@ -239,6 +239,7 @@ s
            electric-pair-mode 1          ; Insert brackets, parentheses in pairs
            ring-bell-function 'ignore    ; Quiet.
            byte-compile-warnings nil     ; Don't show warnings when compiling elisp
+           require-final-newline t       ; End files with \n
            ;; Save undo history between sessions, if you have an undo-dir
            undo-tree-auto-save-history
            (file-exists-p
