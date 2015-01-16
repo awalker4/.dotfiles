@@ -63,6 +63,7 @@
          clojure-mode        ; Mode for .clj files
          csharp-mode         ; Mode for C# files
          company             ; Auto-completion engine
+         diminish            ; Clean up the status line a but
          evil                ; Vi and Emacs, in harmony
          evil-leader         ; Bring back the leader key
          evil-nerd-commenter ; Quickly comment out lines
@@ -298,6 +299,24 @@ PACKAGE is installed and the current version is deleted."
 (when (member "Inconsolata" (font-family-list))
   (set-face-attribute 'default nil :font "Inconsolata-12"))
 
+;; When interactively changing the theme (using =M-x load-theme=), the
+;;    current custom theme is not disabled. This often gives weird-looking
+;;    results; we can advice =load-theme= to always disable themes currently
+;;    enabled themes.
+
+(defadvice load-theme
+  (before disable-before-load (theme &optional no-confirm no-enable) activate)
+  (mapc 'disable-theme custom-enabled-themes))
+
+;; I like how Vim shows you empty lines using tildes. Emacs can do something
+;;    similar with the variable =indicate-empty-lines=, but I'll make it look a bit
+;;    more familiar. ([[http://www.reddit.com/r/emacs/comments/2kdztw/emacs_in_evil_mode_show_tildes_for_blank_lines/][Source]])
+
+(setq-default indicate-empty-lines t)
+(define-fringe-bitmap 'tilde [0 0 0 113 219 142 0 0] nil nil 'center)
+(setcdr (assq 'empty-line fringe-indicator-alist) 'tilde)
+(set-fringe-bitmap-face 'tilde 'font-lock-function-name-face)
+
 ;; Modes
 
 ;;    There are some modes that are enabled by default that I don't find
@@ -333,86 +352,8 @@ PACKAGE is installed and the current version is deleted."
 ;; We want to have autocompletion by default. Load company mode everywhere.
 
 (add-hook 'after-init-hook 'global-company-mode)
-(setq company-idle-delay 0)
-
-;; Evil-leader
-   
-;;    We can bring back the leader key with the =evil-leader= package. I've always
-;;    been a fan of , for my leader.
-
-(global-evil-leader-mode)
-(evil-leader/set-leader ",")
-(evil-leader/set-key
-  "0" 'delete-window
-  "1" 'delete-other-windows
-  "2" 'split-window-below
-  "3" 'split-window-right
-  "f" 'helm-find-files
-  "m" 'compile
-  "p" 'projectile-find-file
-  "t" 'multi-term-dedicated-toggle
-  "ei" 'my-edit-init-org
-  "es" 'my-switch-to-scratch
-  "x" 'helm-M-x)
-
-;; Buffer Stuff
-(evil-leader/set-key
-  "bb" 'helm-mini
-  "bk" 'kill-buffer
-  "bs" 'save-buffer
-  )
-
-;; Evil-surround
-
-;;     This awesome Vim plugin will let you surround text objects with various
-;;     items. Luckily, there's an Emacs port.
-
-(global-evil-surround-mode 1)
-
-;; Evil Functions
-
-(defun aw/open-line-above ()
-  (interactive)
-  (save-excursion
-    (previous-line)
-    (end-of-line)
-    (open-line 1)))
-
-(defun aw/open-line-below ()
-  (interactive)
-  (save-excursion
-    (end-of-line)
-    (open-line 1)))
-
-;; Initialization
-
-;;    Once everything is set up, we can start evil-mode.
-
-(evil-mode 1)
-
-(define-key evil-normal-state-map "H" 'windmove-left)
-(define-key evil-normal-state-map "J" 'windmove-down)
-(define-key evil-normal-state-map "K" 'windmove-up)
-(define-key evil-normal-state-map "L" 'windmove-right)
-
-(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
-(key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
-
-;; I was really starting to miss some of these bindings from TPope's vim-unimpaired.
-
-(key-chord-define evil-normal-state-map "[e" 'move-text-up)
-(key-chord-define evil-normal-state-map "]e" 'move-text-down)
-(key-chord-define evil-normal-state-map "[ " 'aw/open-line-above)
-(key-chord-define evil-normal-state-map "] " 'aw/open-line-below)
-(key-chord-define evil-normal-state-map "[b" 'previous-buffer)
-(key-chord-define evil-normal-state-map "]b" 'next-buffer)
-
-;; Snippets
-
-;;    Start yasnippet
-
-(require 'yasnippet)
-(yas-global-mode 1)
+;; (diminish 'company-mode)
+ (setq company-idle-delay 0)
 
 ;; Helm
 
@@ -429,6 +370,8 @@ PACKAGE is installed and the current version is deleted."
      (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
 
      (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)))
+
+;;(diminish 'helm-mode)
 
 (require 'helm-config)
 
@@ -479,22 +422,49 @@ PACKAGE is installed and the current version is deleted."
 (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
 (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
 
-;; Projectile
+;; Key-chord-mode
 
-;;    Projectile makes it easy to navigate files in a single project. A project
-;;    is defined as any directory containing a .git/ or other VCS
-;;    repository. We can manually define a project by adding an empty
-;;    =.projectile= file to our directory.
+;;    =key-chord-mode= allows me to use sequences of key presses to do things. It
+;;    will come in handy when setting up =evil-mode=
 
-(projectile-global-mode) ; Load Projectile everywhere
-(setq projectile-completion-system 'helm)
-(setq projectile-enable-caching t)
-(helm-projectile-on)
+(setq key-chord-two-keys-delay 2)
+(key-chord-mode 1)
 
-;; Interactive functions
+;; Evil-leader
    
-;;    I want to be able to quickly jump back to certain files or buffers in just a few key
-;;    presses. I'll call these interactive functions with =evil=leader= later on.
+;;    We can bring back the leader key with the =evil-leader= package. I've always
+;;    been a fan of , for my leader.
+
+(global-evil-leader-mode)
+(evil-leader/set-leader ",")
+(evil-leader/set-key
+  "0" 'delete-window
+  "1" 'delete-other-windows
+  "2" 'split-window-below
+  "3" 'split-window-right
+  "f" 'helm-find-files
+  "m" 'compile
+  "p" 'projectile-find-file
+  "t" 'multi-term-dedicated-toggle
+  "ei" 'my-edit-init-org
+  "es" 'my-switch-to-scratch
+  "x" 'helm-M-x)
+
+;; Buffer Stuff
+(evil-leader/set-key
+  "bb" 'helm-mini
+  "bk" 'kill-buffer
+  "bs" 'save-buffer
+  )
+
+;; Evil-surround
+
+;;     This awesome Vim plugin will let you surround text objects with various
+;;     items. Luckily, there's an Emacs port.
+
+(global-evil-surround-mode 1)
+
+;; Evil Functions
 
 (defun my-edit-init-org ()
   (interactive)
@@ -504,38 +474,52 @@ PACKAGE is installed and the current version is deleted."
   (interactive)
   (switch-to-buffer "*scratch*"))
 
-;; Advice
+(defun aw/open-line-above ()
+  (interactive)
+  (save-excursion
+    (previous-line)
+    (end-of-line)
+    (open-line 1)))
 
-;;    An advice can be given to a function to make it behave differently. This
-;;    advice makes =eval-last-sexp= (bound to =C-x C-e=) replace the sexp with
-;;    the value.
+(defun aw/open-line-below ()
+  (interactive)
+  (save-excursion
+    (end-of-line)
+    (open-line 1)))
 
-(defadvice eval-last-sexp (around replace-sexp (arg) activate)
-  "Replace sexp when called with a prefix argument."
-  (if arg
-      (let ((pos (point)))
-        ad-do-it
-        (goto-char pos)
-        (backward-kill-sexp)
-        (forward-sexp))
-    ad-do-it))
+;; Initialization
 
-;; When interactively changing the theme (using =M-x load-theme=), the
-;;    current custom theme is not disabled. This often gives weird-looking
-;;    results; we can advice =load-theme= to always disable themes currently
-;;    enabled themes.
+;;    Once everything is set up, we can start evil-mode.
 
-(defadvice load-theme
-  (before disable-before-load (theme &optional no-confirm no-enable) activate)
-  (mapc 'disable-theme custom-enabled-themes))
+(evil-mode 1)
 
-;; Key-chord-mode
+(define-key evil-normal-state-map "H" 'windmove-left)
+(define-key evil-normal-state-map "J" 'windmove-down)
+(define-key evil-normal-state-map "K" 'windmove-up)
+(define-key evil-normal-state-map "L" 'windmove-right)
 
-;;    =key-chord-mode= allows me to use sequences of key presses to do things. It
-;;    will come in handy when setting up =evil-mode=
+(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+(key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
 
-(setq key-chord-two-keys-delay 2)
-(key-chord-mode 1)
+;; I was really starting to miss some of these bindings from TPope's vim-unimpaired.
+
+(key-chord-define evil-normal-state-map "[e" 'move-text-up)
+(key-chord-define evil-normal-state-map "]e" 'move-text-down)
+(key-chord-define evil-normal-state-map "[ " 'aw/open-line-above)
+(key-chord-define evil-normal-state-map "] " 'aw/open-line-below)
+(key-chord-define evil-normal-state-map "[b" 'previous-buffer)
+(key-chord-define evil-normal-state-map "]b" 'next-buffer)
+
+;; Snippets
+
+;;    Start yasnippet
+
+(require 'yasnippet)
+(yas-global-mode 1)
+
+;; Programming
+
+(add-hook 'prog-mode-hook 'which-function-mode)
 
 ;; Semantic
 
@@ -546,6 +530,19 @@ PACKAGE is installed and the current version is deleted."
 (global-semantic-idle-scheduler-mode 1)
 
 (semantic-mode 1)
+
+;; Projectile
+
+;;    Projectile makes it easy to navigate files in a single project. A project
+;;    is defined as any directory containing a .git/ or other VCS
+;;    repository. We can manually define a project by adding an empty
+;;    =.projectile= file to our directory.
+
+(projectile-global-mode) ; Load Projectile everywhere
+(setq projectile-completion-system 'helm)
+(setq projectile-enable-caching t)
+;;(diminish 'projectile-mode " P" )
+(helm-projectile-on)
 
 ;; Java and C
 
@@ -651,6 +648,21 @@ PACKAGE is installed and the current version is deleted."
 (autoload 'octave-mode "octave-mod" nil t)
 (setq auto-mode-alist
       (cons '("\\.m$" . octave-mode) auto-mode-alist))
+
+;; Lisps
+
+;;      This advice makes =eval-last-sexp= (bound to =C-x C-e=) replace the sexp with
+;;      the value.
+
+(defadvice eval-last-sexp (around replace-sexp (arg) activate)
+  "Replace sexp when called with a prefix argument."
+  (if arg
+      (let ((pos (point)))
+        ad-do-it
+        (goto-char pos)
+        (backward-kill-sexp)
+        (forward-sexp))
+    ad-do-it))
 
 ;; Emacs Lisp
 
@@ -848,13 +860,13 @@ PACKAGE is installed and the current version is deleted."
 
 ;; Bindings for [[https://github.com/magnars/expand-region.el][expand-region]].
 
-(define-key custom-bindings-map (kbd "C-'")  'er/expand-region)
-(define-key custom-bindings-map (kbd "C-;")  'er/contract-region)
+(define-key custom-bindings-map (kbd "C-'") 'er/expand-region)
+(define-key custom-bindings-map (kbd "C-;") 'er/contract-region)
 
 ;; Bindings for multi-term
 
-(define-key custom-bindings-map (kbd "C-c t")  'multi-term-dedicated-toggle)
-(define-key custom-bindings-map (kbd "C-c T")  'get-term)
+(define-key custom-bindings-map (kbd "C-c t") 'multi-term-dedicated-toggle)
+(define-key custom-bindings-map (kbd "C-c T") 'get-term)
 
 ;; Bindings for [[http://magit.github.io][Magit]].
 
@@ -866,10 +878,10 @@ PACKAGE is installed and the current version is deleted."
 
 ;; Bind some native Emacs functions.
 
-(define-key custom-bindings-map (kbd "C-x p")    'proced)
-(define-key custom-bindings-map (kbd "C-c r")    'rename-buffer)
-(define-key custom-bindings-map (kbd "C-c s")    'ispell-word)
-(define-key custom-bindings-map (kbd "C-c a")    'org-agenda-list)
+(define-key custom-bindings-map (kbd "C-x p") 'proced)
+(define-key custom-bindings-map (kbd "C-c r") 'rename-buffer)
+(define-key custom-bindings-map (kbd "C-c s") 'ispell-word)
+(define-key custom-bindings-map (kbd "C-c a") 'org-agenda-list)
 
 ;; Lastly we need to activate the map by creating and activating the
 ;;   =minor-mode=.
