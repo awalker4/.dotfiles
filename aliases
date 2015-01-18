@@ -9,6 +9,8 @@ alias grep='grep --color'
 alias du='du -h'
 alias userctl='systemctl --user'
 alias psg='ps -aux | grep'
+alias off='sudo shutdown 0'
+alias reboot='sudo reboot'
 
 # Files and directories
 alias cp='cp -iv'
@@ -38,14 +40,16 @@ alias grm="git status | grep deleted | awk '{print \$3}' | xargs git rm"
 
 
 # Package management
-if [[ -x /usr/bin/pacman ]]; then
+if [[ -x /usr/bin/yaourt ]]; then
+    alias pacs='yaourt -S'
+    alias pacu='yaourt -U'
+    alias pacr='yaourt -R'
+    alias pacq='yaourt -Q | grep'
+elif [[ -x /usr/bin/pacman ]]; then
     alias pacs='sudo pacman -S'
     alias pacu='sudo pacman -U'
     alias pacr='sudo pacman -R'
     alias pacq='pacman -Q | grep'
-
-    alias off='sudo shutdown 0'
-    alias reboot='sudo reboot'
 elif [[ -x /bin/rpm ]]; then
     alias rpmq='rpm -qa | grep'
 fi
