@@ -61,8 +61,13 @@ elif [[ -x /usr/bin/thunar ]]; then
     alias thu='thunar "$(pwd)"' # Open thunar
 fi
 
+if [[ -x /usr/bin/vendor_perl/mimeopen ]]; then
+    alias open='mimeopen'
+else
+    alias open='xdg-open'
+fi
+
 # Various programs
-alias open='xdg-open'
 alias ff='firefox 2>/dev/null &'
 # Redshift will toggle on the USR1 signal
 alias redkill='pkill -USR1 redshift'
