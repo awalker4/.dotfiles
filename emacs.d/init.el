@@ -57,42 +57,42 @@
 ;; Keep a list of packages we want to have installed.
 
 (defvar required-packages
-       '(ac-octave           ; Auto-completion for octave
-         auto-compile        ; Automatically compile Emacs Lisp libraries
-         cider               ; Clojure repl
-         clojure-mode        ; Mode for .clj files
-         csharp-mode         ; Mode for C# files
-         company             ; Auto-completion engine
-         diminish            ; Clean up the status line a but
-         evil                ; Vi and Emacs, in harmony
-         evil-leader         ; Bring back the leader key
-         evil-nerd-commenter ; Quickly comment out lines
-         evil-surround       ; Tim Pope's vim plugin to surround objects
-         expand-region       ; Increase selected region by semantic units
-         flx-ido             ; flx integration for ido
-         flycheck            ; On-the-fly syntax checking
-         helm                ; Super powerful completion tool
-         helm-gtags          ; Use gtags for semantic completion
-         helm-projectile     ; Projectile as a helm completion source
-         idle-require        ; load elisp libraries while Emacs is idle
-         ido-vertical-mode   ; Makes ido-mode display vertically.
-         jedi                ; Python auto-completion for Emacs
-         key-chord           ; Run commands with multiple key strokes (Helpful for Evil)
-         magit               ; Git integration for Emacs
-         markdown-mode       ; Emacs Major mode for Markdown-formatted files.
-         move-text           ; Move current line or region with M-up or M-down
-         multi-term          ; Better terminals
-         multiple-cursors    ; Multiple cursors for Emacs.
+       '(ac-octave             ; Auto-completion for octave
+         auto-compile          ; Automatically compile Emacs Lisp libraries
+         cider                 ; Clojure repl
+         clojure-mode          ; Mode for .clj files
+         csharp-mode           ; Mode for C# files
+         company               ; Auto-completion engine
+         diminish              ; Clean up the status line a but
+         evil                  ; Vi and Emacs, in harmony
+         evil-leader           ; Bring back the leader key
+         evil-nerd-commenter   ; Quickly comment out lines
+         evil-surround         ; Tim Pope's vim plugin to surround objects
+         expand-region         ; Increase selected region by semantic units
+         flx-ido               ; flx integration for ido
+         flycheck              ; On-the-fly syntax checking
+         helm                  ; Super powerful completion tool
+         helm-gtags            ; Use gtags for semantic completion
+         helm-projectile       ; Projectile as a helm completion source
+         idle-require          ; load elisp libraries while Emacs is idle
+         ido-vertical-mode     ; Makes ido-mode display vertically.
+         jedi                  ; Python auto-completion for Emacs
+         key-chord             ; Run commands with multiple key strokes (Helpful for Evil)
+         magit                 ; Git integration for Emacs
+         markdown-mode         ; Emacs Major mode for Markdown-formatted files.
+         move-text             ; Move current line or region with M-up or M-down
+         multi-term            ; Better terminals
+         multiple-cursors      ; Multiple cursors for Emacs.
          org-trello
-         paredit             ; minor mode for editing parentheses
-         powerline           ; Rewrite of Powerline
-         projectile          ; Easy navigation for files in a project
-         slime               ; Superior Lisp Interaction Mode for Emacs
-         solarized-theme     ; Great color theme
-         smex                ; M-x interface with Ido-style fuzzy matching.
-         undo-tree           ; Treat undo history as a tree
-         yasnippet           ; Snippet engine
-         zenburn-theme       ; Nice looking low-contrast theme
+         paredit               ; minor mode for editing parentheses
+         powerline             ; Rewrite of Powerline
+         projectile            ; Easy navigation for files in a project
+         slime                 ; Superior Lisp Interaction Mode for Emacs
+         solarized-theme       ; Great color theme
+         smex                  ; M-x interface with Ido-style fuzzy matching.
+         undo-tree             ; Treat undo history as a tree
+         yasnippet             ; Snippet engine
+         zenburn-theme         ; Nice looking low-contrast theme
          )
       "Packages which should be installed upon launch")
 
@@ -244,7 +244,8 @@ PACKAGE is installed and the current version is deleted."
 
 ;; The scratch buffer is a useful place to test out bits of elisp or store some
 ;;    text temporarily. It would be nice if it was persistent, though. The
-;;    following code will save the buffer every 5 minutes, and reload it on startup.
+;;    following code will save the buffer every 5 minutes, and reload it on
+;;    startup. ([[http://dorophone.blogspot.com/2011/11/how-to-make-emacs-scratch-buffer.html][Source]])
 
 (defun save-persistent-scratch ()
   "Save the contents of *scratch*"
@@ -297,7 +298,8 @@ PACKAGE is installed and the current version is deleted."
 ;; Use the [[http://www.levien.com/type/myfonts/inconsolata.html][Inconsolata]] font if it's installed on the system.
 
 (when (member "Inconsolata" (font-family-list))
-  (set-face-attribute 'default nil :font "Inconsolata-12"))
+  (add-to-list 'default-frame-alist
+               '(font . "Inconsolata-12")))
 
 ;; When interactively changing the theme (using =M-x load-theme=), the
 ;;    current custom theme is not disabled. This often gives weird-looking
@@ -396,6 +398,19 @@ PACKAGE is installed and the current version is deleted."
 
 (helm-mode 1)
 
+;; When you press backspace in a helm buffer and there's nothing left to delete,
+;;    helm will complain by saying ~Text is read only~. A much better default is to just
+;;    close the buffer. ([[http://oremacs.com/2014/12/21/helm-backspace/][Source]])
+
+(defun helm-backspace ()
+  (interactive)
+  (condition-case nil
+      (backward-delete-char 1)
+    (error
+     (helm-keyboard-quit))))
+
+(define-key helm-map (kbd "DEL") 'helm-backspace)
+
 ;; Helm-gtags
 
 (setq
@@ -424,16 +439,16 @@ PACKAGE is installed and the current version is deleted."
 
 ;; Key-chord-mode
 
-;;    =key-chord-mode= allows me to use sequences of key presses to do things. It
-;;    will come in handy when setting up =evil-mode=
+;;     =key-chord-mode= allows me to use sequences of key presses to do things. It
+;;     will come in handy when setting up =evil-mode=
 
 (setq key-chord-two-keys-delay 2)
 (key-chord-mode 1)
 
 ;; Evil-leader
    
-;;    We can bring back the leader key with the =evil-leader= package. I've always
-;;    been a fan of , for my leader.
+;;     We can bring back the leader key with the =evil-leader= package. I've always
+;;     been a fan of , for my leader.
 
 (global-evil-leader-mode)
 (evil-leader/set-leader ",")
@@ -517,9 +532,30 @@ PACKAGE is installed and the current version is deleted."
 (require 'yasnippet)
 (yas-global-mode 1)
 
-;; Programming
+;; Environment
 
-(add-hook 'prog-mode-hook 'which-function-mode)
+;;     White space stuff ([[http://www.reddit.com/r/emacs/comments/2keh6u/show_tabs_and_trailing_whitespaces_only/][Source]])
+
+(require 'whitespace)
+(setq whitespace-display-mappings
+   ;; all numbers are Unicode codepoint in decimal. try (insert-char 182 ) to see it
+  '(
+    (space-mark 32 [183] [46]) ; 32 SPACE, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
+    (newline-mark 10 [182 10]) ; 10 LINE FEED
+    (tab-mark 9 [187 9] [9655 9] [92 9]) ; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
+    ))
+(setq whitespace-style '(face tabs trailing tab-mark))
+(set-face-attribute 'whitespace-tab nil
+                    :background "#f0f0f0"
+                    :foreground "#00a8a8"
+                    :weight 'bold)
+(set-face-attribute 'whitespace-trailing nil
+                    :background "#e4eeff"
+                    :foreground "#183bc8"
+                    :weight 'normal)
+(add-hook 'prog-mode-hook 'whitespace-mode)
+
+(add-hook 'prog-mode-hook 'whitespace-mode)
 
 ;; Semantic
 
@@ -543,6 +579,19 @@ PACKAGE is installed and the current version is deleted."
 (setq projectile-enable-caching t)
 ;;(diminish 'projectile-mode " P" )
 (helm-projectile-on)
+
+;; C code
+
+(add-to-list 'org-babel-load-languages
+             '(C . t))
+
+(advice-add 'org-babel-C-ensure-main-wrap :override #'my-org-test)
+
+(defun my-org-test (body)
+  "Wrap BODY in a \"main\" function call if none exists."
+  (if (string-match "^[ \t]*[intvod]+[ \t\n\r]*main[ \t]*(.*)" body)
+      body
+    (format "int main(int argc, char* argv[]) {\n%s\nreturn 0;\n}\n" body)))
 
 ;; Java and C
 
@@ -585,8 +634,8 @@ PACKAGE is installed and the current version is deleted."
 
 ;; Allow company to use OmniSharp for autocompletion.
 
-(eval-after-load 'company
-  '(add-to-list 'company-backends 'company-omnisharp))
+;;(eval-after-load 'company
+  ;;'(add-to-list 'company-backends 'company-omnisharp))
 
 ;; LaTeX
 
