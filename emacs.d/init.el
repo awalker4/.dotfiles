@@ -679,7 +679,7 @@ PACKAGE is installed and the current version is deleted."
 
 ;; Base Environment
 
-;;          Only use line numbering when programming. For opening large files, this may add some
+;;    Only use line numbering when programming. For opening large files, this may add some
 ;;    overhead, so we can delay rendering a bit.
 
 (setq linum-delay t linum-eager nil)
@@ -869,18 +869,17 @@ PACKAGE is installed and the current version is deleted."
 ;;    Magit is awesome. Open it up with the entire frame.
 
 (require 'fullframe)
-(fullframe magit-status magit-mode-quit-window)         
-
+(fullframe magit-status magit-mode-quit-window)
 (define-key custom-bindings-map (kbd "C-c m") 'magit-status)
 
 ;; Diffs
 
 ;;     =ediff= is a powerful tool for dealing with changes to a file. You can diff
-;;     two                 files or diff the current buffer against the version that's on disk. I
+;;     two files or diff the current buffer against the version that's on disk. I
 ;;     haven't had to use it too much yet, but here are some tweaks that I've
 ;;     picked up.
 
-;;             By default, ediff compares two buffers in a horizontal split. Vertical would
+;;     By default, ediff compares two buffers in a horizontal split. Vertical would
 ;;     make it a lot easier to compare things.
 
 (custom-set-variables
@@ -892,9 +891,30 @@ PACKAGE is installed and the current version is deleted."
 
 (add-hook 'ediff-after-quit-hook-internal 'winner-undo)
 
-;; When diffing org files, expand everything.
+;; It's hard to diff org files when everything is collapsed. These functions
+;;     will expand each hunk as I jump to it, and collapse the rest. ([[http://permalink.gmane.org/gmane.emacs.orgmode/75211][Source]])
 
-;; (add-hook 'ediff-hook 'show-all)
+;; Check for org mode and existence of buffer
+(defun aw/ediff-org-showhide(buf command &rest cmdargs)
+  "If buffer exists and is orgmode then execute command"
+  (if buf
+      (if (eq (buffer-local-value 'major-mode (get-buffer buf)) 'org-mode)
+          (save-excursion (set-buffer buf) (apply command cmdargs)))))
+
+(defun aw/ediff-org-unfold-tree-element ()
+  "Unfold tree at diff location"
+  (f-ediff-org-showhide ediff-buffer-A 'org-reveal)
+  (f-ediff-org-showhide ediff-buffer-B 'org-reveal)
+  (f-ediff-org-showhide ediff-buffer-C 'org-reveal))
+;;
+(defun aw/ediff-org-fold-tree ()
+  "Fold tree back to top level"
+  (f-ediff-org-showhide ediff-buffer-A 'hide-sublevels 1)
+  (f-ediff-org-showhide ediff-buffer-B 'hide-sublevels 1)
+  (f-ediff-org-showhide ediff-buffer-C 'hide-sublevels 1))
+
+(add-hook 'ediff-select-hook 'aw/ediff-org-unfold-tree-element)
+(add-hook 'ediff-unselect-hook 'aw/ediff-org-fold-tree)
 
 ;; We can use a function to toggle how whitespace is treated in the
 ;;     diff. ([[http://www.reddit.com/r/emacs/comments/2513zo/ediff_tip_make_vertical_split_the_default/][Source]])
