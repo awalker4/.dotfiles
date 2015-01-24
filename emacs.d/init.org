@@ -231,6 +231,13 @@
          (when (not (package-installed-p p))
            (package-install p))))
    #+END_SRC
+   
+   Force =list-packages= to use the whole frame.
+
+   #+BEGIN_SRC emacs-lisp
+     (fullframe list-packages quit-window)
+   #+END_SRC
+
 ** Sane defaults
 
    These are what /I/ consider to be saner defaults.
@@ -654,6 +661,7 @@
    #+END_SRC
 
    #+BEGIN_SRC emacs-lisp
+     (fullframe ibuffer ibuffer-quit)
      (define-key custom-bindings-map (kbd "C-x C-b")  'ibuffer)
      (define-key custom-bindings-map (kbd "C-c r") 'rename-buffer)
    #+END_SRC
@@ -804,7 +812,7 @@
 
     #+BEGIN_SRC emacs-lisp
       (setq linum-delay t linum-eager nil)
-      (add-hook prog-mode-hook 'linum-mode)
+      (add-hook 'prog-mode-hook 'linum-mode)
     #+END_SRC
 
     White space stuff ([[http://www.reddit.com/r/emacs/comments/2keh6u/show_tabs_and_trailing_whitespaces_only/][Source]])
@@ -1024,7 +1032,6 @@
    Magit is awesome. Open it up with the entire frame.
 
    #+BEGIN_SRC emacs-lisp
-     (require 'fullframe)
      (fullframe magit-status magit-mode-quit-window)
      (define-key custom-bindings-map (kbd "C-c m") 'magit-status)
    #+END_SRC
@@ -1036,7 +1043,7 @@
     haven't had to use it too much yet, but here are some tweaks that I've
     picked up.
 
-    By default, ediff compares two buffers in a horizontal split. Vertical would
+    By default, ediff compares two buffers in a vertical split. Horizontal would
     make it a lot easier to compare things.
 
     #+BEGIN_SRC emacs-lisp
@@ -1065,15 +1072,15 @@
 
       (defun aw/ediff-org-unfold-tree-element ()
         "Unfold tree at diff location"
-        (f-ediff-org-showhide ediff-buffer-A 'org-reveal)
-        (f-ediff-org-showhide ediff-buffer-B 'org-reveal)
-        (f-ediff-org-showhide ediff-buffer-C 'org-reveal))
+        (aw/ediff-org-showhide ediff-buffer-A 'org-reveal)
+        (aw/ediff-org-showhide ediff-buffer-B 'org-reveal)
+        (aw/ediff-org-showhide ediff-buffer-C 'org-reveal))
       ;;
       (defun aw/ediff-org-fold-tree ()
         "Fold tree back to top level"
-        (f-ediff-org-showhide ediff-buffer-A 'hide-sublevels 1)
-        (f-ediff-org-showhide ediff-buffer-B 'hide-sublevels 1)
-        (f-ediff-org-showhide ediff-buffer-C 'hide-sublevels 1))
+        (aw/ediff-org-showhide ediff-buffer-A 'hide-sublevels 1)
+        (aw/ediff-org-showhide ediff-buffer-B 'hide-sublevels 1)
+        (aw/ediff-org-showhide ediff-buffer-C 'hide-sublevels 1))
 
       (add-hook 'ediff-select-hook 'aw/ediff-org-unfold-tree-element)
       (add-hook 'ediff-unselect-hook 'aw/ediff-org-fold-tree)
@@ -1109,7 +1116,7 @@
                 #'(lambda () (define-key ediff-mode-map [?W] 'ediff-toggle-whitespace-sensitivity)))
 
     #+END_SRC
-
+    
 ** Projectile
 
    Projectile makes it easy to navigate files in a single project. A project

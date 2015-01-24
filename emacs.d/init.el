@@ -192,6 +192,10 @@ PACKAGE is installed and the current version is deleted."
     (when (not (package-installed-p p))
       (package-install p))))
 
+;; Force =list-packages= to use the whole frame.
+
+(fullframe list-packages quit-window)
+
 ;; Sane defaults
 
 ;;    These are what /I/ consider to be saner defaults.
@@ -555,6 +559,7 @@ PACKAGE is installed and the current version is deleted."
 
 (add-hook 'ibuffer-hook 'ibuffer-tramp-set-filter-groups-by-tramp-connection)
 
+(fullframe ibuffer ibuffer-quit)
 (define-key custom-bindings-map (kbd "C-x C-b")  'ibuffer)
 (define-key custom-bindings-map (kbd "C-c r") 'rename-buffer)
 
@@ -683,7 +688,7 @@ PACKAGE is installed and the current version is deleted."
 ;;    overhead, so we can delay rendering a bit.
 
 (setq linum-delay t linum-eager nil)
-(add-hook prog-mode-hook 'linum-mode)
+(add-hook 'prog-mode-hook 'linum-mode)
 
 ;; White space stuff ([[http://www.reddit.com/r/emacs/comments/2keh6u/show_tabs_and_trailing_whitespaces_only/][Source]])
 
@@ -868,7 +873,6 @@ PACKAGE is installed and the current version is deleted."
 
 ;;    Magit is awesome. Open it up with the entire frame.
 
-(require 'fullframe)
 (fullframe magit-status magit-mode-quit-window)
 (define-key custom-bindings-map (kbd "C-c m") 'magit-status)
 
@@ -879,7 +883,7 @@ PACKAGE is installed and the current version is deleted."
 ;;     haven't had to use it too much yet, but here are some tweaks that I've
 ;;     picked up.
 
-;;     By default, ediff compares two buffers in a horizontal split. Vertical would
+;;     By default, ediff compares two buffers in a vertical split. Horizontal would
 ;;     make it a lot easier to compare things.
 
 (custom-set-variables
@@ -903,15 +907,15 @@ PACKAGE is installed and the current version is deleted."
 
 (defun aw/ediff-org-unfold-tree-element ()
   "Unfold tree at diff location"
-  (f-ediff-org-showhide ediff-buffer-A 'org-reveal)
-  (f-ediff-org-showhide ediff-buffer-B 'org-reveal)
-  (f-ediff-org-showhide ediff-buffer-C 'org-reveal))
+  (aw/ediff-org-showhide ediff-buffer-A 'org-reveal)
+  (aw/ediff-org-showhide ediff-buffer-B 'org-reveal)
+  (aw/ediff-org-showhide ediff-buffer-C 'org-reveal))
 ;;
 (defun aw/ediff-org-fold-tree ()
   "Fold tree back to top level"
-  (f-ediff-org-showhide ediff-buffer-A 'hide-sublevels 1)
-  (f-ediff-org-showhide ediff-buffer-B 'hide-sublevels 1)
-  (f-ediff-org-showhide ediff-buffer-C 'hide-sublevels 1))
+  (aw/ediff-org-showhide ediff-buffer-A 'hide-sublevels 1)
+  (aw/ediff-org-showhide ediff-buffer-B 'hide-sublevels 1)
+  (aw/ediff-org-showhide ediff-buffer-C 'hide-sublevels 1))
 
 (add-hook 'ediff-select-hook 'aw/ediff-org-unfold-tree-element)
 (add-hook 'ediff-unselect-hook 'aw/ediff-org-fold-tree)
