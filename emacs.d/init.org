@@ -238,6 +238,11 @@
      (fullframe list-packages quit-window)
    #+END_SRC
 
+*** Requires
+
+    #+BEGIN_SRC emacs-lisp
+      (require 'fullframe)
+    #+END_SRC
 ** Sane defaults
 
    These are what /I/ consider to be saner defaults.
@@ -684,7 +689,7 @@
 *** Evil-leader
    
     We can bring back the leader key with the =evil-leader= package. I've always
-    been a fan of , for my leader.
+    been a fan of , for my eader.
 
     #+BEGIN_SRC emacs-lisp
       (global-evil-leader-mode)
@@ -693,9 +698,9 @@
         "f" 'helm-find-files
         "m" 'compile
         "t" 'multi-term-dedicated-toggle
-        "ei" 'my-edit-init-org
-        "eI" 'my-edit-init-el
-        "es" 'my-switch-to-scratch
+        "ei" 'aw/edit-init-org
+        "eI" 'aw/edit-init-el
+        "es" 'aw/switch-to-scratch
         "x" 'helm-M-x)
 
       ;; Window stuff
@@ -703,7 +708,9 @@
         "0" 'delete-window
         "1" 'delete-other-windows
         "2" 'split-window-below
+        "@" 'aw/split-window-below-and-switch
         "3" 'split-window-right
+        "#" 'aw/split-window-right-and-switch
         "=" 'balance-windows)
 
       ;; Buffer Stuff
@@ -726,6 +733,10 @@
         "pg" 'helm-projectile-grep-or-ack
         "po" 'helm-occur
         "pp" 'projectile-switch-project)
+
+      ;; Org stuff
+      (evil-leader/set-key
+        "oa" 'org-agenda-list)
     #+END_SRC
 
 *** Evil-surround
@@ -740,17 +751,27 @@
 *** Evil Functions
 
     #+BEGIN_SRC emacs-lisp
-      (defun my-edit-init-org ()
+      (defun aw/edit-init-org ()
         (interactive)
         (find-file (concat user-emacs-directory "init.org")))
 
-      (defun my-edit-init-el ()
+      (defun aw/edit-init-el ()
         (interactive)
         (find-file (concat user-emacs-directory "init.el")))
 
-      (defun my-switch-to-scratch ()
+      (defun aw/switch-to-scratch ()
         (interactive)
         (switch-to-buffer "*scratch*"))
+
+      (defun aw/split-window-right-and-switch ()
+        (interactive)
+        (split-window-right)
+        (other-window 1))
+
+      (defun aw/split-window-below-and-switch ()
+        (interactive)
+        (split-window-below)
+        (other-window 1))
 
       (defun aw/open-line-above ()
         (interactive)
@@ -782,6 +803,9 @@
 
      (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
      (key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
+
+     ;; Make tab work in terminal emacs
+     (setq evil-want-C-i-jump nil)
    #+END_SRC
    
    I was really starting to miss some of these bindings from TPope's vim-unimpaired.
@@ -1207,7 +1231,6 @@
 
      (add-hook 'shell-mode-hook (lambda () (local-set-key (kbd "C-l") 'clear-shell)))
    #+END_SRC
-
 ** Config files
    
    Let's add some color to these files.
@@ -1259,6 +1282,11 @@
    #+BEGIN_SRC emacs-lisp
      (setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
      (custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))
+   #+END_SRC
+   
+   Make =o= start a new header.
+
+   #+BEGIN_SRC emacs-lisp
    #+END_SRC
 
 ** MobileOrg

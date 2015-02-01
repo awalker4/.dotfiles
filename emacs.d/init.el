@@ -196,6 +196,10 @@ PACKAGE is installed and the current version is deleted."
 
 (fullframe list-packages quit-window)
 
+;; Requires
+
+(require 'fullframe)
+
 ;; Sane defaults
 
 ;;    These are what /I/ consider to be saner defaults.
@@ -574,7 +578,7 @@ PACKAGE is installed and the current version is deleted."
 ;; Evil-leader
    
 ;;     We can bring back the leader key with the =evil-leader= package. I've always
-;;     been a fan of , for my leader.
+;;     been a fan of , for my eader.
 
 (global-evil-leader-mode)
 (evil-leader/set-leader ",")
@@ -582,9 +586,9 @@ PACKAGE is installed and the current version is deleted."
   "f" 'helm-find-files
   "m" 'compile
   "t" 'multi-term-dedicated-toggle
-  "ei" 'my-edit-init-org
-  "eI" 'my-edit-init-el
-  "es" 'my-switch-to-scratch
+  "ei" 'aw/edit-init-org
+  "eI" 'aw/edit-init-el
+  "es" 'aw/switch-to-scratch
   "x" 'helm-M-x)
 
 ;; Window stuff
@@ -592,7 +596,9 @@ PACKAGE is installed and the current version is deleted."
   "0" 'delete-window
   "1" 'delete-other-windows
   "2" 'split-window-below
+  "@" 'aw/split-window-below-and-switch
   "3" 'split-window-right
+  "#" 'aw/split-window-right-and-switch
   "=" 'balance-windows)
 
 ;; Buffer Stuff
@@ -616,6 +622,10 @@ PACKAGE is installed and the current version is deleted."
   "po" 'helm-occur
   "pp" 'projectile-switch-project)
 
+;; Org stuff
+(evil-leader/set-key
+  "oa" 'org-agenda-list)
+
 ;; Evil-surround
 
 ;;     This awesome Vim plugin will let you surround text objects with various
@@ -625,17 +635,27 @@ PACKAGE is installed and the current version is deleted."
 
 ;; Evil Functions
 
-(defun my-edit-init-org ()
+(defun aw/edit-init-org ()
   (interactive)
   (find-file (concat user-emacs-directory "init.org")))
 
-(defun my-edit-init-el ()
+(defun aw/edit-init-el ()
   (interactive)
   (find-file (concat user-emacs-directory "init.el")))
 
-(defun my-switch-to-scratch ()
+(defun aw/switch-to-scratch ()
   (interactive)
   (switch-to-buffer "*scratch*"))
+
+(defun aw/split-window-right-and-switch ()
+  (interactive)
+  (split-window-right)
+  (other-window 1))
+
+(defun aw/split-window-below-and-switch ()
+  (interactive)
+  (split-window-below)
+  (other-window 1))
 
 (defun aw/open-line-above ()
   (interactive)
@@ -665,6 +685,9 @@ PACKAGE is installed and the current version is deleted."
 
 (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
 (key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
+
+;; Make tab work in terminal emacs
+(setq evil-want-C-i-jump nil)
 
 ;; I was really starting to miss some of these bindings from TPope's vim-unimpaired.
 
@@ -1066,6 +1089,10 @@ automatically updates the diff to reflect the change."
 
 (setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
 (custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))
+
+;; Make =o= start a new header.
+
+
 
 ;; MobileOrg
 ;;    MobileOrg will let me sync my agenda to my phone, which will then sync
