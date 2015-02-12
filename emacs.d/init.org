@@ -65,7 +65,7 @@
     This is a list of everything that should be installed using package.el.
 
    #+BEGIN_SRC emacs-lisp
-     (defvar required-packages
+          (defvar required-packages
             '(ac-octave             ; Auto-completion for octave
               auto-compile          ; Automatically compile Emacs Lisp libraries
               cider                 ; Clojure repl
@@ -84,8 +84,10 @@
               helm                  ; Super powerful completion tool
               helm-gtags            ; Use gtags for semantic completion
               helm-projectile       ; Projectile as a helm completion source
+              helm-spotify          ; Spotify's entire library at my fingertips
               idle-require          ; load elisp libraries while Emacs is idle
               ibuffer-tramp         ; sort ibuffer based on tramp connection
+              impatient-mode        ; Edit html in realtime
               jedi                  ; Python auto-completion for Emacs
               key-chord             ; Run commands with multiple key strokes (Helpful for Evil)
               magit                 ; Git integration for Emacs
@@ -103,7 +105,7 @@
               yasnippet             ; Snippet engine
               zenburn-theme         ; Nice looking low-contrast theme
               )
-           "Packages which should be installed upon launch")
+                "Packages which should be installed upon launch")
    #+END_SRC
 
 *** Package Setup
@@ -247,8 +249,6 @@
 
    These are what /I/ consider to be saner defaults.
 
-   We can set variables to whatever value we'd like using =setq=.
-
    #+BEGIN_SRC emacs-lisp
      (setq default-input-method "TeX"    ; Use TeX when toggling input method.
            doc-view-continuous t         ; At page edge goto next/previous.
@@ -269,11 +269,16 @@
              (and (file-exists-p undo-dir)
                   (list (cons "." undo-dir)))))
    #+END_SRC
-
+   
+   #+BEGIN_SRC emacs-lisp
+     (require 'undo-tree)
+     (diminish 'undo-tree-mode)
+   #+END_SRC
+   
    Some variables are buffer-local, so changing them using =setq= will only
    change them in a single buffer. Using =setq-default= we change the
    buffer-local variable's default value.
-
+   
    #+BEGIN_SRC emacs-lisp
      (setq-default fill-column 80                    ; Maximum line width.
                    indent-tabs-mode nil              ; Use spaces instead of tabs.
@@ -282,17 +287,17 @@
                    compilation-ask-about-save nil    ; Automatically save when compiling
                    auto-fill-function 'do-auto-fill) ; Auto-fill-mode everywhere.
    #+END_SRC
-
+   
    Answering /yes/ and /no/ to each question from Emacs can be tedious, a
    single /y/ or /n/ will suffice.
-
+   
    #+BEGIN_SRC emacs-lisp
    (fset 'yes-or-no-p 'y-or-n-p)
    #+END_SRC
-
+   
    To avoid file system clutter we put all auto saved files in a single
    directory.
-
+   
    #+BEGIN_SRC emacs-lisp
    (defvar emacs-autosave-directory
      (concat user-emacs-directory "autosaves/")
@@ -306,13 +311,13 @@
          auto-save-file-name-transforms
          `((".*" ,emacs-autosave-directory t)))
    #+END_SRC
-
+   
    The scratch buffer is a useful place to test out bits of elisp or store some
    text temporarily. It would be nice if it was persistent, though. The
    following code will save the buffer every 5 minutes, and reload it on
    startup. ([[http://dorophone.blogspot.com/2011/11/how-to-make-emacs-scratch-buffer.html][Source]])
-
-    #+BEGIN_SRC emacs-lisp
+   
+   #+BEGIN_SRC emacs-lisp
       (defun save-persistent-scratch ()
         "Save the contents of *scratch*"
              (with-current-buffer (get-buffer-create "*scratch*")
@@ -331,42 +336,42 @@
       (add-hook 'kill-emacs-hook 'save-persistent-scratch)
 
       (run-with-idle-timer 300 t 'save-persistent-scratch)
-    #+END_SRC
-
+   #+END_SRC
+   
    Set =utf-8= as preferred coding system.
-
+   
    #+BEGIN_SRC emacs-lisp
      (set-language-environment "UTF-8")
    #+END_SRC
-
+   
    By default the =narrow-to-region= command is disabled and issues a
    warning, because it might confuse new users. I find it useful sometimes,
    and don't want to be warned.
-
+   
    #+BEGIN_SRC emacs-lisp
    (put 'narrow-to-region 'disabled nil)
    #+END_SRC
-
+   
    Call =auto-complete= default configuration, which enables =auto-complete=
    globally.
-
+   
    #+BEGIN_SRC emacs-lisp
      (eval-after-load 'auto-complete-config `(ac-config-default))
    #+END_SRC
-
+   
    Automaticly revert =doc-view=-buffers when the file changes on disk.
-
+   
    #+BEGIN_SRC emacs-lisp
    (add-hook 'doc-view-mode-hook 'auto-revert-mode)
    #+END_SRC
    
    Use Shift+arrow keys to jump around windows.
-
+   
    #+BEGIN_SRC emacs-lisp
      (when (fboundp 'windmove-default-keybindings)
         (windmove-default-keybindings))
    #+END_SRC
-
+   
 ** Keybindings
    
    I keep my global key bindings in a custom keymap. By loading this map in its
@@ -400,11 +405,14 @@
        (funcall mode 0))
    #+END_SRC
 
-   Change the color-theme to =solarized=.
+   TODO: This doesn't work with emacsclient
+   Change the color-theme to =solarized=. Use =wombat= in the terminal, since
+   solarized doesn't play very nicely.
 
    #+BEGIN_SRC emacs-lisp
-     (setq solarized-scale-org-headlines nil)
      (load-theme 'solarized-dark t)
+
+     (setq solarized-scale-org-headlines nil)
    #+END_SRC
 
    Use the [[http://www.levien.com/type/myfonts/inconsolata.html][Inconsolata]] font if it's installed on the system.
@@ -666,7 +674,7 @@
    #+END_SRC
 
    #+BEGIN_SRC emacs-lisp
-     (fullframe ibuffer ibuffer-quit)
+     ;; (fullframe ibuffer ibuffer-quit)
      (define-key custom-bindings-map (kbd "C-x C-b")  'ibuffer)
      (define-key custom-bindings-map (kbd "C-c r") 'rename-buffer)
    #+END_SRC
@@ -689,7 +697,7 @@
 *** Evil-leader
    
     We can bring back the leader key with the =evil-leader= package. I've always
-    been a fan of , for my eader.
+    been a fan of , for my leader.
 
     #+BEGIN_SRC emacs-lisp
       (global-evil-leader-mode)
@@ -718,7 +726,8 @@
         "bb" 'helm-mini
         "bk" 'kill-buffer
         "bl" 'ibuffer
-        "bs" 'save-buffer)
+        "bs" 'save-buffer
+        "bw" 'write-file)
 
       ;; Help stuff
       (evil-leader/set-key
@@ -727,16 +736,27 @@
         "hv" 'describe-variable
         "hm" 'man)
 
+      ;; Git stuff
+      (evil-leader/set-key
+        "gb" 'magit-blame-mode
+        "gs" 'magit-status)
+
       ;; Projectile/Helm stuff
       (evil-leader/set-key
         "pf" 'helm-projectile-find-file
-        "pg" 'helm-projectile-grep-or-ack
+        "pg" 'helm-projectile-grep
         "po" 'helm-occur
-        "pp" 'projectile-switch-project)
+        "pp" 'projectile-switch-project
+        "ps" 'helm-spotify)
 
       ;; Org stuff
       (evil-leader/set-key
-        "oa" 'org-agenda-list)
+        "oa" 'org-agenda-list
+        "oc" 'org-capture)
+
+      ;; Misc
+      (evil-leader/set-key
+        "vv" 'eval-last-sexp)
     #+END_SRC
 
 *** Evil-surround
@@ -837,6 +857,7 @@
     #+BEGIN_SRC emacs-lisp
       (setq linum-delay t linum-eager nil)
       (add-hook 'prog-mode-hook 'linum-mode)
+      (add-hook 'prog-mode-hook 'flycheck-mode)
     #+END_SRC
 
     White space stuff ([[http://www.reddit.com/r/emacs/comments/2keh6u/show_tabs_and_trailing_whitespaces_only/][Source]])
@@ -867,6 +888,38 @@
       (add-hook 'prog-mode-hook 'whitespace-mode)
     #+END_SRC
 ** Language Settings
+*** C#
+
+    Omnisharp gives us IDE capabilities for C#. Let's enable it for
+    =csharp-mode=
+
+    #+BEGIN_SRC emacs-lisp
+      (add-hook 'csharp-mode-hook 'omnisharp-mode)
+
+      ;;(omnisharp-imenu-support t)
+    #+END_SRC
+
+    Allow company to use OmniSharp for autocompletion.
+
+    #+BEGIN_SRC emacs-lisp
+       ;;(eval-after-load 'company
+         ;;'(add-to-list 'company-backends 'company-omnisharp))
+    #+END_SRC
+*** FSP
+
+    FSP (Finite state processes) is a notation that formally describes concurrent
+    systems as described in the book Concurrency by Magee and Kramer. Someday
+    I want to make a fully featured mode for FSP. Someone by the name of
+    Esben Andreasen made a mode with basic syntax highlighting, so that will
+    have to do for now.
+
+    We'll add it manually until I have time to play around with it.
+
+    #+BEGIN_SRC emacs-lisp
+      ;; Load fsp-mode.el from its own directory
+      (add-to-list 'load-path "~/Dropbox/fsp-mode/")
+      (require 'fsp-mode)
+    #+END_SRC
 *** Java and C
 
     The =c-mode-common-hook= is a general hook that work on all C-like
@@ -901,23 +954,6 @@
       (setq-local compile-command (concat "javac " (buffer-name))))
 
     (add-hook 'java-mode-hook 'java-setup)
-    #+END_SRC
-*** C#
-
-    Omnisharp gives us IDE capabilities for C#. Let's enable it for
-    =csharp-mode=
-
-    #+BEGIN_SRC emacs-lisp
-      (add-hook 'csharp-mode-hook 'omnisharp-mode)
-
-      ;;(omnisharp-imenu-support t)
-    #+END_SRC
-
-    Allow company to use OmniSharp for autocompletion.
-
-    #+BEGIN_SRC emacs-lisp
-       ;;(eval-after-load 'company
-         ;;'(add-to-list 'company-backends 'company-omnisharp))
     #+END_SRC
 *** LaTeX
 
@@ -955,41 +991,12 @@
       (eval-after-load 'tex-mode
         '(setcar (cdr (cddaar tex-compile-commands)) " -shell-escape "))
     #+END_SRC
-
-*** Python
-
-     [[http://tkf.github.io/emacs-jedi/released/][Jedi]] offers very nice auto completion for =python-mode=. Mind that it is
-     dependent on some python programs as well, so make sure you follow the
-     instructions from the site.
-
-     #+BEGIN_SRC emacs-lisp
-     (require 'jedi)
-     (add-hook 'python-mode-hook 'jedi:setup)
-     (setq jedi:server-command
-          (cons "python3" (cdr jedi:server-command))
-          python-shell-interpreter "python3")
-     (setq jedi:complete-on-dot t)
-     ;;(add-hook 'python-mode-hook 'jedi:ac-setup)
-     #+END_SRC
-
-*** Matlab
-
-    =Matlab-mode= works pretty good out of the box, but we can do without the
-    splash screen.
-
+    
+    TODO flycheck
     #+BEGIN_SRC emacs-lisp
-      (eval-after-load 'matlab
-        '(add-to-list 'matlab-shell-command-switches "-nosplash"))
-    #+END_SRC
+      (evil-leader/set-key-for-mode 'latex-mode
+        "at" 'tex-compile)
 
-*** Octave
-
-    Make it so =.m= files are loaded in =octave-mode=.
-
-    #+BEGIN_SRC emacs-lisp
-      (autoload 'octave-mode "octave-mod" nil t)
-      (setq auto-mode-alist
-            (cons '("\\.m$" . octave-mode) auto-mode-alist))
     #+END_SRC
 
 *** Lisps
@@ -1020,25 +1027,78 @@
                      "\r" 'reindent-then-newline-and-indent)))
        (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
        (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
-       (add-hook 'emacs-lisp-mode-hook 'flyspell-prog-mode) ;; Requires Ispell  
+       (add-hook 'emacs-lisp-mode-hook 'flyspell-prog-mode) ;; Requires Ispell
      #+END_SRC
 
-*** FSP
+     Flycheck gets to be a bit much when warning about checkdoc issues, so we
+     should disable those.
 
-    FSP (Finite state processes) is a notation that formally describes concurrent
-    systems as described in the book Concurrency by Magee and Kramer. Someday
-    I want to make a fully featured mode for FSP. Someone by the name of
-    Esben Andreasen made a mode with basic syntax highlighting, so that will
-    have to do for now.
+     #+BEGIN_SRC emacs-lisp
+       (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
+     #+END_SRC
+*** Matlab
 
-    We'll add it manually until I have time to play around with it.
+    =Matlab-mode= works pretty good out of the box, but we can do without the
+    splash screen.
 
     #+BEGIN_SRC emacs-lisp
-      ;; Load fsp-mode.el from its own directory
-      (add-to-list 'load-path "~/Dropbox/fsp-mode/")
-      (require 'fsp-mode)
+      (eval-after-load 'matlab
+        '(add-to-list 'matlab-shell-command-switches "-nosplash"))
     #+END_SRC
 
+*** Octave
+
+    Make it so =.m= files are loaded in =octave-mode=.
+
+    #+BEGIN_SRC emacs-lisp
+      (autoload 'octave-mode "octave-mod" nil t)
+      (setq auto-mode-alist
+            (cons '("\\.m$" . octave-mode) auto-mode-alist))
+    #+END_SRC
+
+*** Python
+
+     [[http://tkf.github.io/emacs-jedi/released/][Jedi]] offers very nice auto completion for =python-mode=. Mind that it is
+     dependent on some python programs as well, so make sure you follow the
+     instructions from the site.
+
+     #+BEGIN_SRC emacs-lisp
+     (require 'jedi)
+     (add-hook 'python-mode-hook 'jedi:setup)
+     (setq jedi:server-command
+          (cons "python3" (cdr jedi:server-command))
+          python-shell-interpreter "python3")
+     (setq jedi:complete-on-dot t)
+     ;;(add-hook 'python-mode-hook 'jedi:ac-setup)
+     #+END_SRC
+
+*** Web Editing
+
+     TODO: start httpd in correct directory
+
+    =impatient-mode= is an amazing tool for live-editing HTML. When paired with
+    =simple-httdp=, you can point your browser to =http://localhost:8080/imp= to
+    see a live copy of your HTML buffer. No need to save or refresh
+    anything. This is as instantaneous as it gets.
+
+    Let's start impatient mode for all HTML, CSS, and Javascript buffers, and
+    run =httpd-start= when needed.
+
+    #+BEGIN_SRC emacs-lisp
+      (require 'simple-httpd)
+
+      (defun aw/imp-setup ()
+        (httpd-start)
+        (impatient-mode))
+
+      (add-hook 'html-mode-hook 'aw/imp-setup)
+      (add-hook 'css-mode-hook 'aw/imp-setup)
+      (add-hook 'js-mode-hook 'aw/imp-setup)
+    #+END_SRC
+
+**** HTML
+**** CSS
+**** JavaScript
 ** CEDET
 *** Semantic
 
@@ -1255,10 +1315,24 @@
      (add-hook 'proced-mode-hook 'proced-settings)
      (define-key custom-bindings-map (kbd "C-x p") 'proced)
    #+END_SRC
-* Task Tracking
-
+* Org-mode
+  
+  =Org-mode= makes up a massive part of my emacs usage. 
+  
+  #+BEGIN_SRC emacs-lisp
+      (add-to-list 'auto-mode-alist '("\.txt\\'" . org-mode))
+  #+END_SRC
+  
+  Expand a fold when trying to edit it.
+  
+  #+BEGIN_SRC emacs-lisp
+      (setq org-catch-invisible-edits 'show)
+  #+END_SRC
+  
+** Org-agenda
+   
    I keep my schedule with =org=agenda=.
-
+   
    #+BEGIN_SRC emacs-lisp
      (setq org-agenda-start-on-weekday nil              ; Show agenda from today.
            org-agenda-files '("~/Dropbox/org")          ; A list of agenda files.
@@ -1267,27 +1341,58 @@
 
      (define-key custom-bindings-map (kbd "C-c a") 'org-agenda-list)
    #+END_SRC
-
+   
    When editing org-files with source-blocks, we want the source blocks to
    be themed as they would in their native mode.
-
+   
    #+BEGIN_SRC emacs-lisp
      (setq org-src-fontify-natively t
            org-confirm-babel-evaluate nil)
    #+END_SRC
-
+   
    This is quite an ugly fix for allowing code markup for expressions like
    ="this string"=, because the quotation marks causes problems.
-
+   
    #+BEGIN_SRC emacs-lisp
      (setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
      (custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))
    #+END_SRC
    
    Make =o= start a new header.
-
+   
    #+BEGIN_SRC emacs-lisp
    #+END_SRC
+** TODO Capturing
+
+   #+BEGIN_SRC emacs-lisp
+     (setq org-default-notes-file (concat org-directory "/inbox.org"))
+     (define-key custom-bindings-map (kbd "C-c o") 'org-capture)
+   #+END_SRC
+
+   Make captures start in insert state
+
+*** Capture templates
+
+    The list of templates should be empty to begin with.
+
+    #+BEGIN_SRC emacs-lisp
+      (setq org-capture-templates '())
+    #+END_SRC
+
+    Basic tasks can go straight to my inbox for reorganizing later.
+
+    #+BEGIN_SRC emacs-lisp
+      (add-to-list 'org-capture-templates
+                   '("t" "Todo" entry (file+headline "~/Dropbox/org/inbox.org" "Tasks")
+                    "* TODO %?\n  %i\n  %a"))
+    #+END_SRC
+    
+
+    #+BEGIN_SRC emacs-lisp
+      (add-to-list 'org-capture-templates
+                   '("s" "Scheduled Action" entry (file+datetree "~/Dropbox/org/inbox.org")
+                     "* %?\n%t\n" ))
+    #+END_SRC
 
 ** MobileOrg
    MobileOrg will let me sync my agenda to my phone, which will then sync
@@ -1331,12 +1436,6 @@
      (my-org-mobile-sync-start)
    #+END_SRC
 
-** Org capture
-
-   #+BEGIN_SRC emacs-lisp
-     (setq org-default-notes-file (concat org-directory "/inbox.org"))
-     (define-key custom-bindings-map (kbd "C-c o") 'org-capture)
-   #+END_SRC
 ** Keybindings
 
    Org-mode uses Shift + arrow keys to change things like timestamps, TODO

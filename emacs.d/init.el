@@ -43,43 +43,45 @@
 ;;     This is a list of everything that should be installed using package.el.
 
 (defvar required-packages
-       '(ac-octave             ; Auto-completion for octave
-         auto-compile          ; Automatically compile Emacs Lisp libraries
-         cider                 ; Clojure repl
-         clojure-mode          ; Mode for .clj files
-         csharp-mode           ; Mode for C# files
-         company               ; Auto-completion engine
-         diminish              ; Clean up the status line a but
-         evil                  ; Vi and Emacs, in harmony
-         evil-leader           ; Bring back the leader key
-         evil-nerd-commenter   ; Quickly comment out lines
-         evil-surround         ; Tim Pope's vim plugin to surround objects
-         expand-region         ; Increase selected region by semantic units
-         flycheck              ; On-the-fly syntax checking
-         fullframe             ; Make certain modes take up the whole frame
-         gist                  ; Quickly post code snippets to Github
-         helm                  ; Super powerful completion tool
-         helm-gtags            ; Use gtags for semantic completion
-         helm-projectile       ; Projectile as a helm completion source
-         idle-require          ; load elisp libraries while Emacs is idle
-         ibuffer-tramp         ; sort ibuffer based on tramp connection
-         jedi                  ; Python auto-completion for Emacs
-         key-chord             ; Run commands with multiple key strokes (Helpful for Evil)
-         magit                 ; Git integration for Emacs
-         markdown-mode         ; Emacs Major mode for Markdown-formatted files.
-         move-text             ; Move current line or region with M-up or M-down
-         multi-term            ; Better terminals
-         multiple-cursors      ; Multiple cursors for Emacs.
-         org-trello            ; two-way sync between org and Trello
-         paredit               ; minor mode for editing parentheses
-         powerline             ; Rewrite of Powerline
-         projectile            ; Easy navigation for files in a project
-         slime                 ; Superior Lisp Interaction Mode for Emacs
-         solarized-theme       ; Great color theme
-         undo-tree             ; Treat undo history as a tree
-         yasnippet             ; Snippet engine
-         zenburn-theme         ; Nice looking low-contrast theme
-         )
+  '(ac-octave             ; Auto-completion for octave
+    auto-compile          ; Automatically compile Emacs Lisp libraries
+    cider                 ; Clojure repl
+    clojure-mode          ; Mode for .clj files
+    csharp-mode           ; Mode for C# files
+    company               ; Auto-completion engine
+    diminish              ; Clean up the status line a but
+    evil                  ; Vi and Emacs, in harmony
+    evil-leader           ; Bring back the leader key
+    evil-nerd-commenter   ; Quickly comment out lines
+    evil-surround         ; Tim Pope's vim plugin to surround objects
+    expand-region         ; Increase selected region by semantic units
+    flycheck              ; On-the-fly syntax checking
+    fullframe             ; Make certain modes take up the whole frame
+    gist                  ; Quickly post code snippets to Github
+    helm                  ; Super powerful completion tool
+    helm-gtags            ; Use gtags for semantic completion
+    helm-projectile       ; Projectile as a helm completion source
+    helm-spotify          ; Spotify's entire library at my fingertips
+    idle-require          ; load elisp libraries while Emacs is idle
+    ibuffer-tramp         ; sort ibuffer based on tramp connection
+    impatient-mode        ; Edit html in realtime
+    jedi                  ; Python auto-completion for Emacs
+    key-chord             ; Run commands with multiple key strokes (Helpful for Evil)
+    magit                 ; Git integration for Emacs
+    markdown-mode         ; Emacs Major mode for Markdown-formatted files.
+    move-text             ; Move current line or region with M-up or M-down
+    multi-term            ; Better terminals
+    multiple-cursors      ; Multiple cursors for Emacs.
+    org-trello            ; two-way sync between org and Trello
+    paredit               ; minor mode for editing parentheses
+    powerline             ; Rewrite of Powerline
+    projectile            ; Easy navigation for files in a project
+    slime                 ; Superior Lisp Interaction Mode for Emacs
+    solarized-theme       ; Great color theme
+    undo-tree             ; Treat undo history as a tree
+    yasnippet             ; Snippet engine
+    zenburn-theme         ; Nice looking low-contrast theme
+    )
       "Packages which should be installed upon launch")
 
 ;; Package Setup
@@ -204,8 +206,6 @@ PACKAGE is installed and the current version is deleted."
 
 ;;    These are what /I/ consider to be saner defaults.
 
-;;    We can set variables to whatever value we'd like using =setq=.
-
 (setq default-input-method "TeX"    ; Use TeX when toggling input method.
       doc-view-continuous t         ; At page edge goto next/previous.
       echo-keystrokes 0.1           ; Show keystrokes asap.
@@ -224,6 +224,9 @@ PACKAGE is installed and the current version is deleted."
       (let ((undo-dir (concat user-emacs-directory "undo")))
         (and (file-exists-p undo-dir)
              (list (cons "." undo-dir)))))
+
+(require 'undo-tree)
+(diminish 'undo-tree-mode)
 
 ;; Some variables are buffer-local, so changing them using =setq= will only
 ;;    change them in a single buffer. Using =setq-default= we change the
@@ -331,10 +334,13 @@ PACKAGE is installed and the current version is deleted."
            blink-cursor-mode))          ; The blinking cursor gets old.
   (funcall mode 0))
 
-;; Change the color-theme to =solarized=.
+;; TODO: This doesn't work with emacsclient
+;;    Change the color-theme to =solarized=. Use =wombat= in the terminal, since
+;;    solarized doesn't play very nicely.
+
+(load-theme 'solarized-dark t)
 
 (setq solarized-scale-org-headlines nil)
-(load-theme 'solarized-dark t)
 
 ;; Use the [[http://www.levien.com/type/myfonts/inconsolata.html][Inconsolata]] font if it's installed on the system.
 
@@ -563,7 +569,7 @@ PACKAGE is installed and the current version is deleted."
 
 (add-hook 'ibuffer-hook 'ibuffer-tramp-set-filter-groups-by-tramp-connection)
 
-(fullframe ibuffer ibuffer-quit)
+;; (fullframe ibuffer ibuffer-quit)
 (define-key custom-bindings-map (kbd "C-x C-b")  'ibuffer)
 (define-key custom-bindings-map (kbd "C-c r") 'rename-buffer)
 
@@ -578,7 +584,7 @@ PACKAGE is installed and the current version is deleted."
 ;; Evil-leader
    
 ;;     We can bring back the leader key with the =evil-leader= package. I've always
-;;     been a fan of , for my eader.
+;;     been a fan of , for my leader.
 
 (global-evil-leader-mode)
 (evil-leader/set-leader ",")
@@ -606,7 +612,8 @@ PACKAGE is installed and the current version is deleted."
   "bb" 'helm-mini
   "bk" 'kill-buffer
   "bl" 'ibuffer
-  "bs" 'save-buffer)
+  "bs" 'save-buffer
+  "bw" 'write-file)
 
 ;; Help stuff
 (evil-leader/set-key
@@ -615,16 +622,27 @@ PACKAGE is installed and the current version is deleted."
   "hv" 'describe-variable
   "hm" 'man)
 
+;; Git stuff
+(evil-leader/set-key
+  "gb" 'magit-blame-mode
+  "gs" 'magit-status)
+
 ;; Projectile/Helm stuff
 (evil-leader/set-key
   "pf" 'helm-projectile-find-file
-  "pg" 'helm-projectile-grep-or-ack
+  "pg" 'helm-projectile-grep
   "po" 'helm-occur
-  "pp" 'projectile-switch-project)
+  "pp" 'projectile-switch-project
+  "ps" 'helm-spotify)
 
 ;; Org stuff
 (evil-leader/set-key
-  "oa" 'org-agenda-list)
+  "oa" 'org-agenda-list
+  "oc" 'org-capture)
+
+;; Misc
+(evil-leader/set-key
+  "vv" 'eval-last-sexp)
 
 ;; Evil-surround
 
@@ -712,6 +730,7 @@ PACKAGE is installed and the current version is deleted."
 
 (setq linum-delay t linum-eager nil)
 (add-hook 'prog-mode-hook 'linum-mode)
+(add-hook 'prog-mode-hook 'flycheck-mode)
 
 ;; White space stuff ([[http://www.reddit.com/r/emacs/comments/2keh6u/show_tabs_and_trailing_whitespaces_only/][Source]])
 
@@ -735,6 +754,34 @@ PACKAGE is installed and the current version is deleted."
 (add-hook 'prog-mode-hook 'whitespace-mode)
 
 (add-hook 'prog-mode-hook 'whitespace-mode)
+
+;; C#
+
+;;     Omnisharp gives us IDE capabilities for C#. Let's enable it for
+;;     =csharp-mode=
+
+(add-hook 'csharp-mode-hook 'omnisharp-mode)
+
+;;(omnisharp-imenu-support t)
+
+;; Allow company to use OmniSharp for autocompletion.
+
+;;(eval-after-load 'company
+  ;;'(add-to-list 'company-backends 'company-omnisharp))
+
+;; FSP
+
+;;     FSP (Finite state processes) is a notation that formally describes concurrent
+;;     systems as described in the book Concurrency by Magee and Kramer. Someday
+;;     I want to make a fully featured mode for FSP. Someone by the name of
+;;     Esben Andreasen made a mode with basic syntax highlighting, so that will
+;;     have to do for now.
+
+;;     We'll add it manually until I have time to play around with it.
+
+;; Load fsp-mode.el from its own directory
+(add-to-list 'load-path "~/Dropbox/fsp-mode/")
+(require 'fsp-mode)
 
 ;; Java and C
 
@@ -765,20 +812,6 @@ PACKAGE is installed and the current version is deleted."
   (setq-local compile-command (concat "javac " (buffer-name))))
 
 (add-hook 'java-mode-hook 'java-setup)
-
-;; C#
-
-;;     Omnisharp gives us IDE capabilities for C#. Let's enable it for
-;;     =csharp-mode=
-
-(add-hook 'csharp-mode-hook 'omnisharp-mode)
-
-;;(omnisharp-imenu-support t)
-
-;; Allow company to use OmniSharp for autocompletion.
-
-;;(eval-after-load 'company
-  ;;'(add-to-list 'company-backends 'company-omnisharp))
 
 ;; LaTeX
 
@@ -811,35 +844,10 @@ PACKAGE is installed and the current version is deleted."
 (eval-after-load 'tex-mode
   '(setcar (cdr (cddaar tex-compile-commands)) " -shell-escape "))
 
-;; Python
+;; TODO flycheck
 
-;;      [[http://tkf.github.io/emacs-jedi/released/][Jedi]] offers very nice auto completion for =python-mode=. Mind that it is
-;;      dependent on some python programs as well, so make sure you follow the
-;;      instructions from the site.
-
-(require 'jedi)
-(add-hook 'python-mode-hook 'jedi:setup)
-(setq jedi:server-command
-     (cons "python3" (cdr jedi:server-command))
-     python-shell-interpreter "python3")
-(setq jedi:complete-on-dot t)
-;;(add-hook 'python-mode-hook 'jedi:ac-setup)
-
-;; Matlab
-
-;;     =Matlab-mode= works pretty good out of the box, but we can do without the
-;;     splash screen.
-
-(eval-after-load 'matlab
-  '(add-to-list 'matlab-shell-command-switches "-nosplash"))
-
-;; Octave
-
-;;     Make it so =.m= files are loaded in =octave-mode=.
-
-(autoload 'octave-mode "octave-mod" nil t)
-(setq auto-mode-alist
-      (cons '("\\.m$" . octave-mode) auto-mode-alist))
+(evil-leader/set-key-for-mode 'latex-mode
+  "at" 'tex-compile)
 
 ;; Lisps
 
@@ -868,19 +876,62 @@ PACKAGE is installed and the current version is deleted."
 (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
 (add-hook 'emacs-lisp-mode-hook 'flyspell-prog-mode) ;; Requires Ispell
 
-;; FSP
+;; Flycheck gets to be a bit much when warning about checkdoc issues, so we
+;;      should disable those.
 
-;;     FSP (Finite state processes) is a notation that formally describes concurrent
-;;     systems as described in the book Concurrency by Magee and Kramer. Someday
-;;     I want to make a fully featured mode for FSP. Someone by the name of
-;;     Esben Andreasen made a mode with basic syntax highlighting, so that will
-;;     have to do for now.
+(setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
 
-;;     We'll add it manually until I have time to play around with it.
+;; Matlab
 
-;; Load fsp-mode.el from its own directory
-(add-to-list 'load-path "~/Dropbox/fsp-mode/")
-(require 'fsp-mode)
+;;     =Matlab-mode= works pretty good out of the box, but we can do without the
+;;     splash screen.
+
+(eval-after-load 'matlab
+  '(add-to-list 'matlab-shell-command-switches "-nosplash"))
+
+;; Octave
+
+;;     Make it so =.m= files are loaded in =octave-mode=.
+
+(autoload 'octave-mode "octave-mod" nil t)
+(setq auto-mode-alist
+      (cons '("\\.m$" . octave-mode) auto-mode-alist))
+
+;; Python
+
+;;      [[http://tkf.github.io/emacs-jedi/released/][Jedi]] offers very nice auto completion for =python-mode=. Mind that it is
+;;      dependent on some python programs as well, so make sure you follow the
+;;      instructions from the site.
+
+(require 'jedi)
+(add-hook 'python-mode-hook 'jedi:setup)
+(setq jedi:server-command
+     (cons "python3" (cdr jedi:server-command))
+     python-shell-interpreter "python3")
+(setq jedi:complete-on-dot t)
+;;(add-hook 'python-mode-hook 'jedi:ac-setup)
+
+;; Web Editing
+
+;;      TODO: start httpd in correct directory
+
+;;     =impatient-mode= is an amazing tool for live-editing HTML. When paired with
+;;     =simple-httdp=, you can point your browser to =http://localhost:8080/imp= to
+;;     see a live copy of your HTML buffer. No need to save or refresh
+;;     anything. This is as instantaneous as it gets.
+
+;;     Let's start impatient mode for all HTML, CSS, and Javascript buffers, and
+;;     run =httpd-start= when needed.
+
+(require 'simple-httpd)
+
+(defun aw/imp-setup ()
+  (httpd-start)
+  (impatient-mode))
+
+(add-hook 'html-mode-hook 'aw/imp-setup)
+(add-hook 'css-mode-hook 'aw/imp-setup)
+(add-hook 'js-mode-hook 'aw/imp-setup)
 
 ;; Semantic
 
@@ -1067,8 +1118,18 @@ automatically updates the diff to reflect the change."
 (add-hook 'proced-mode-hook 'proced-settings)
 (define-key custom-bindings-map (kbd "C-x p") 'proced)
 
-;; Task Tracking
+;; Org-mode
+  
+;;   =Org-mode= makes up a massive part of my emacs usage.
 
+(add-to-list 'auto-mode-alist '("\.txt\\'" . org-mode))
+
+;; Expand a fold when trying to edit it.
+
+(setq org-catch-invisible-edits 'show)
+
+;; Org-agenda
+   
 ;;    I keep my schedule with =org=agenda=.
 
 (setq org-agenda-start-on-weekday nil              ; Show agenda from today.
@@ -1093,6 +1154,27 @@ automatically updates the diff to reflect the change."
 ;; Make =o= start a new header.
 
 
+
+;; TODO Capturing
+
+(setq org-default-notes-file (concat org-directory "/inbox.org"))
+(define-key custom-bindings-map (kbd "C-c o") 'org-capture)
+
+;; Capture templates
+
+;;     The list of templates should be empty to begin with.
+
+(setq org-capture-templates '())
+
+;; Basic tasks can go straight to my inbox for reorganizing later.
+
+(add-to-list 'org-capture-templates
+             '("t" "Todo" entry (file+headline "~/Dropbox/org/inbox.org" "Tasks")
+              "* TODO %?\n  %i\n  %a"))
+
+(add-to-list 'org-capture-templates
+             '("s" "Scheduled Action" entry (file+datetree "~/Dropbox/org/inbox.org")
+               "* %?\n%t\n" ))
 
 ;; MobileOrg
 ;;    MobileOrg will let me sync my agenda to my phone, which will then sync
@@ -1131,11 +1213,6 @@ automatically updates the diff to reflect the change."
   (cancel-timer my-org-mobile-sync-timer))
 
 (my-org-mobile-sync-start)
-
-;; Org capture
-
-(setq org-default-notes-file (concat org-directory "/inbox.org"))
-(define-key custom-bindings-map (kbd "C-c o") 'org-capture)
 
 ;; Keybindings
 
