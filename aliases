@@ -9,6 +9,8 @@ alias grep='grep --color'
 alias du='du -h'
 alias userctl='systemctl --user'
 alias psg='ps -aux | grep'
+alias play='mplayer'
+alias xclip='xclip -selection c'
 alias off='sudo shutdown 0'
 alias reboot='sudo reboot'
 
