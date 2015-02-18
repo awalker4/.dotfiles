@@ -642,6 +642,7 @@ PACKAGE is installed and the current version is deleted."
 
 ;; Misc
 (evil-leader/set-key
+  "vb" 'eval-buffer
   "vv" 'eval-last-sexp)
 
 ;; Evil-surround
@@ -1035,19 +1036,6 @@ automatically updates the diff to reflect the change."
 ;;(diminish 'projectile-mode " P" )
 (helm-projectile-on)
 
-;; C code
-
-(add-to-list 'org-babel-load-languages
-             '(C . t))
-
-(advice-add 'org-babel-C-ensure-main-wrap :override #'my-org-test)
-
-(defun my-org-test (body)
-  "Wrap BODY in a \"main\" function call if none exists."
-  (if (string-match "^[ \t]*[intvod]+[ \t\n\r]*main[ \t]*(.*)" body)
-      body
-    (format "int main(int argc, char* argv[]) {\n%s\nreturn 0;\n}\n" body)))
-
 ;; Terminals
    
 ;;    Multi-term makes working with many terminals a bit nicer. I can easily create
@@ -1154,6 +1142,21 @@ automatically updates the diff to reflect the change."
 ;; Make =o= start a new header.
 
 
+
+;; Org-babel
+
+;;    Org-babel is awesome for literate programming, and it even works with compiled languages.
+
+(add-to-list 'org-babel-load-languages
+             '(C . t))
+
+(advice-add 'org-babel-C-ensure-main-wrap :override #'aw/org-c-src-main)
+
+(defun aw/org-c-src-main (body)
+  "Wrap BODY in a \"main\" function call if none exists."
+  (if (string-match "^[ \t]*[intvod]+[ \t\n\r]*main[ \t]*(.*)" body)
+      body
+    (format "int main(int argc, char* argv[]) {\n%s\nreturn 0;\n}\n" body)))
 
 ;; TODO Capturing
 
