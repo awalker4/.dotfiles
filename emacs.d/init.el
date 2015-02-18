@@ -573,6 +573,9 @@ PACKAGE is installed and the current version is deleted."
 (define-key custom-bindings-map (kbd "C-x C-b")  'ibuffer)
 (define-key custom-bindings-map (kbd "C-c r") 'rename-buffer)
 
+;; (eval-after-load 'evil
+;;   (evil-set-initial-state 'ibuffer-mode 'normal))
+
 ;; Key-chord-mode
    
 ;;    =key-chord-mode= allows me to use sequences of key presses to do things. It
@@ -754,8 +757,6 @@ PACKAGE is installed and the current version is deleted."
                     :weight 'normal)
 (add-hook 'prog-mode-hook 'whitespace-mode)
 
-(add-hook 'prog-mode-hook 'whitespace-mode)
-
 ;; C#
 
 ;;     Omnisharp gives us IDE capabilities for C#. Let's enable it for
@@ -882,14 +883,6 @@ PACKAGE is installed and the current version is deleted."
 
 (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
 
-;; Matlab
-
-;;     =Matlab-mode= works pretty good out of the box, but we can do without the
-;;     splash screen.
-
-(eval-after-load 'matlab
-  '(add-to-list 'matlab-shell-command-switches "-nosplash"))
-
 ;; Octave
 
 ;;     Make it so =.m= files are loaded in =octave-mode=.
@@ -912,7 +905,7 @@ PACKAGE is installed and the current version is deleted."
 (setq jedi:complete-on-dot t)
 ;;(add-hook 'python-mode-hook 'jedi:ac-setup)
 
-;; Web Editing
+;; TODO Web Editing
 
 ;;      TODO: start httpd in correct directory
 
@@ -1173,7 +1166,7 @@ automatically updates the diff to reflect the change."
 
 (add-to-list 'org-capture-templates
              '("t" "Todo" entry (file+headline "~/Dropbox/org/inbox.org" "Tasks")
-              "* TODO %?\n  %i\n  %a"))
+              "* TODO %?\n  %i\n"))
 
 (add-to-list 'org-capture-templates
              '("s" "Scheduled Action" entry (file+datetree "~/Dropbox/org/inbox.org")
@@ -1228,6 +1221,14 @@ automatically updates the diff to reflect the change."
 (add-hook 'org-shiftleft-final-hook 'windmove-left)
 (add-hook 'org-shiftdown-final-hook 'windmove-down)
 (add-hook 'org-shiftright-final-hook 'windmove-right)
+
+;; Some default org keybindings could be a bit more evil.
+
+(evil-define-key 'normal org-mode-map
+  (kbd "M-h") 'org-metaleft
+  (kbd "M-j") 'org-metadown
+  (kbd "M-k") 'org-metaup
+  (kbd "M-l") 'org-metaright)
 
 ;; Wrap-up
   
