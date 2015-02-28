@@ -1066,10 +1066,10 @@
 
      TODO: start httpd in correct directory
 
-    =impatient-mode= is an amazing tool for live-editing HTML. When paired with
+    =impatient-mode= is an amazing tool for live-editing web pages. When paired with
     =simple-httdp=, you can point your browser to =http://localhost:8080/imp= to
-    see a live copy of your HTML buffer. No need to save or refresh
-    anything. This is as instantaneous as it gets.
+    see a live copy of any buffer that has impatient-mode enabled. If that buffer happens to contain HTML, CSS, or Javascript, it will be evaluated on the fly. No need to save or refresh
+    anything. It's almost like they knew that I'm very... impatient.
 
     Let's start impatient mode for all HTML, CSS, and Javascript buffers, and
     run =httpd-start= when needed.
@@ -1078,6 +1078,7 @@
       (require 'simple-httpd)
 
       (defun aw/imp-setup ()
+        (setq httpd-root "/home/austin/impatient-test/") ;; I'd like to set this based on the current buffer's working directory
         (httpd-start)
         (impatient-mode))
 
