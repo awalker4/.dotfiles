@@ -244,47 +244,32 @@ map <leader>et :tabe %%
 """"""""""""""""""""""""""""""""""""""""""""""""""
 filetype off
 
-" Use Vundle
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+call plug#begin('~/.vim/plugged')
 
-Plugin 'gmarik/Vundle.vim'
+Plug 'gmarik/Vundle.vim'
 
-if v:version >= 704 || v:version == 703 && has("patch584")
-    Plugin 'Valloric/YouCompleteMe' " Program autocompletion (Vim 7.3.584+)
-else
-    Plugin 'vim-scripts/AutoComplPop'
-endif
+Plug 'vim-scripts/AutoComplPop'
 
-Plugin 'MarcWeber/vim-addon-local-vimrc'
+Plug 'MarcWeber/vim-addon-local-vimrc'
 
 " Visual
-Plugin 'bling/vim-airline' " Status line
-Plugin 'altercation/vim-colors-solarized' " Solarized colorscheme
+Plug 'bling/vim-airline' " Status line
+Plug 'altercation/vim-colors-solarized' " Solarized colorscheme
 
 " Navigation
-Plugin 'kien/ctrlp.vim'
-Plugin 'tpope/vim-unimpaired' " Some nice bracket maps
-Plugin 'nelstrom/vim-visual-star-search' " Use visual selection for * and #
-"Plugin 'justinmk/vim-sneak' " Easy forward motion
+Plug 'kien/ctrlp.vim'
+Plug 'tpope/vim-unimpaired' " Some nice bracket maps
+Plug 'nelstrom/vim-visual-star-search' " Use visual selection for * and #
 
-" Coding
-"Plugin 'MarcWeber/vim-addon-mw-utils'
-"Plugin 'tomtom/tlib_vim'
-Plugin 'honza/vim-snippets'
-"Plugin 'garbas/vim-snipmate' " Depends on above three
-Plugin 'sirver/ultisnips'
-
-Plugin 'scrooloose/nerdcommenter' " Quick commenting
-Plugin 'scrooloose/syntastic' " Show syntax errors
-Plugin 'tpope/vim-surround' " Quickly surround text
+Plug 'scrooloose/nerdcommenter' " Quick commenting
+Plug 'scrooloose/syntastic' " Show syntax errors
+Plug 'tpope/vim-surround' " Quickly surround text
 
 " Git/Github
-Plugin 'tpope/vim-fugitive' " Git integration
-Plugin 'mattn/webapi-vim'
-Plugin 'mattn/gist-vim' " Quickly upload gists
+Plug 'mattn/webapi-vim'
+Plug 'mattn/gist-vim' " Quickly upload gists
 
-call vundle#end()
+call plug#end()
 
 filetype plugin indent on
 
@@ -293,55 +278,11 @@ filetype plugin indent on
 """"""""""""""""""""""""""""""
 
 """"""""""""""""""""
-" YouCompleteMe
-""""""""""""""""""""
-let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
-
-function! g:UltiSnips_Complete()
-  call UltiSnips#ExpandSnippetOrJump()
-  if g:ulti_expand_or_jump_res == 0
-    if pumvisible()
-      return "\<C-N>"
-    else
-      return "\<TAB>"
-    endif
-  endif
-
-  return ""
-  endif
-endfunction
-
-au BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <C-R>=g:UltiSnips_Complete()<cr>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsListSnippets="<c-e>"
- "this mapping Enter key to <C-y> to chose the current highlight item
- "and close the selection list, same as other IDEs.
- "CONFLICT with some plugins like tpope/Endwise
-inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-
-""""""""""""""""""""
-" Ultisnips
-""""""""""""""""""""
-"let g:UltiSnipsExpandTrigger="<c-e>"
-
-""""""""""""""""""""
-" Fugitive
-""""""""""""""""""""
-set diffopt=vertical
-
-""""""""""""""""""""
 " Ctrlp
 """"""""""""""""""""
 "let g:ctrlp_clear_cache_on_exit = 0
 "let g:ctrlp_use_caching = 100
 let g:ctrlp_open_multiple_files = '2vjr'
-
-""""""""""""""""""""
-" Vim-Gist
-""""""""""""""""""""
-let g:gist_clip_command = 'xclip -selection clipboard'
-let g:gist_open_browser_after_post = 1
-let g:gist_browser_command = 'firefox %URL% &'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Autocommands
@@ -367,7 +308,7 @@ set background=dark
 " Make popups readable
 hi Pmenusel ctermbg=red
 
-colorscheme solarized
+"colorscheme solarized
 
 
 " Highlight Word (Thanks Steve Losh!)
