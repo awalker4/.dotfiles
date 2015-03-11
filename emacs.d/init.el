@@ -20,8 +20,7 @@
                 "/home/austin/.dotfiles/emacs.d/init.org")
      ;; Avoid running hooks when tangling.
      (let ((prog-mode-hook nil))
-       (org-babel-tangle)
-       (byte-compile-file (concat user-emacs-directory "init.el")))))
+       (org-babel-tangle))))
 
  (add-hook 'after-save-hook 'tangle-init)
 
@@ -54,6 +53,7 @@
     evil-leader           ; Bring back the leader key
     evil-nerd-commenter   ; Quickly comment out lines
     evil-surround         ; Tim Pope's vim plugin to surround objects
+    evil-visualstar       ; Use * and # to search for the visual selection
     expand-region         ; Increase selected region by semantic units
     flycheck              ; On-the-fly syntax checking
     fullframe             ; Make certain modes take up the whole frame
@@ -82,7 +82,7 @@
     yasnippet             ; Snippet engine
     zenburn-theme         ; Nice looking low-contrast theme
     )
-      "Packages which should be installed upon launch")
+  "Packages which should be installed upon launch")
 
 ;; Package Setup
 
@@ -238,6 +238,7 @@ PACKAGE is installed and the current version is deleted."
               compilation-scroll-output 1       ; Follow compilation buffer
               compilation-ask-about-save nil    ; Automatically save when compiling
               auto-fill-function 'do-auto-fill) ; Auto-fill-mode everywhere.
+(diminish 'auto-fill-function)
 
 ;; Answering /yes/ and /no/ to each question from Emacs can be tedious, a
 ;;    single /y/ or /n/ will suffice.
@@ -322,6 +323,153 @@ PACKAGE is installed and the current version is deleted."
 (define-key custom-bindings-map (kbd "C-;") 'er/contract-region)
 (define-key custom-bindings-map (kbd "C-c h g") 'helm-google-suggest)
 (define-key custom-bindings-map (kbd "C-c s") 'ispell-word)
+
+;; Key-chord-mode
+    
+;;     =key-chord-mode= allows me to use sequences of key presses to do things. It
+;;     will come in handy when setting up =evil-mode=
+
+(setq key-chord-two-keys-delay 2)
+(key-chord-mode 1)
+
+;; Evil-leader
+    
+;;      We can bring back the leader key with the =evil-leader= package. I've always
+;;      been a fan of , for my leader.
+
+(global-evil-leader-mode)
+(evil-leader/set-leader ",")
+(evil-leader/set-key
+  "f" 'helm-find-files
+  "m" 'compile
+  "t" 'multi-term-dedicated-toggle
+  "ei" 'aw/edit-init-org
+  "eI" 'aw/edit-init-el
+  "es" 'aw/switch-to-scratch
+  "x" 'helm-M-x)
+
+;; Window stuff
+(evil-leader/set-key
+  "0" 'delete-window
+  "1" 'delete-other-windows
+  "2" 'split-window-below
+  "@" 'aw/split-window-below-and-switch
+  "3" 'split-window-right
+  "#" 'aw/split-window-right-and-switch
+  "=" 'balance-windows)
+
+;; Buffer Stuff
+(evil-leader/set-key
+  "bb" 'helm-mini
+  "bk" 'kill-buffer
+  "bl" 'ibuffer
+  "bm" 'bookmark-jump
+  "bs" 'save-buffer
+  "bw" 'write-file)
+
+;; Help stuff
+(evil-leader/set-key
+  "hc" 'describe-key-briefly
+  "hf" 'describe-function
+  "hv" 'describe-variable
+  "hm" 'man)
+
+;; Git stuff
+(evil-leader/set-key
+  "gb" 'magit-blame-mode
+  "gs" 'magit-status)
+
+;; Projectile/Helm stuff
+(evil-leader/set-key
+  "pf" 'helm-projectile-find-file
+  "pg" 'helm-projectile-grep
+  "po" 'helm-occur
+  "pp" 'projectile-switch-project
+  "ps" 'helm-spotify)
+
+;; Org stuff
+(evil-leader/set-key
+  "oa" 'org-agenda-list
+  "oc" 'org-capture)
+
+;; Misc
+(evil-leader/set-key
+  "vb" 'eval-buffer
+  "vv" 'eval-last-sexp)
+
+;; Evil-surround
+
+;;      This awesome Vim plugin will let you surround text objects with various
+;;      items. Luckily, there's an Emacs port.
+
+(global-evil-surround-mode 1)
+
+;; Evil Functions
+
+(defun aw/edit-init-org ()
+  (interactive)
+  (find-file (concat user-emacs-directory "init.org")))
+
+(defun aw/edit-init-el ()
+  (interactive)
+  (find-file (concat user-emacs-directory "init.el")))
+
+(defun aw/switch-to-scratch ()
+  (interactive)
+  (switch-to-buffer "*scratch*"))
+
+(defun aw/split-window-right-and-switch ()
+  (interactive)
+  (split-window-right)
+  (other-window 1))
+
+(defun aw/split-window-below-and-switch ()
+  (interactive)
+  (split-window-below)
+  (other-window 1))
+
+(defun aw/open-line-above ()
+  (interactive)
+  (save-excursion
+    (beginning-of-line)
+    (open-line 1)))
+
+(defun aw/open-line-below ()
+  (interactive)
+  (save-excursion
+    (end-of-line)
+    (open-line 1)))
+
+;; Initialization
+
+;;     Once everything is set up, we can start evil-mode.
+
+;; Nerd commenter
+(evilnc-default-hotkeys)
+(global-evil-visualstar-mode t)
+
+
+(evil-mode 1)
+
+(define-key evil-normal-state-map "H" 'windmove-left)
+(define-key evil-normal-state-map "J" 'windmove-down)
+(define-key evil-normal-state-map "K" 'windmove-up)
+(define-key evil-normal-state-map "L" 'windmove-right)
+
+(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+(key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
+
+;; Make tab work in terminal emacs
+(setq evil-want-C-i-jump nil)
+
+;; I was really starting to miss some of these bindings from TPope's vim-unimpaired.
+
+(key-chord-define evil-normal-state-map "[e" 'move-text-up)
+(key-chord-define evil-normal-state-map "]e" 'move-text-down)
+(key-chord-define evil-normal-state-map "[ " 'aw/open-line-above)
+(key-chord-define evil-normal-state-map "] " 'aw/open-line-below)
+(key-chord-define evil-normal-state-map "[b" 'previous-buffer)
+(key-chord-define evil-normal-state-map "]b" 'next-buffer)
 
 ;; Visual
 
@@ -453,12 +601,6 @@ PACKAGE is installed and the current version is deleted."
 
 (define-key helm-map (kbd "DEL") 'helm-backspace)
 
-;; I use =winnner-mode= to occasionally return to a window layout. After using a
-;;    helm buffer, =winner-undo= will display again, which isn't helpful. We can
-;;    use a regex match to ignore it.
-
-(defvar winner-boring-buffers-regexp "\\*[hH]elm.*")
-
 ;; Helm-gtags
 
 (setq
@@ -573,152 +715,7 @@ PACKAGE is installed and the current version is deleted."
 (define-key custom-bindings-map (kbd "C-x C-b")  'ibuffer)
 (define-key custom-bindings-map (kbd "C-c r") 'rename-buffer)
 
-;; (eval-after-load 'evil
-;;   (evil-set-initial-state 'ibuffer-mode 'normal))
-
-;; Key-chord-mode
-   
-;;    =key-chord-mode= allows me to use sequences of key presses to do things. It
-;;    will come in handy when setting up =evil-mode=
-
-(setq key-chord-two-keys-delay 2)
-(key-chord-mode 1)
-
-;; Evil-leader
-   
-;;     We can bring back the leader key with the =evil-leader= package. I've always
-;;     been a fan of , for my leader.
-
-(global-evil-leader-mode)
-(evil-leader/set-leader ",")
-(evil-leader/set-key
-  "f" 'helm-find-files
-  "m" 'compile
-  "t" 'multi-term-dedicated-toggle
-  "ei" 'aw/edit-init-org
-  "eI" 'aw/edit-init-el
-  "es" 'aw/switch-to-scratch
-  "x" 'helm-M-x)
-
-;; Window stuff
-(evil-leader/set-key
-  "0" 'delete-window
-  "1" 'delete-other-windows
-  "2" 'split-window-below
-  "@" 'aw/split-window-below-and-switch
-  "3" 'split-window-right
-  "#" 'aw/split-window-right-and-switch
-  "=" 'balance-windows)
-
-;; Buffer Stuff
-(evil-leader/set-key
-  "bb" 'helm-mini
-  "bk" 'kill-buffer
-  "bl" 'ibuffer
-  "bs" 'save-buffer
-  "bw" 'write-file)
-
-;; Help stuff
-(evil-leader/set-key
-  "hc" 'describe-key-briefly
-  "hf" 'describe-function
-  "hv" 'describe-variable
-  "hm" 'man)
-
-;; Git stuff
-(evil-leader/set-key
-  "gb" 'magit-blame-mode
-  "gs" 'magit-status)
-
-;; Projectile/Helm stuff
-(evil-leader/set-key
-  "pf" 'helm-projectile-find-file
-  "pg" 'helm-projectile-grep
-  "po" 'helm-occur
-  "pp" 'projectile-switch-project
-  "ps" 'helm-spotify)
-
-;; Org stuff
-(evil-leader/set-key
-  "oa" 'org-agenda-list
-  "oc" 'org-capture)
-
-;; Misc
-(evil-leader/set-key
-  "vb" 'eval-buffer
-  "vv" 'eval-last-sexp)
-
-;; Evil-surround
-
-;;     This awesome Vim plugin will let you surround text objects with various
-;;     items. Luckily, there's an Emacs port.
-
-(global-evil-surround-mode 1)
-
-;; Evil Functions
-
-(defun aw/edit-init-org ()
-  (interactive)
-  (find-file (concat user-emacs-directory "init.org")))
-
-(defun aw/edit-init-el ()
-  (interactive)
-  (find-file (concat user-emacs-directory "init.el")))
-
-(defun aw/switch-to-scratch ()
-  (interactive)
-  (switch-to-buffer "*scratch*"))
-
-(defun aw/split-window-right-and-switch ()
-  (interactive)
-  (split-window-right)
-  (other-window 1))
-
-(defun aw/split-window-below-and-switch ()
-  (interactive)
-  (split-window-below)
-  (other-window 1))
-
-(defun aw/open-line-above ()
-  (interactive)
-  (save-excursion
-    (beginning-of-line)
-    (open-line 1)))
-
-(defun aw/open-line-below ()
-  (interactive)
-  (save-excursion
-    (end-of-line)
-    (open-line 1)))
-
-;; Initialization
-
-;;    Once everything is set up, we can start evil-mode.
-
-;; Nerd commenter
-(evilnc-default-hotkeys)
-
-(evil-mode 1)
-
-(define-key evil-normal-state-map "H" 'windmove-left)
-(define-key evil-normal-state-map "J" 'windmove-down)
-(define-key evil-normal-state-map "K" 'windmove-up)
-(define-key evil-normal-state-map "L" 'windmove-right)
-
-(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
-(key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
-
-;; Make tab work in terminal emacs
-(setq evil-want-C-i-jump nil)
-
-;; I was really starting to miss some of these bindings from TPope's vim-unimpaired.
-
-(key-chord-define evil-normal-state-map "[e" 'move-text-up)
-(key-chord-define evil-normal-state-map "]e" 'move-text-down)
-(key-chord-define evil-normal-state-map "[ " 'aw/open-line-above)
-(key-chord-define evil-normal-state-map "] " 'aw/open-line-below)
-(key-chord-define evil-normal-state-map "[b" 'previous-buffer)
-(key-chord-define evil-normal-state-map "]b" 'next-buffer)
+(evil-set-initial-state 'ibuffer-mode 'normal)
 
 ;; Snippets
 
@@ -909,10 +906,10 @@ PACKAGE is installed and the current version is deleted."
 
 ;;      TODO: start httpd in correct directory
 
-;;     =impatient-mode= is an amazing tool for live-editing HTML. When paired with
+;;     =impatient-mode= is an amazing tool for live-editing web pages. When paired with
 ;;     =simple-httdp=, you can point your browser to =http://localhost:8080/imp= to
-;;     see a live copy of your HTML buffer. No need to save or refresh
-;;     anything. This is as instantaneous as it gets.
+;;     see a live copy of any buffer that has impatient-mode enabled. If that buffer happens to contain HTML, CSS, or Javascript, it will be evaluated on the fly. No need to save or refresh
+;;     anything. It's almost like they knew that I'm very... impatient.
 
 ;;     Let's start impatient mode for all HTML, CSS, and Javascript buffers, and
 ;;     run =httpd-start= when needed.
@@ -920,12 +917,19 @@ PACKAGE is installed and the current version is deleted."
 (require 'simple-httpd)
 
 (defun aw/imp-setup ()
+  (setq httpd-root "/home/austin/impatient-test/") ;; I'd like to set this based on the current buffer's working directory
   (httpd-start)
   (impatient-mode))
 
-(add-hook 'html-mode-hook 'aw/imp-setup)
-(add-hook 'css-mode-hook 'aw/imp-setup)
-(add-hook 'js-mode-hook 'aw/imp-setup)
+;; (add-hook 'html-mode-hook 'aw/imp-setup)
+;; (add-hook 'css-mode-hook 'aw/imp-setup)
+;; (add-hook 'js-mode-hook 'aw/imp-setup)
+
+;; JavaScript
+
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(add-hook 'js2-mode-hook 'ac-js2-mode)
+(setq js2-highlight-level 1)
 
 ;; Semantic
 
@@ -1109,7 +1113,7 @@ automatically updates the diff to reflect the change."
 
 (setq org-catch-invisible-edits 'show)
 
-;; Org-agenda
+;; Agenda
    
 ;;    I keep my schedule with =org=agenda=.
 
@@ -1119,6 +1123,10 @@ automatically updates the diff to reflect the change."
       org-agenda-span 1)                           ; Show only today by default
 
 (define-key custom-bindings-map (kbd "C-c a") 'org-agenda-list)
+
+;; Show the agenda buffer in a full frame.
+
+;; (fullframe org-agenda-mode org-agenda-quit)
 
 ;; When editing org-files with source-blocks, we want the source blocks to
 ;;    be themed as they would in their native mode.
@@ -1132,13 +1140,14 @@ automatically updates the diff to reflect the change."
 (setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
 (custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))
 
-;; Make =o= start a new header.
+;; TODO: Make =o= start a new header.
 
 
 
-;; Org-babel
+;; Babel
 
-;;    Org-babel is awesome for literate programming, and it even works with compiled languages.
+;;    Org-babel is awesome for literate programming, and it even works with
+;;    compiled languages. To create C source blocks we just need to enable
 
 (add-to-list 'org-babel-load-languages
              '(C . t))
@@ -1151,10 +1160,16 @@ automatically updates the diff to reflect the change."
       body
     (format "int main(int argc, char* argv[]) {\n%s\nreturn 0;\n}\n" body)))
 
-;; TODO Capturing
+;; Capturing
 
 (setq org-default-notes-file (concat org-directory "/inbox.org"))
 (define-key custom-bindings-map (kbd "C-c o") 'org-capture)
+
+;; The capture buffer should start in insert state. Note that the usual function
+;;    =evil-set-initial-state= doesn't work for this case. I'm pretty sure it's
+;;    because =org-capture-mode= is only a minor mode, but I could be wrong.
+
+(add-hook 'org-capture-mode-hook 'evil-insert-state)
 
 ;; Capture templates
 
@@ -1171,6 +1186,12 @@ automatically updates the diff to reflect the change."
 (add-to-list 'org-capture-templates
              '("s" "Scheduled Action" entry (file+datetree "~/Dropbox/org/inbox.org")
                "* %?\n%t\n" ))
+
+;; One of the most common captures will be school assignments.
+
+(add-to-list 'org-capture-templates
+             '("a" "Assignment" entry (file+headline "~/Dropbox/org/school.org" "381 Assignments")
+              "**** %?\n" ))
 
 ;; MobileOrg
 ;;    MobileOrg will let me sync my agenda to my phone, which will then sync
