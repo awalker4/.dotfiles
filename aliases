@@ -52,6 +52,8 @@ elif [[ -x /usr/bin/pacman ]]; then
     alias pacu='sudo pacman -U'
     alias pacr='sudo pacman -R'
     alias pacq='pacman -Q | grep'
+elif [[ -x /usr/bin/apt ]]; then
+    alias apti='sudo apt-get install'
 elif [[ -x /bin/rpm ]]; then
     alias rpmq='rpm -qa | grep'
 fi
