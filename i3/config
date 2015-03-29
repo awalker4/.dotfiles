@@ -173,6 +173,7 @@ bindsym Print exec --no-startup-id scrot -q 100 ~/Pictures/screenshots/%Y-%m-%d-
 
 # Media controls
 
+bindsym $mod+Shift+d exec "urxvt -e bash -c 'export EDITOR=emacsclient && ranger'"
 bindsym $mod+Shift+p exec "urxvt -e ncmpcpp"
 bindsym $mod+p exec "mpc toggle"
 # increase/decrease volume
