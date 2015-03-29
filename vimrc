@@ -2,7 +2,7 @@
 " ~/.vimrc
 " Vim settings
 "
-" Inspired largely by Steve Losh's vimrc
+" Inspired by Steve Losh's vimrc
 " https://bitbucket.org/sjl/dotfiles/src/tip/vim/vimrc
 "
 " Sections:
@@ -16,7 +16,6 @@
 "   -> Leader shortcuts
 "   -> Plugins
     "   -> Plugin settings
-"   -> Autocommands
 "   -> Colors 
 """"""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -181,10 +180,6 @@ set incsearch
 "Always highlight matches
 set hlsearch
 
-" Use literal regex
-"nnoremap / /\v
-"vnoremap / /\v
-
 " Substitute globally by default
 set gdefault
 
@@ -242,15 +237,9 @@ map <leader>et :tabe %%
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugins
 """"""""""""""""""""""""""""""""""""""""""""""""""
-filetype off
-
 call plug#begin('~/.vim/plugged')
 
-Plug 'gmarik/Vundle.vim'
-
 Plug 'vim-scripts/AutoComplPop'
-
-Plug 'MarcWeber/vim-addon-local-vimrc'
 
 " Visual
 Plug 'bling/vim-airline' " Status line
@@ -265,13 +254,7 @@ Plug 'scrooloose/nerdcommenter' " Quick commenting
 Plug 'scrooloose/syntastic' " Show syntax errors
 Plug 'tpope/vim-surround' " Quickly surround text
 
-" Git/Github
-Plug 'mattn/webapi-vim'
-Plug 'mattn/gist-vim' " Quickly upload gists
-
 call plug#end()
-
-filetype plugin indent on
 
 """"""""""""""""""""""""""""""
 " => Plugin settings
@@ -285,20 +268,6 @@ filetype plugin indent on
 let g:ctrlp_open_multiple_files = '2vjr'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""
-" => Autocommands
-""""""""""""""""""""""""""""""""""""""""""""""""""
-" Make shell scripts executable based on shebang
-"au BufwritePost * if getline("1") == '#!/bin/bash' | exe '!chmod u+x %' | endif
-
-" Delete trailing white space on save, useful for Python and CoffeeScript
-func! DeleteTrailingWS()
-  exe "normal mz"
-  %s/\s\+$//ge
-  exe "normal `z"
-endfunc
-"autocmd BufWrite *.py,*.coffee :call DeleteTrailingWS()
-
-""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors 
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " Syntax highlighting
@@ -308,7 +277,7 @@ set background=dark
 " Make popups readable
 hi Pmenusel ctermbg=red
 
-"colorscheme solarized
+colorscheme solarized
 
 
 " Highlight Word (Thanks Steve Losh!)
