@@ -36,7 +36,8 @@ source ~/.dotfiles/aliases
 ########################################
 # => General
 ########################################
-export TERM=xterm-256color
+TERM=xterm-256color
+EDITOR=vim
 
 #Don't save duplicate lines
 export HISTCONTROL=erasedups

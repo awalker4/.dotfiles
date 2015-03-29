@@ -92,8 +92,8 @@ setopt no_rm_star_silent
 ########################################
 # Variables
 ########################################
-export EDITOR=vim
-export PATH=$PATH:$HOME/bin:/usr/local/bin:$HOME/.gem/ruby/2.1.0/bin
+EDITOR=vim
+PATH=$PATH:$HOME/bin:/usr/local/bin:$HOME/.gem/ruby/2.1.0/bin
 
 source ~/.dotfiles/aliases
 ########################################
