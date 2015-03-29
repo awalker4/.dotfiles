@@ -478,7 +478,7 @@
 **** Evil-surround
 
      This awesome Vim plugin will let you surround text objects with various
-     items. Luckily, there's an Emacs port.
+     items. Luckily, there's an Emacs version.
      
      #+BEGIN_SRC emacs-lisp
        (global-evil-surround-mode 1)
@@ -530,7 +530,6 @@
       ;; Nerd commenter
       (evilnc-default-hotkeys)
       (global-evil-visualstar-mode t)
-
 
       (evil-mode 1)
 
@@ -904,6 +903,14 @@
        ;;(eval-after-load 'company
          ;;'(add-to-list 'company-backends 'company-omnisharp))
     #+END_SRC
+*** C++
+
+    By default, .h files are opened in C mode. I'll mostly be using them for C++
+    projects, though.
+
+    #+BEGIN_SRC emacs-lisp
+    (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+    #+END_SRC
 *** FSP
 
     FSP (Finite state processes) is a notation that formally describes concurrent
@@ -916,8 +923,8 @@
 
     #+BEGIN_SRC emacs-lisp
       ;; Load fsp-mode.el from its own directory
-      (add-to-list 'load-path "~/Dropbox/fsp-mode/")
-      (require 'fsp-mode)
+      ;; (add-to-list 'load-path "~/Dropbox/fsp-mode/")
+      ;; (require 'fsp-mode)
     #+END_SRC
 *** Java and C
 
@@ -1400,7 +1407,8 @@
 
     #+BEGIN_SRC emacs-lisp
       (add-to-list 'org-capture-templates
-                   '("s" "Scheduled Action" entry (file+datetree "~/Dropbox/org/inbox.org")
+                   '("s" "Scheduled Action"
+                     entry (file+datetree "~/Dropbox/org/inbox.org")
                      "* %?\n%t\n" ))
     #+END_SRC
     
@@ -1408,8 +1416,21 @@
 
     #+BEGIN_SRC emacs-lisp
       (add-to-list 'org-capture-templates
-                   '("a" "Assignment" entry (file+headline "~/Dropbox/org/school.org" "381 Assignments")
-                    "**** %?\n" ))
+                   '("1" "Assignment (CIS 381)"
+                     entry (file+headline "~/Dropbox/org/school.org" "CIS 381")
+                     "**** %?\n" ))
+      (add-to-list 'org-capture-templates
+                   '("2" "Assignment (CIS 467)"
+                     entry (file+headline "~/Dropbox/org/school.org" "CIS 467")
+                     "**** %?\n" ))
+      (add-to-list 'org-capture-templates
+                   '("3" "Assignment (CIS 481)"
+                     entry (file+headline "~/Dropbox/org/school.org" "CIS 481")
+                     "**** %?\n" ))
+      (add-to-list 'org-capture-templates
+                   '("4" "Assignment (CIS 499)"
+                     entry (file+headline "~/Dropbox/org/school.org" "CIS 499")
+                     "**** %?\n" ))
     #+END_SRC
 
 ** MobileOrg
@@ -1503,9 +1524,11 @@
 * Future plans
 
   I'm never done tweaking my setup. Here's some stuff that will happen in my
-  next procrastination session.
+  next procrastination session. If you have a fix for any of these, let me know!
 
   - ibuffer going full frame messes up my frame layout
+  - evil-mode
+    - terminal emacs does not expand org headings with tab
   - org stuff
     - org-agenda should use evil keys, also probably magit and ibuffer
     - I need to sort out my org-capture workflow
@@ -1516,7 +1539,7 @@
     - Inconsolata doesn't load until I eval init.el again
     - Org headers are oversized until I eval again (this is a solarized thing)
   - This whole file needs to be better organized
-  - If there's a compilation buffer open, use it again
+    - use-package for packages
 
 * License
 
