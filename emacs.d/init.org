@@ -99,6 +99,7 @@
          paredit               ; minor mode for editing parentheses
          powerline             ; Rewrite of Powerline
          projectile            ; Easy navigation for files in a project
+         skewer-mode           ; Use the browser as a Javascript repl
          slime                 ; Superior Lisp Interaction Mode for Emacs
          solarized-theme       ; Great color theme
          undo-tree             ; Treat undo history as a tree
@@ -435,12 +436,13 @@
          "#" 'aw/split-window-right-and-switch
          "=" 'balance-windows)
 
-       ;; Buffer Stuff
+       ;; Buffer and file stuff
        (evil-leader/set-key
          "bb" 'helm-mini
          "bk" 'kill-buffer
          "bl" 'ibuffer
          "bm" 'bookmark-jump
+         "bo" 'ff-find-other-file
          "bs" 'save-buffer
          "bw" 'write-file)
 
@@ -1418,19 +1420,19 @@
       (add-to-list 'org-capture-templates
                    '("1" "Assignment (CIS 381)"
                      entry (file+headline "~/Dropbox/org/school.org" "CIS 381")
-                     "**** %?\n" ))
+                     "**** TODO %?\n" ))
       (add-to-list 'org-capture-templates
                    '("2" "Assignment (CIS 467)"
                      entry (file+headline "~/Dropbox/org/school.org" "CIS 467")
-                     "**** %?\n" ))
+                     "**** TODO %?\n" ))
       (add-to-list 'org-capture-templates
                    '("3" "Assignment (CIS 481)"
                      entry (file+headline "~/Dropbox/org/school.org" "CIS 481")
-                     "**** %?\n" ))
+                     "**** TODO %?\n" ))
       (add-to-list 'org-capture-templates
                    '("4" "Assignment (CIS 499)"
                      entry (file+headline "~/Dropbox/org/school.org" "CIS 499")
-                     "**** %?\n" ))
+                     "**** TODO %?\n" ))
     #+END_SRC
 
 ** MobileOrg
