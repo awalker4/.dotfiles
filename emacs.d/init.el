@@ -1170,7 +1170,7 @@ automatically updates the diff to reflect the change."
 
 ;; Capturing
 
-(setq org-default-notes-file (concat org-directory "/inbox.org"))
+(setq org-default-notes-file (concat org-directory "/calendar.org"))
 (define-key custom-bindings-map (kbd "C-c o") 'org-capture)
 
 ;; The capture buffer should start in insert state. Note that the usual function
@@ -1193,27 +1193,27 @@ automatically updates the diff to reflect the change."
 
 (add-to-list 'org-capture-templates
              '("s" "Scheduled Action"
-               entry (file+datetree "~/Dropbox/org/inbox.org")
-               "* %?\n%t\n" ))
+               entry (file+datetree+prompt "~/Dropbox/org/calendar.org")
+               "* %?\n%T\n" ))
 
 ;; One of the most common captures will be school assignments.
 
 (add-to-list 'org-capture-templates
              '("1" "Assignment (CIS 381)"
-               entry (file+headline "~/Dropbox/org/school.org" "CIS 381")
-               "**** TODO %?\n" ))
+               entry (file+datetree+prompt "~/Dropbox/org/calendar.org" "CIS 381")
+               "* TODO %? :cis381:\nDEADLINE: %T\n" ))
 (add-to-list 'org-capture-templates
              '("2" "Assignment (CIS 467)"
-               entry (file+headline "~/Dropbox/org/school.org" "CIS 467")
-               "**** TODO %?\n" ))
+               entry (file+datetree+prompt "~/Dropbox/org/calendar.org" "CIS 467")
+               "**** TODO %? :cis467:\nDEADLINE: %T\n" ))
 (add-to-list 'org-capture-templates
              '("3" "Assignment (CIS 481)"
-               entry (file+headline "~/Dropbox/org/school.org" "CIS 481")
-               "**** TODO %?\n" ))
+               entry (file+datetree+prompt "~/Dropbox/org/calendar.org" "CIS 481")
+               "**** TODO %? :cis481:\nDEADLINE: %T\n" ))
 (add-to-list 'org-capture-templates
              '("4" "Assignment (CIS 499)"
-               entry (file+headline "~/Dropbox/org/school.org" "CIS 499")
-               "**** TODO %?\n" ))
+               entry (file+datetree+prompt "~/Dropbox/org/calendar.org" "CIS 499")
+               "**** TODO %? :cis499:\nDEADLINE: %T\n" ))
 
 ;; MobileOrg
 ;;    MobileOrg will let me sync my agenda to my phone, which will then sync
