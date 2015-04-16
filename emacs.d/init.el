@@ -827,30 +827,6 @@ PACKAGE is installed and the current version is deleted."
 
 (add-to-list 'auto-mode-alist '("\\.tex\\'" . latex-mode))
 
-;; I like using the [[https://code.google.com/p/minted/][Minted]] package for source blocks in LaTeX. To make org
-;;     use this we add the following snippet.
-
-(eval-after-load 'org
-  '(add-to-list 'org-latex-packages-alist '("" "minted")))
-(setq org-latex-listings 'minted)
-
-;; Because [[https://code.google.com/p/minted/][Minted]] uses [[http://pygments.org][Pygments]] (an external process), we must add the
-;;     =-shell-escape= option to the =org-latex-pdf-process= commands. The
-;;     =tex-compile-commands= variable controls the default compile command for
-;;     Tex- and LaTeX-mode, we can add the flag with a rather dirty statement
-;;     (if anyone finds a nicer way to do this, please let me know).
-
-(eval-after-load 'ox-latex
-  '(setq org-latex-pdf-process
-         (mapcar
-          (lambda (str)
-            (concat "pdflatex -shell-escape "
-                    (substring str (string-match "-" str))))
-          org-latex-pdf-process)))
-
-(eval-after-load 'tex-mode
-  '(setcar (cdr (cddaar tex-compile-commands)) " -shell-escape "))
-
 ;; TODO flycheck
 
 (evil-leader/set-key-for-mode 'latex-mode
