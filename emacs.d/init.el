@@ -827,30 +827,6 @@ PACKAGE is installed and the current version is deleted."
 
 (add-to-list 'auto-mode-alist '("\\.tex\\'" . latex-mode))
 
-;; I like using the [[https://code.google.com/p/minted/][Minted]] package for source blocks in LaTeX. To make org
-;;     use this we add the following snippet.
-
-(eval-after-load 'org
-  '(add-to-list 'org-latex-packages-alist '("" "minted")))
-(setq org-latex-listings 'minted)
-
-;; Because [[https://code.google.com/p/minted/][Minted]] uses [[http://pygments.org][Pygments]] (an external process), we must add the
-;;     =-shell-escape= option to the =org-latex-pdf-process= commands. The
-;;     =tex-compile-commands= variable controls the default compile command for
-;;     Tex- and LaTeX-mode, we can add the flag with a rather dirty statement
-;;     (if anyone finds a nicer way to do this, please let me know).
-
-(eval-after-load 'ox-latex
-  '(setq org-latex-pdf-process
-         (mapcar
-          (lambda (str)
-            (concat "pdflatex -shell-escape "
-                    (substring str (string-match "-" str))))
-          org-latex-pdf-process)))
-
-(eval-after-load 'tex-mode
-  '(setcar (cdr (cddaar tex-compile-commands)) " -shell-escape "))
-
 ;; TODO flycheck
 
 (evil-leader/set-key-for-mode 'latex-mode
@@ -903,7 +879,7 @@ PACKAGE is installed and the current version is deleted."
 ;;      instructions from the site.
 
 (require 'jedi)
-(add-hook 'python-mode-hook 'jedi:setup)
+;; (add-hook 'python-mode-hook 'jedi:setup)
 (setq jedi:server-command
      (cons "python3" (cdr jedi:server-command))
      python-shell-interpreter "python3")
@@ -1185,16 +1161,16 @@ automatically updates the diff to reflect the change."
 
 (setq org-capture-templates '())
 
-;; Basic tasks can go straight to my inbox for reorganizing later.
 
-(add-to-list 'org-capture-templates
-             '("t" "Todo" entry (file+headline "~/Dropbox/org/inbox.org" "Tasks")
-              "* TODO %?\n  %i\n"))
 
 (add-to-list 'org-capture-templates
              '("s" "Scheduled Action"
                entry (file+datetree+prompt "~/Dropbox/org/calendar.org")
                "* %?\n%T\n" ))
+
+(add-to-list 'org-capture-templates
+             '("t" "Todo" entry (file+headline "~/Dropbox/org/calendar.org" "Todos")
+              "* TODO %?\n  SCHEDULED: %t\n"))
 
 ;; One of the most common captures will be school assignments.
 
