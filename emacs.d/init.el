@@ -59,6 +59,7 @@
     fullframe             ; Make certain modes take up the whole frame
     gist                  ; Quickly post code snippets to Github
     helm                  ; Super powerful completion tool
+    helm-ag
     helm-gtags            ; Use gtags for semantic completion
     helm-projectile       ; Projectile as a helm completion source
     helm-spotify          ; Spotify's entire library at my fingertips
@@ -309,6 +310,106 @@ PACKAGE is installed and the current version is deleted."
 (when (fboundp 'windmove-default-keybindings)
    (windmove-default-keybindings))
 
+;; Since I'm using a daemon, I rarely kill emacs, which means bookmarks will
+;;    never get saved on quit. Just save them on every update.
+
+(setq bookmark-save-flag 1)
+
+;; Helm
+
+;;    Helm is an amazing completion tool for finding almost anything. We can
+;;    replace many default functions with the helm equivalent.
+
+(eval-after-load 'helm
+  '(progn
+     (global-set-key (kbd "M-y") 'helm-show-kill-ring)
+     (global-set-key (kbd "C-x b") 'helm-mini)
+     (global-set-key (kbd "C-x C-f") 'helm-find-files)
+     (global-set-key (kbd "M-x") 'helm-M-x)
+     (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
+     (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+
+     (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)))
+
+(eval-after-load "helm-regexp"
+  '(setq helm-source-moccur
+         (helm-make-source "Moccur"
+             'helm-source-multi-occur :follow 1)))
+;;(diminish 'helm-mode)
+
+(require 'helm-config)
+
+;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
+;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
+;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
+(global-set-key (kbd "C-c h") 'helm-command-prefix)
+(global-unset-key (kbd "C-x c"))
+
+(when (executable-find "curl")
+  (setq helm-google-suggest-use-curl-p t))
+
+(setq helm-quick-update                     t ; do not display invisible candidates
+      helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
+      helm-M-x-fuzzy-match                  t ; fuzzy matching M-x
+      helm-buffers-fuzzy-matching           t ; fuzzy matching buffer names when non--nil
+      helm-recentf-fuzzy-match              t ; fuzzy matching recent files
+      helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
+      helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
+      helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
+      helm-ff-file-name-history-use-recentf t)
+
+(helm-mode 1)
+
+;; I'd like to easily run helm-occur on all buffers that are backed by files. ([[http://stackoverflow.com/questions/14726601/sublime-text-2s-goto-anything-or-instant-search-for-emacs][Source]])
+
+(defun aw/helm-do-grep-all-buffers ()
+  "multi-occur in all buffers backed by files."
+  (interactive)
+  (helm-multi-occur
+   (delq nil
+         (mapcar (lambda (b)
+                   (when (buffer-file-name b) (buffer-name b)))
+                 (buffer-list)))))
+
+;; When you press backspace in a helm buffer and there's nothing left to delete,
+;;    helm will complain by saying ~Text is read only~. A much better default is to just
+;;    close the buffer. ([[http://oremacs.com/2014/12/21/helm-backspace/][Source]])
+
+(defun helm-backspace ()
+  (interactive)
+  (condition-case nil
+      (backward-delete-char 1)
+    (error
+     (helm-keyboard-quit))))
+
+(define-key helm-map (kbd "DEL") 'helm-backspace)
+
+;; Helm-gtags
+
+(setq
+ helm-gtags-ignore-case t
+ helm-gtags-auto-update t
+ helm-gtags-use-input-at-cursor t
+ helm-gtags-pulse-at-cursor t
+ helm-gtags-prefix-key "\C-cg"
+ helm-gtags-suggested-key-mapping t
+ )
+
+(require 'helm-gtags)
+;; Enable helm-gtags-mode
+(add-hook 'dired-mode-hook 'helm-gtags-mode)
+(add-hook 'eshell-mode-hook 'helm-gtags-mode)
+(add-hook 'c-mode-hook 'helm-gtags-mode)
+(add-hook 'c++-mode-hook 'helm-gtags-mode)
+(add-hook 'asm-mode-hook 'helm-gtags-mode)
+
+(define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
+(define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
+(define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
+(define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
+(define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+(define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
+
 ;; Keybindings
    
 ;;    I keep my global key bindings in a custom keymap. By loading this map in its
@@ -346,6 +447,7 @@ PACKAGE is installed and the current version is deleted."
   "t" 'multi-term-dedicated-toggle
   "ei" 'aw/edit-init-org
   "eI" 'aw/edit-init-el
+  "eo" 'aw/edit-org-calendar
   "es" 'aw/switch-to-scratch
   "x" 'helm-M-x)
 
@@ -362,10 +464,12 @@ PACKAGE is installed and the current version is deleted."
 ;; Buffer and file stuff
 (evil-leader/set-key
   "bb" 'helm-mini
+  "bg" 'aw/helm-do-grep-all-buffers
+  "bh" 'ff-find-other-file
   "bk" 'kill-buffer
   "bl" 'ibuffer
   "bm" 'bookmark-jump
-  "bo" 'ff-find-other-file
+  "bo" 'helm-occur
   "bs" 'save-buffer
   "bw" 'write-file)
 
@@ -385,7 +489,6 @@ PACKAGE is installed and the current version is deleted."
 (evil-leader/set-key
   "pf" 'helm-projectile-find-file
   "pg" 'helm-projectile-grep
-  "po" 'helm-occur
   "pp" 'projectile-switch-project
   "ps" 'helm-spotify)
 
@@ -415,6 +518,10 @@ PACKAGE is installed and the current version is deleted."
 (defun aw/edit-init-el ()
   (interactive)
   (find-file (concat user-emacs-directory "init.el")))
+
+(defun aw/edit-org-calendar ()
+  (interactive)
+  (find-file (concat org-directory "/calendar.org")))
 
 (defun aw/switch-to-scratch ()
   (interactive)
@@ -472,6 +579,38 @@ PACKAGE is installed and the current version is deleted."
 (key-chord-define evil-normal-state-map "[b" 'previous-buffer)
 (key-chord-define evil-normal-state-map "]b" 'next-buffer)
 
+;; Modes
+
+;;    There are some modes that are enabled by default that I don't find
+;;    particularly useful. We create a list of these modes, and disable all of
+;;    these.
+
+
+;;    Let's apply the same technique for enabling modes that are disabled by
+;;    default.
+
+(dolist (mode
+         '(column-number-mode         ; Show column number in mode line.
+           delete-selection-mode      ; Replace selected text.
+           dirtrack-mode              ; directory tracking in *shell*
+           recentf-mode               ; Recently opened files.
+           show-paren-mode))          ; Highlight matching parentheses.
+  (funcall mode 1))
+
+(when (version< emacs-version "24.4")
+  (eval-after-load 'auto-compile
+    '((auto-compile-on-save-mode 1))))  ; compile .el files on save.
+
+;; This makes =.md=-files open in =markdown-mode=.
+
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+
+;; We want to have autocompletion by default. Load company mode everywhere.
+
+(add-hook 'after-init-hook 'global-company-mode)
+;; (diminish 'company-mode)
+ (setq company-idle-delay 0)
+
 ;; Visual
 
 ;;    First, get rid of a few things.
@@ -515,118 +654,6 @@ PACKAGE is installed and the current version is deleted."
 (define-fringe-bitmap 'tilde [0 0 0 113 219 142 0 0] nil nil 'center)
 (setcdr (assq 'empty-line fringe-indicator-alist) 'tilde)
 (set-fringe-bitmap-face 'tilde 'font-lock-function-name-face)
-
-;; Modes
-
-;;    There are some modes that are enabled by default that I don't find
-;;    particularly useful. We create a list of these modes, and disable all of
-;;    these.
-
-
-;;    Let's apply the same technique for enabling modes that are disabled by
-;;    default.
-
-(dolist (mode
-         '(column-number-mode         ; Show column number in mode line.
-           delete-selection-mode      ; Replace selected text.
-           dirtrack-mode              ; directory tracking in *shell*
-           recentf-mode               ; Recently opened files.
-           show-paren-mode))          ; Highlight matching parentheses.
-  (funcall mode 1))
-
-(when (version< emacs-version "24.4")
-  (eval-after-load 'auto-compile
-    '((auto-compile-on-save-mode 1))))  ; compile .el files on save.
-
-;; This makes =.md=-files open in =markdown-mode=.
-
-(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-
-;; We want to have autocompletion by default. Load company mode everywhere.
-
-(add-hook 'after-init-hook 'global-company-mode)
-;; (diminish 'company-mode)
- (setq company-idle-delay 0)
-
-;; Helm
-
-;;    Helm is an amazing completion tool for finding almost anything. We can
-;;    replace many default functions with the helm equivalent.
-
-(eval-after-load 'helm
-  '(progn
-     (global-set-key (kbd "M-y") 'helm-show-kill-ring)
-     (global-set-key (kbd "C-x b") 'helm-mini)
-     (global-set-key (kbd "C-x C-f") 'helm-find-files)
-     (global-set-key (kbd "M-x") 'helm-M-x)
-     (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
-     (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
-
-     (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)))
-
-;;(diminish 'helm-mode)
-
-(require 'helm-config)
-
-;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
-;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
-;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
-(global-set-key (kbd "C-c h") 'helm-command-prefix)
-(global-unset-key (kbd "C-x c"))
-
-(when (executable-find "curl")
-  (setq helm-google-suggest-use-curl-p t))
-
-(setq helm-quick-update                     t ; do not display invisible candidates
-      helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
-      helm-M-x-fuzzy-match                  t ; fuzzy matching M-x
-      helm-buffers-fuzzy-matching           t ; fuzzy matching buffer names when non--nil
-      helm-recentf-fuzzy-match              t ; fuzzy matching recent files
-      helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
-      helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
-      helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
-      helm-ff-file-name-history-use-recentf t)
-
-(helm-mode 1)
-
-;; When you press backspace in a helm buffer and there's nothing left to delete,
-;;    helm will complain by saying ~Text is read only~. A much better default is to just
-;;    close the buffer. ([[http://oremacs.com/2014/12/21/helm-backspace/][Source]])
-
-(defun helm-backspace ()
-  (interactive)
-  (condition-case nil
-      (backward-delete-char 1)
-    (error
-     (helm-keyboard-quit))))
-
-(define-key helm-map (kbd "DEL") 'helm-backspace)
-
-;; Helm-gtags
-
-(setq
- helm-gtags-ignore-case t
- helm-gtags-auto-update t
- helm-gtags-use-input-at-cursor t
- helm-gtags-pulse-at-cursor t
- helm-gtags-prefix-key "\C-cg"
- helm-gtags-suggested-key-mapping t
- )
-
-(require 'helm-gtags)
-;; Enable helm-gtags-mode
-(add-hook 'dired-mode-hook 'helm-gtags-mode)
-(add-hook 'eshell-mode-hook 'helm-gtags-mode)
-(add-hook 'c-mode-hook 'helm-gtags-mode)
-(add-hook 'c++-mode-hook 'helm-gtags-mode)
-(add-hook 'asm-mode-hook 'helm-gtags-mode)
-
-(define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
-(define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
-(define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
-(define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
-(define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
-(define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
 
 ;; Windows
    
@@ -803,19 +830,7 @@ PACKAGE is installed and the current version is deleted."
 
 (add-hook 'c-mode-common-hook 'c-setup)
 
-;; Some statements in Java appear often, and become tedious to write
-;;     out. We can use abbrevs to speed this up.
-
-(define-abbrev-table 'java-mode-abbrev-table
-  '(("psv" "public static void main(String[] args) {" nil 0)
-    ("sopl" "System.out.println" nil 0)
-    ("sop" "System.out.printf" nil 0)))
-
-;; To be able to use the abbrev table defined above, =abbrev-mode= must be
-;;     activated.
-
 (defun java-setup ()
-  (abbrev-mode t)
   (setq-local compile-command (concat "javac " (buffer-name))))
 
 (add-hook 'java-mode-hook 'java-setup)
@@ -903,7 +918,7 @@ PACKAGE is installed and the current version is deleted."
 ;;      instructions from the site.
 
 (require 'jedi)
-(add-hook 'python-mode-hook 'jedi:setup)
+;; (add-hook 'python-mode-hook 'jedi:setup)
 (setq jedi:server-command
      (cons "python3" (cdr jedi:server-command))
      python-shell-interpreter "python3")
@@ -925,7 +940,7 @@ PACKAGE is installed and the current version is deleted."
 (require 'simple-httpd)
 
 (defun aw/imp-setup ()
-  (setq httpd-root "/home/austin/impatient-test/") ;; I'd like to set this based on the current buffer's working directory
+  (setq httpd-root "/home/austin/Dropbox/school/cis467/hw3/") ;; I'd like to set this based on the current buffer's working directory
   (httpd-start)
   (impatient-mode))
 
