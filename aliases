@@ -1,7 +1,7 @@
 # This file is used to keep all my aliases between bash and zsh
 
 # General shell
-alias realias='vim ~/.dotfiles/aliases; source ~/.dotfiles/aliases'
+alias realias='emclient ~/.dotfiles/aliases; source ~/.dotfiles/aliases'
 alias vi='vim'
 alias em='emacsclient -c --no-wait'
 alias h='history'
