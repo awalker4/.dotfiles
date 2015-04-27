@@ -2,6 +2,7 @@
 #+LATEX_HEADER: \usepackage{parskip}
 #+LATEX_HEADER: \usepackage{inconsolata}
 #+PROPERTY: header-args :tangle yes :comments org
+#+STARTUP: hidestars
 
 #+TITLE: Emacs configuration file
 #+AUTHOR: Austin Walker
@@ -929,6 +930,7 @@
       ;; (add-to-list 'load-path "~/Dropbox/fsp-mode/")
       ;; (require 'fsp-mode)
     #+END_SRC
+
 *** Java and C
 
     The =c-mode-common-hook= is a general hook that work on all C-like
@@ -1034,13 +1036,13 @@
      instructions from the site.
 
      #+BEGIN_SRC emacs-lisp
-     (require 'jedi)
-     (add-hook 'python-mode-hook 'jedi:setup)
-     (setq jedi:server-command
-          (cons "python3" (cdr jedi:server-command))
-          python-shell-interpreter "python3")
-     (setq jedi:complete-on-dot t)
-     ;;(add-hook 'python-mode-hook 'jedi:ac-setup)
+       (require 'jedi)
+       ;; (add-hook 'python-mode-hook 'jedi:setup)
+       (setq jedi:server-command
+            (cons "python3" (cdr jedi:server-command))
+            python-shell-interpreter "python3")
+       (setq jedi:complete-on-dot t)
+       ;;(add-hook 'python-mode-hook 'jedi:ac-setup)
      #+END_SRC
 
 *** TODO Web Editing
@@ -1371,20 +1373,18 @@
       (setq org-capture-templates '())
     #+END_SRC
 
-    Basic tasks can go straight to my inbox for reorganizing later.
-
     #+BEGIN_SRC emacs-lisp
-      (add-to-list 'org-capture-templates
-                   '("t" "Todo" entry (file+headline "~/Dropbox/org/calendar.org" "Tasks")
-                    "* TODO %?\n  %i\n"))
     #+END_SRC
-    
 
     #+BEGIN_SRC emacs-lisp
       (add-to-list 'org-capture-templates
                    '("s" "Scheduled Action"
                      entry (file+datetree+prompt "~/Dropbox/org/calendar.org")
                      "* %?\n%T\n" ))
+
+      (add-to-list 'org-capture-templates
+                   '("t" "Todo" entry (file+headline "~/Dropbox/org/calendar.org" "Tasks")
+                    "* TODO %?\n  SCHEDULED: %t\n"))
     #+END_SRC
     
     One of the most common captures will be school assignments.
@@ -1511,7 +1511,6 @@
     - I need to sort out my org-capture workflow
       - Capture buffer should start in insert state
   - start working on a better latex workflow
-  - Make impatient mode start up for me
   - Something's out of order with loading the font
     - Inconsolata doesn't load until I eval init.el again
     - Org headers are oversized until I eval again (this is a solarized thing)

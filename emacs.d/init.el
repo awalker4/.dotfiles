@@ -879,7 +879,7 @@ PACKAGE is installed and the current version is deleted."
 ;;      instructions from the site.
 
 (require 'jedi)
-(add-hook 'python-mode-hook 'jedi:setup)
+;; (add-hook 'python-mode-hook 'jedi:setup)
 (setq jedi:server-command
      (cons "python3" (cdr jedi:server-command))
      python-shell-interpreter "python3")
@@ -1161,11 +1161,9 @@ automatically updates the diff to reflect the change."
 
 (setq org-capture-templates '())
 
-;; Basic tasks can go straight to my inbox for reorganizing later.
-
-(add-to-list 'org-capture-templates
-             '("t" "Todo" entry (file+headline "~/Dropbox/org/calendar.org" "Tasks")
-              "* TODO %?\n  %i\n"))
+      (add-to-list 'org-capture-templates
+                   '("t" "Todo" entry (file+headline "~/Dropbox/org/calendar.org" "Tasks")
+                    "* TODO %?\n  SCHEDULED: %t\n"))
 
 (add-to-list 'org-capture-templates
              '("s" "Scheduled Action"
