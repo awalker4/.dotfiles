@@ -1136,7 +1136,7 @@ automatically updates the diff to reflect the change."
 (add-to-list 'org-babel-load-languages
              '(C . t))
 
-(advice-add 'org-babel-C-ensure-main-wrap :override #'aw/org-c-src-main)
+;; (advice-add 'org-babel-C-ensure-main-wrap :override #'aw/org-c-src-main)
 
 (defun aw/org-c-src-main (body)
   "Wrap BODY in a \"main\" function call if none exists."
@@ -1164,7 +1164,7 @@ automatically updates the diff to reflect the change."
 ;; Basic tasks can go straight to my inbox for reorganizing later.
 
 (add-to-list 'org-capture-templates
-             '("t" "Todo" entry (file+headline "~/Dropbox/org/inbox.org" "Tasks")
+             '("t" "Todo" entry (file+headline "~/Dropbox/org/calendar.org" "Tasks")
               "* TODO %?\n  %i\n"))
 
 (add-to-list 'org-capture-templates
