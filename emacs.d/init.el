@@ -1151,7 +1151,7 @@ automatically updates the diff to reflect the change."
 (add-to-list 'org-babel-load-languages
              '(C . t))
 
-(advice-add 'org-babel-C-ensure-main-wrap :override #'aw/org-c-src-main)
+;; (advice-add 'org-babel-C-ensure-main-wrap :override #'aw/org-c-src-main)
 
 (defun aw/org-c-src-main (body)
   "Wrap BODY in a \"main\" function call if none exists."
@@ -1176,16 +1176,14 @@ automatically updates the diff to reflect the change."
 
 (setq org-capture-templates '())
 
-
+      (add-to-list 'org-capture-templates
+                   '("t" "Todo" entry (file+headline "~/Dropbox/org/calendar.org" "Tasks")
+                    "* TODO %?\n  SCHEDULED: %t\n"))
 
 (add-to-list 'org-capture-templates
              '("s" "Scheduled Action"
                entry (file+datetree+prompt "~/Dropbox/org/calendar.org")
                "* %?\n%T\n" ))
-
-(add-to-list 'org-capture-templates
-             '("t" "Todo" entry (file+headline "~/Dropbox/org/calendar.org" "Todos")
-              "* TODO %?\n  SCHEDULED: %t\n"))
 
 ;; One of the most common captures will be school assignments.
 

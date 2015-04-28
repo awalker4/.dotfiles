@@ -92,6 +92,7 @@
          ibuffer-tramp         ; sort ibuffer based on tramp connection
          impatient-mode        ; Edit html in realtime
          jedi                  ; Python auto-completion for Emacs
+         js2-mode              ; Javascript editing done right
          key-chord             ; Run commands with multiple key strokes (Helpful for Evil)
          magit                 ; Git integration for Emacs
          markdown-mode         ; Emacs Major mode for Markdown-formatted files.
@@ -1392,7 +1393,6 @@
 
     #+BEGIN_SRC emacs-lisp
     #+END_SRC
-    
 
     #+BEGIN_SRC emacs-lisp
       (add-to-list 'org-capture-templates
@@ -1401,7 +1401,7 @@
                      "* %?\n%T\n" ))
 
       (add-to-list 'org-capture-templates
-                   '("t" "Todo" entry (file+headline "~/Dropbox/org/calendar.org" "Todos")
+                   '("t" "Todo" entry (file+headline "~/Dropbox/org/calendar.org" "Tasks")
                     "* TODO %?\n  SCHEDULED: %t\n"))
     #+END_SRC
     
@@ -1522,6 +1522,8 @@
   - ibuffer going full frame messes up my frame layout
   - evil-mode
     - terminal emacs does not expand org headings with tab
+  - magit
+    - magit-filenotify to auto refresh the status buffer
   - org stuff
     - org-agenda should use evil keys, also probably magit and ibuffer
     - I need to sort out my org-capture workflow
@@ -1530,6 +1532,7 @@
   - Something's out of order with loading the font
     - Inconsolata doesn't load until I eval init.el again
     - Org headers are oversized until I eval again (this is a solarized thing)
+  - Hard line wrapping gets annoying when programming
   - This whole file needs to be better organized
     - use-package for packages
 
