@@ -67,6 +67,7 @@
     ibuffer-tramp         ; sort ibuffer based on tramp connection
     impatient-mode        ; Edit html in realtime
     jedi                  ; Python auto-completion for Emacs
+    js2-mode              ; Javascript editing done right
     key-chord             ; Run commands with multiple key strokes (Helpful for Evil)
     magit                 ; Git integration for Emacs
     markdown-mode         ; Emacs Major mode for Markdown-formatted files.
@@ -234,7 +235,7 @@ PACKAGE is installed and the current version is deleted."
 ;;    change them in a single buffer. Using =setq-default= we change the
 ;;    buffer-local variable's default value.
 
-(setq-default fill-column 80                    ; Maximum line width.
+(setq-default fill-column 100                    ; Maximum line width.
               indent-tabs-mode nil              ; Use spaces instead of tabs.
               split-width-threshold 100         ; Split verticly by default.
               compilation-scroll-output 1       ; Follow compilation buffer
@@ -439,68 +440,69 @@ PACKAGE is installed and the current version is deleted."
 ;;      We can bring back the leader key with the =evil-leader= package. I've always
 ;;      been a fan of , for my leader.
 
-(global-evil-leader-mode)
-(evil-leader/set-leader ",")
-(evil-leader/set-key
-  "f" 'helm-find-files
-  "m" 'compile
-  "t" 'multi-term-dedicated-toggle
-  "ei" 'aw/edit-init-org
-  "eI" 'aw/edit-init-el
-  "eo" 'aw/edit-org-calendar
-  "es" 'aw/switch-to-scratch
-  "x" 'helm-M-x)
+(setq evil-want-C-i-jump nil)
 
-;; Window stuff
-(evil-leader/set-key
-  "0" 'delete-window
-  "1" 'delete-other-windows
-  "2" 'split-window-below
-  "@" 'aw/split-window-below-and-switch
-  "3" 'split-window-right
-  "#" 'aw/split-window-right-and-switch
-  "=" 'balance-windows)
+        (global-evil-leader-mode)
+        (evil-leader/set-leader ",")
+        (evil-leader/set-key
+          "f" 'helm-find-files
+          "m" 'compile
+          "t" 'multi-term-dedicated-toggle
+          "ei" 'aw/edit-init-org
+          "eI" 'aw/edit-init-el
+          "eo" 'aw/edit-org-calendar
+          "es" 'aw/switch-to-scratch
+          "x" 'helm-M-x)
 
-;; Buffer and file stuff
-(evil-leader/set-key
-  "bb" 'helm-mini
-  "bg" 'aw/helm-do-grep-all-buffers
-  "bh" 'ff-find-other-file
-  "bk" 'kill-buffer
-  "bl" 'ibuffer
-  "bm" 'bookmark-jump
-  "bo" 'helm-occur
-  "bs" 'save-buffer
-  "bw" 'write-file)
+        ;; Window stuff
+        (evil-leader/set-key
+          "0" 'delete-window
+          "1" 'delete-other-windows
+          "2" 'split-window-below
+          "@" 'aw/split-window-below-and-switch
+          "3" 'split-window-right
+          "#" 'aw/split-window-right-and-switch
+          "=" 'balance-windows)
 
-;; Help stuff
-(evil-leader/set-key
-  "hc" 'describe-key-briefly
-  "hf" 'describe-function
-  "hv" 'describe-variable
-  "hm" 'man)
+        ;; Buffer and file stuff
+        (evil-leader/set-key
+          "bg" 'aw/helm-do-grep-all-buffers
+          "bh" 'ff-find-other-file
+          "bk" 'kill-buffer
+          "bl" 'ibuffer
+          "bm" 'bookmark-jump
+          "bo" 'helm-occur
+          "bs" 'helm-mini
+          "bw" 'write-file)
 
-;; Git stuff
-(evil-leader/set-key
-  "gb" 'magit-blame-mode
-  "gs" 'magit-status)
+        ;; Help stuff
+        (evil-leader/set-key
+          "hc" 'describe-key-briefly
+          "hf" 'describe-function
+          "hv" 'describe-variable
+          "hm" 'man)
 
-;; Projectile/Helm stuff
-(evil-leader/set-key
-  "pf" 'helm-projectile-find-file
-  "pg" 'helm-projectile-grep
-  "pp" 'projectile-switch-project
-  "ps" 'helm-spotify)
+        ;; Git stuff
+        (evil-leader/set-key
+          "gb" 'magit-blame-mode
+          "gs" 'magit-status)
 
-;; Org stuff
-(evil-leader/set-key
-  "oa" 'org-agenda-list
-  "oc" 'org-capture)
+        ;; Projectile/Helm stuff
+        (evil-leader/set-key
+          "pf" 'helm-projectile-find-file
+          "pg" 'helm-projectile-grep
+          "pp" 'projectile-switch-project
+          "ps" 'helm-spotify)
 
-;; Misc
-(evil-leader/set-key
-  "vb" 'eval-buffer
-  "vv" 'eval-last-sexp)
+        ;; Org stuff
+        (evil-leader/set-key
+          "oa" 'org-agenda-list
+          "oc" 'org-capture)
+
+        ;; Misc
+        (evil-leader/set-key
+          "vb" 'eval-buffer
+          "vv" 'eval-last-sexp)
 
 ;; Evil-surround
 
@@ -557,6 +559,8 @@ PACKAGE is installed and the current version is deleted."
 (evilnc-default-hotkeys)
 (global-evil-visualstar-mode t)
 
+;; Make tab work in terminal emacs
+(require 'evil)
 (evil-mode 1)
 
 (define-key evil-normal-state-map "H" 'windmove-left)
@@ -566,9 +570,6 @@ PACKAGE is installed and the current version is deleted."
 
 (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
 (key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
-
-;; Make tab work in terminal emacs
-(setq evil-want-C-i-jump nil)
 
 ;; I was really starting to miss some of these bindings from TPope's vim-unimpaired.
 
@@ -622,13 +623,12 @@ PACKAGE is installed and the current version is deleted."
            blink-cursor-mode))          ; The blinking cursor gets old.
   (funcall mode 0))
 
-;; TODO: This doesn't work with emacsclient
-;;    Change the color-theme to =solarized=. Use =wombat= in the terminal, since
-;;    solarized doesn't play very nicely.
+;; Change the color-theme to =zenburn=.
 
-(load-theme 'solarized-dark t)
+;; (load-theme 'solarized-dark t)
+;; (setq solarized-scale-org-headlines nil)
 
-(setq solarized-scale-org-headlines nil)
+(load-theme 'zenburn t)
 
 ;; Use the [[http://www.levien.com/type/myfonts/inconsolata.html][Inconsolata]] font if it's installed on the system.
 
@@ -1151,7 +1151,7 @@ automatically updates the diff to reflect the change."
 (add-to-list 'org-babel-load-languages
              '(C . t))
 
-;; (advice-add 'org-babel-C-ensure-main-wrap :override #'aw/org-c-src-main)
+(advice-add 'org-babel-C-ensure-main-wrap :override #'aw/org-c-src-main)
 
 (defun aw/org-c-src-main (body)
   "Wrap BODY in a \"main\" function call if none exists."
@@ -1176,14 +1176,16 @@ automatically updates the diff to reflect the change."
 
 (setq org-capture-templates '())
 
-      (add-to-list 'org-capture-templates
-                   '("t" "Todo" entry (file+headline "~/Dropbox/org/calendar.org" "Tasks")
-                    "* TODO %?\n  SCHEDULED: %t\n"))
+
 
 (add-to-list 'org-capture-templates
              '("s" "Scheduled Action"
                entry (file+datetree+prompt "~/Dropbox/org/calendar.org")
                "* %?\n%T\n" ))
+
+(add-to-list 'org-capture-templates
+             '("t" "Todo" entry (file+headline "~/Dropbox/org/calendar.org" "Tasks")
+              "* TODO %?\n  SCHEDULED: %t\n"))
 
 ;; One of the most common captures will be school assignments.
 
