@@ -1,4 +1,3 @@
-
 #+BABEL: :cache yes
 #+LATEX_HEADER: \usepackage{parskip}
 #+LATEX_HEADER: \usepackage{inconsolata}
@@ -287,7 +286,7 @@
    buffer-local variable's default value.
    
    #+BEGIN_SRC emacs-lisp
-     (setq-default fill-column 80                    ; Maximum line width.
+     (setq-default fill-column 100                    ; Maximum line width.
                    indent-tabs-mode nil              ; Use spaces instead of tabs.
                    split-width-threshold 100         ; Split verticly by default.
                    compilation-scroll-output 1       ; Follow compilation buffer
@@ -538,6 +537,8 @@
      been a fan of , for my leader.
 
      #+BEGIN_SRC emacs-lisp
+      (setq evil-want-C-i-jump nil)
+
               (global-evil-leader-mode)
               (evil-leader/set-leader ",")
               (evil-leader/set-key
@@ -562,14 +563,13 @@
 
               ;; Buffer and file stuff
               (evil-leader/set-key
-                "bb" 'helm-mini
                 "bg" 'aw/helm-do-grep-all-buffers
                 "bh" 'ff-find-other-file
                 "bk" 'kill-buffer
                 "bl" 'ibuffer
                 "bm" 'bookmark-jump
                 "bo" 'helm-occur
-                "bs" 'save-buffer
+                "bs" 'helm-mini
                 "bw" 'write-file)
 
               ;; Help stuff
@@ -662,6 +662,8 @@
       (evilnc-default-hotkeys)
       (global-evil-visualstar-mode t)
 
+      ;; Make tab work in terminal emacs
+      (require 'evil)
       (evil-mode 1)
 
       (define-key evil-normal-state-map "H" 'windmove-left)
@@ -672,8 +674,6 @@
       (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
       (key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
 
-      ;; Make tab work in terminal emacs
-      (setq evil-want-C-i-jump nil)
     #+END_SRC
     
     I was really starting to miss some of these bindings from TPope's vim-unimpaired.
@@ -738,14 +738,13 @@
        (funcall mode 0))
    #+END_SRC
 
-   TODO: This doesn't work with emacsclient
-   Change the color-theme to =solarized=. Use =wombat= in the terminal, since
-   solarized doesn't play very nicely.
+   Change the color-theme to =zenburn=.
 
    #+BEGIN_SRC emacs-lisp
-     (load-theme 'solarized-dark t)
+     ;; (load-theme 'solarized-dark t)
+     ;; (setq solarized-scale-org-headlines nil)
 
-     (setq solarized-scale-org-headlines nil)
+     (load-theme 'zenburn t)
    #+END_SRC
 
    Use the [[http://www.levien.com/type/myfonts/inconsolata.html][Inconsolata]] font if it's installed on the system.
