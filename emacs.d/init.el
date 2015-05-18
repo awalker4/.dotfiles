@@ -13,11 +13,14 @@
 ;;    the =after-save-hook= ensuring to always tangle and byte-compile the
 ;;    =org=-document after changes.
 
+(defun aw/editing-init-org-p ()
+  (equal (file-name-nondirectory (buffer-file-name))
+                "init.org"))
+
 (defun tangle-init ()
    "If the current buffer is 'init.org' the code-blocks are
  tangled, and the tangled file is compiled."
-   (when (equal (buffer-file-name)
-                "/home/austin/.dotfiles/emacs.d/init.org")
+   (when (aw/editing-init-org-p)
      ;; Avoid running hooks when tangling.
      (let ((prog-mode-hook nil))
        (org-babel-tangle))))
@@ -30,8 +33,7 @@
 ;;    template a bit when I'm in this file.
 
 (defun aw/init-org-elisp-template ()
-    (when (equal (buffer-file-name)
-                 "/home/austin/.dotfiles/emacs.d/init.org")
+    (when (aw/editing-init-org-p)
       (setq-local org-structure-template-alist
                   '(("s" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC" "<src lang="emacs lisp">\n?\n</src>")))))
 
