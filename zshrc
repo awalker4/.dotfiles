@@ -92,7 +92,8 @@ setopt no_rm_star_silent
 ########################################
 # Variables
 ########################################
-EDITOR=vim
+export EDITOR=vim
+export LEDGER_FILE="~/ledger.dat"
 PATH=$PATH:$HOME/bin:/usr/local/bin:$HOME/.gem/ruby/2.1.0/bin
 
 source ~/.dotfiles/aliases
