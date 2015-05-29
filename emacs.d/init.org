@@ -95,6 +95,7 @@
          jedi                  ; Python auto-completion for Emacs
          js2-mode              ; Javascript editing done right
          key-chord             ; Run commands with multiple key strokes (Helpful for Evil)
+         ledger-mode           ; Mode for editing ledger files
          magit                 ; Git integration for Emacs
          markdown-mode         ; Emacs Major mode for Markdown-formatted files.
          move-text             ; Move current line or region with M-up or M-down
@@ -617,40 +618,44 @@
        (defun aw/edit-init-org ()
          (interactive)
          (find-file (concat user-emacs-directory "init.org")))
-
+       
        (defun aw/edit-init-el ()
          (interactive)
          (find-file (concat user-emacs-directory "init.el")))
-
+       
        (defun aw/edit-org-calendar ()
          (interactive)
          (find-file (concat org-directory "/calendar.org")))
-
+       
        (defun aw/switch-to-scratch ()
          (interactive)
          (switch-to-buffer "*scratch*"))
-
+       
        (defun aw/split-window-right-and-switch ()
          (interactive)
          (split-window-right)
          (other-window 1))
-
+       
        (defun aw/split-window-below-and-switch ()
          (interactive)
          (split-window-below)
          (other-window 1))
-
+       
        (defun aw/open-line-above ()
          (interactive)
          (save-excursion
            (beginning-of-line)
            (open-line 1)))
-
+       
        (defun aw/open-line-below ()
          (interactive)
          (save-excursion
            (end-of-line)
            (open-line 1)))
+       
+       (defun aw/interactive-org-todo ()
+         (interactive)
+         (org-todo-list '(4)))
      #+END_SRC
 
 **** Initialization
@@ -1043,9 +1048,9 @@
     Make it so =.m= files are loaded in =octave-mode=.
 
     #+BEGIN_SRC emacs-lisp
-      (autoload 'octave-mode "octave-mod" nil t)
-      (setq auto-mode-alist
-            (cons '("\\.m$" . octave-mode) auto-mode-alist))
+      ;; (autoload 'octave-mode "octave-mode" nil t)
+      ;; (setq auto-mode-alist
+      ;;       (cons '("\\.m$" . octave-mode) auto-mode-alist))
     #+END_SRC
 
 *** Python
@@ -1337,19 +1342,6 @@
            org-confirm-babel-evaluate nil)
    #+END_SRC
    
-   This is quite an ugly fix for allowing code markup for expressions like
-   ="this string"=, because the quotation marks causes problems.
-   
-   #+BEGIN_SRC emacs-lisp
-     (setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
-     (custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))
-   #+END_SRC
-   
-   TODO: Make =o= start a new header.
-   
-   #+BEGIN_SRC emacs-lisp
-   #+END_SRC
-   
 ** Babel
 
    Org-babel is awesome for literate programming, and it even works with
@@ -1393,9 +1385,6 @@
     #+END_SRC
 
     #+BEGIN_SRC emacs-lisp
-    #+END_SRC
-
-    #+BEGIN_SRC emacs-lisp
       (add-to-list 'org-capture-templates
                    '("s" "Scheduled Action"
                      entry (file+datetree+prompt "~/Dropbox/org/calendar.org")
@@ -1426,6 +1415,17 @@
                      entry (file+datetree+prompt "~/Dropbox/org/calendar.org" "CIS 499")
                      "**** TODO %? :cis499:\nDEADLINE: %T\n" ))
     #+END_SRC
+
+** Habits
+
+   Org-mode has a nice feature called org-habit that I can use to track day to
+   day things. Let's load the module first.
+
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'org-modules
+                  'org-habit)
+     
+   #+END_SRC
 
 ** MobileOrg
    MobileOrg will let me sync my agenda to my phone, which will then sync
@@ -1492,6 +1492,35 @@
        (kbd "M-k") 'org-metaup
        (kbd "M-l") 'org-metaright)
    #+END_SRC
+* Ledger
+  #+BEGIN_SRC emacs-lisp
+    ;; (add-to-list 'org-capture-templates
+    ;;              '("l" "Ledger Entries"))
+
+    (add-to-list 'org-capture-templates
+                 '("r" "Test ledger entry" plain (file "~/ledger.dat")
+                  ;; "%(org-read-date) %^{Payee}
+      ;; Liabilities:MBNA  
+      ;; Expenses:%^{Account}  %^{Amount}"
+                  "This is a test entry"
+                  ))
+
+    ;; (setq org-capture-templates
+    ;;       (append '(("l" "Ledger entries")
+    ;;                 ("lm" "MBNA" plain
+    ;;                  (file "~/personal/ledger")
+    ;;                  "%(org-read-date) %^{Payee}
+    ;;   Liabilities:MBNA  
+    ;;   Expenses:%^{Account}  %^{Amount}
+    ;; ")
+    ;;                 ("lc" "Cash" plain
+    ;;                  (file "~/personal/ledger")
+    ;;                  "%(org-read-date) * %^{Payee}
+    ;;   Expenses:Cash 
+    ;;   Expenses:%^{Account}  %^{Amount}
+    ;; "))
+    ;;               org-capture-templates))
+  #+END_SRC
 
 * Wrap-up
   

@@ -71,6 +71,7 @@
     jedi                  ; Python auto-completion for Emacs
     js2-mode              ; Javascript editing done right
     key-chord             ; Run commands with multiple key strokes (Helpful for Evil)
+    ledger-mode           ; Mode for editing ledger files
     magit                 ; Git integration for Emacs
     markdown-mode         ; Emacs Major mode for Markdown-formatted files.
     move-text             ; Move current line or region with M-up or M-down
@@ -553,6 +554,10 @@ PACKAGE is installed and the current version is deleted."
     (end-of-line)
     (open-line 1)))
 
+(defun aw/interactive-org-todo ()
+  (interactive)
+  (org-todo-list '(4)))
+
 ;; Initialization
 
 ;;     Once everything is set up, we can start evil-mode.
@@ -885,9 +890,9 @@ PACKAGE is installed and the current version is deleted."
 
 ;;     Make it so =.m= files are loaded in =octave-mode=.
 
-(autoload 'octave-mode "octave-mod" nil t)
-(setq auto-mode-alist
-      (cons '("\\.m$" . octave-mode) auto-mode-alist))
+;; (autoload 'octave-mode "octave-mode" nil t)
+;; (setq auto-mode-alist
+;;       (cons '("\\.m$" . octave-mode) auto-mode-alist))
 
 ;; Python
 
@@ -1135,16 +1140,6 @@ automatically updates the diff to reflect the change."
 (setq org-src-fontify-natively t
       org-confirm-babel-evaluate nil)
 
-;; This is quite an ugly fix for allowing code markup for expressions like
-;;    ="this string"=, because the quotation marks causes problems.
-
-(setcar (nthcdr 2 org-emphasis-regexp-components) " \t\n,")
-(custom-set-variables `(org-emphasis-alist ',org-emphasis-alist))
-
-;; TODO: Make =o= start a new header.
-
-
-
 ;; Babel
 
 ;;    Org-babel is awesome for literate programming, and it even works with
@@ -1178,8 +1173,6 @@ automatically updates the diff to reflect the change."
 
 (setq org-capture-templates '())
 
-
-
 (add-to-list 'org-capture-templates
              '("s" "Scheduled Action"
                entry (file+datetree+prompt "~/Dropbox/org/calendar.org")
@@ -1207,6 +1200,14 @@ automatically updates the diff to reflect the change."
              '("4" "Assignment (CIS 499)"
                entry (file+datetree+prompt "~/Dropbox/org/calendar.org" "CIS 499")
                "**** TODO %? :cis499:\nDEADLINE: %T\n" ))
+
+;; Habits
+
+;;    Org-mode has a nice feature called org-habit that I can use to track day to
+;;    day things. Let's load the module first.
+
+(add-to-list 'org-modules
+             'org-habit)
 
 ;; MobileOrg
 ;;    MobileOrg will let me sync my agenda to my phone, which will then sync
@@ -1265,6 +1266,35 @@ automatically updates the diff to reflect the change."
   (kbd "M-j") 'org-metadown
   (kbd "M-k") 'org-metaup
   (kbd "M-l") 'org-metaright)
+
+;; Ledger
+
+;; (add-to-list 'org-capture-templates
+;;              '("l" "Ledger Entries"))
+
+(add-to-list 'org-capture-templates
+             '("r" "Test ledger entry" plain (file "~/ledger.dat")
+              ;; "%(org-read-date) %^{Payee}
+  ;; Liabilities:MBNA  
+  ;; Expenses:%^{Account}  %^{Amount}"
+              "This is a test entry"
+              ))
+
+;; (setq org-capture-templates
+;;       (append '(("l" "Ledger entries")
+;;                 ("lm" "MBNA" plain
+;;                  (file "~/personal/ledger")
+;;                  "%(org-read-date) %^{Payee}
+;;   Liabilities:MBNA  
+;;   Expenses:%^{Account}  %^{Amount}
+;; ")
+;;                 ("lc" "Cash" plain
+;;                  (file "~/personal/ledger")
+;;                  "%(org-read-date) * %^{Payee}
+;;   Expenses:Cash 
+;;   Expenses:%^{Account}  %^{Amount}
+;; "))
+;;               org-capture-templates))
 
 ;; Wrap-up
   
