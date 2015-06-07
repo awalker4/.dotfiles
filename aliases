@@ -1,7 +1,7 @@
 # This file is used to keep all my aliases between bash and zsh
 
 # General shell
-alias realias='emclient ~/.dotfiles/aliases; source ~/.dotfiles/aliases'
+alias realias='vim ~/.dotfiles/aliases; source ~/.dotfiles/aliases'
 alias vi='vim'
 alias em='emacsclient -c --no-wait'
 alias h='history'
@@ -10,6 +10,8 @@ alias du='du -h'
 alias userctl='systemctl --user'
 alias psg='ps -aux | grep'
 alias play='mplayer'
+alias bal='ledger bal'
+alias ball='ledger bal assets liabilities'
 alias xclip='xclip -selection c'
 alias off='sudo shutdown 0'
 alias reboot='sudo reboot'
