@@ -538,69 +538,70 @@
      been a fan of , for my leader.
 
      #+BEGIN_SRC emacs-lisp
-      (setq evil-want-C-i-jump nil)
+       (setq evil-want-C-i-jump nil)
 
-              (global-evil-leader-mode)
-              (evil-leader/set-leader ",")
-              (evil-leader/set-key
-                "f" 'helm-find-files
-                "m" 'compile
-                "t" 'multi-term-dedicated-toggle
-                "ei" 'aw/edit-init-org
-                "eI" 'aw/edit-init-el
-                "eo" 'aw/edit-org-calendar
-                "es" 'aw/switch-to-scratch
-                "x" 'helm-M-x)
+               (global-evil-leader-mode)
+               (evil-leader/set-leader ",")
+               (evil-leader/set-key
+                 "f" 'helm-find-files
+                 "m" 'compile
+                 "t" 'multi-term-dedicated-toggle
+                 "ei" 'aw/edit-init-org
+                 "eI" 'aw/edit-init-el
+                 "el" 'aw/edit-ledger-file
+                 "eo" 'aw/edit-org-calendar
+                 "es" 'aw/switch-to-scratch
+                 "x" 'helm-M-x)
 
-              ;; Window stuff
-              (evil-leader/set-key
-                "0" 'delete-window
-                "1" 'delete-other-windows
-                "2" 'split-window-below
-                "@" 'aw/split-window-below-and-switch
-                "3" 'split-window-right
-                "#" 'aw/split-window-right-and-switch
-                "=" 'balance-windows)
+               ;; Window stuff
+               (evil-leader/set-key
+                 "0" 'delete-window
+                 "1" 'delete-other-windows
+                 "2" 'split-window-below
+                 "@" 'aw/split-window-below-and-switch
+                 "3" 'split-window-right
+                 "#" 'aw/split-window-right-and-switch
+                 "=" 'balance-windows)
 
-              ;; Buffer and file stuff
-              (evil-leader/set-key
-                "bg" 'aw/helm-do-grep-all-buffers
-                "bh" 'ff-find-other-file
-                "bk" 'kill-buffer
-                "bl" 'ibuffer
-                "bm" 'bookmark-jump
-                "bo" 'helm-occur
-                "bs" 'helm-mini
-                "bw" 'write-file)
+               ;; Buffer and file stuff
+               (evil-leader/set-key
+                 "bg" 'aw/helm-do-grep-all-buffers
+                 "bh" 'ff-find-other-file
+                 "bk" 'kill-buffer
+                 "bl" 'ibuffer
+                 "bm" 'bookmark-jump
+                 "bo" 'helm-occur
+                 "bs" 'helm-mini
+                 "bw" 'write-file)
 
-              ;; Help stuff
-              (evil-leader/set-key
-                "hc" 'describe-key-briefly
-                "hf" 'describe-function
-                "hv" 'describe-variable
-                "hm" 'man)
+               ;; Help stuff
+               (evil-leader/set-key
+                 "hc" 'describe-key-briefly
+                 "hf" 'describe-function
+                 "hv" 'describe-variable
+                 "hm" 'man)
 
-              ;; Git stuff
-              (evil-leader/set-key
-                "gb" 'magit-blame-mode
-                "gs" 'magit-status)
+               ;; Git stuff
+               (evil-leader/set-key
+                 "gb" 'magit-blame-mode
+                 "gs" 'magit-status)
 
-              ;; Projectile/Helm stuff
-              (evil-leader/set-key
-                "pf" 'helm-projectile-find-file
-                "pg" 'helm-projectile-grep
-                "pp" 'projectile-switch-project
-                "ps" 'helm-spotify)
+               ;; Projectile/Helm stuff
+               (evil-leader/set-key
+                 "pf" 'helm-projectile-find-file
+                 "pg" 'helm-projectile-grep
+                 "pp" 'projectile-switch-project
+                 "ps" 'helm-spotify)
 
-              ;; Org stuff
-              (evil-leader/set-key
-                "oa" 'org-agenda-list
-                "oc" 'org-capture)
+               ;; Org stuff
+               (evil-leader/set-key
+                 "oa" 'org-agenda-list
+                 "oc" 'org-capture)
 
-              ;; Misc
-              (evil-leader/set-key
-                "vb" 'eval-buffer
-                "vv" 'eval-last-sexp)
+               ;; Misc
+               (evil-leader/set-key
+                 "vb" 'eval-buffer
+                 "vv" 'eval-last-sexp)
      #+END_SRC
 
 **** Evil-surround
@@ -618,41 +619,45 @@
        (defun aw/edit-init-org ()
          (interactive)
          (find-file (concat user-emacs-directory "init.org")))
-       
+
        (defun aw/edit-init-el ()
          (interactive)
          (find-file (concat user-emacs-directory "init.el")))
-       
+
        (defun aw/edit-org-calendar ()
          (interactive)
          (find-file (concat org-directory "/calendar.org")))
-       
+
+       (defun aw/edit-ledger-file ()
+         (interactive)
+         (find-file "~/Dropbox/ledger.dat"))
+
        (defun aw/switch-to-scratch ()
          (interactive)
          (switch-to-buffer "*scratch*"))
-       
+
        (defun aw/split-window-right-and-switch ()
          (interactive)
          (split-window-right)
          (other-window 1))
-       
+
        (defun aw/split-window-below-and-switch ()
          (interactive)
          (split-window-below)
          (other-window 1))
-       
+
        (defun aw/open-line-above ()
          (interactive)
          (save-excursion
            (beginning-of-line)
            (open-line 1)))
-       
+
        (defun aw/open-line-below ()
          (interactive)
          (save-excursion
            (end-of-line)
            (open-line 1)))
-       
+
        (defun aw/interactive-org-todo ()
          (interactive)
          (org-todo-list '(4)))
@@ -1348,8 +1353,11 @@
    compiled languages. To create C source blocks we just need to enable 
 
    #+BEGIN_SRC emacs-lisp
-     (add-to-list 'org-babel-load-languages
-                  '(C . t))
+     (org-babel-do-load-languages
+      'org-babel-load-languages
+      '((emacs-lisp . t)
+        (C . t)
+        (octave . t)))
    #+END_SRC
    
    #+BEGIN_SRC emacs-lisp
@@ -1422,8 +1430,8 @@
    day things. Let's load the module first.
 
    #+BEGIN_SRC emacs-lisp
-     (add-to-list 'org-modules
-                  'org-habit)
+     ;; (add-to-list 'org-modules
+     ;;              'org-habit)
      
    #+END_SRC
 
@@ -1494,16 +1502,19 @@
    #+END_SRC
 * Ledger
   #+BEGIN_SRC emacs-lisp
+    (setq auto-mode-alist
+          (cons '("\\.dat$" . ledger-mode) auto-mode-alist))
+
     ;; (add-to-list 'org-capture-templates
     ;;              '("l" "Ledger Entries"))
 
-    (add-to-list 'org-capture-templates
-                 '("r" "Test ledger entry" plain (file "~/ledger.dat")
+    ;; (add-to-list 'org-capture-templates
+    ;;              '("r" "Test ledger entry" plain (file "~/ledger.dat")
                   ;; "%(org-read-date) %^{Payee}
       ;; Liabilities:MBNA  
       ;; Expenses:%^{Account}  %^{Amount}"
-                  "This is a test entry"
-                  ))
+                  ;; "This is a test entry"
+                  ;; ))
 
     ;; (setq org-capture-templates
     ;;       (append '(("l" "Ledger entries")

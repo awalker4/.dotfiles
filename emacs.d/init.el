@@ -453,6 +453,7 @@ PACKAGE is installed and the current version is deleted."
           "t" 'multi-term-dedicated-toggle
           "ei" 'aw/edit-init-org
           "eI" 'aw/edit-init-el
+          "el" 'aw/edit-ledger-file
           "eo" 'aw/edit-org-calendar
           "es" 'aw/switch-to-scratch
           "x" 'helm-M-x)
@@ -527,6 +528,10 @@ PACKAGE is installed and the current version is deleted."
 (defun aw/edit-org-calendar ()
   (interactive)
   (find-file (concat org-directory "/calendar.org")))
+
+(defun aw/edit-ledger-file ()
+  (interactive)
+  (find-file "~/Dropbox/ledger.dat"))
 
 (defun aw/switch-to-scratch ()
   (interactive)
@@ -1145,8 +1150,11 @@ automatically updates the diff to reflect the change."
 ;;    Org-babel is awesome for literate programming, and it even works with
 ;;    compiled languages. To create C source blocks we just need to enable
 
-(add-to-list 'org-babel-load-languages
-             '(C . t))
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (C . t)
+   (octave . t)))
 
 (advice-add 'org-babel-C-ensure-main-wrap :override #'aw/org-c-src-main)
 
@@ -1206,8 +1214,8 @@ automatically updates the diff to reflect the change."
 ;;    Org-mode has a nice feature called org-habit that I can use to track day to
 ;;    day things. Let's load the module first.
 
-(add-to-list 'org-modules
-             'org-habit)
+;; (add-to-list 'org-modules
+;;              'org-habit)
 
 ;; MobileOrg
 ;;    MobileOrg will let me sync my agenda to my phone, which will then sync
@@ -1269,16 +1277,19 @@ automatically updates the diff to reflect the change."
 
 ;; Ledger
 
+(setq auto-mode-alist
+      (cons '("\\.dat$" . ledger-mode) auto-mode-alist))
+
 ;; (add-to-list 'org-capture-templates
 ;;              '("l" "Ledger Entries"))
 
-(add-to-list 'org-capture-templates
-             '("r" "Test ledger entry" plain (file "~/ledger.dat")
+;; (add-to-list 'org-capture-templates
+;;              '("r" "Test ledger entry" plain (file "~/ledger.dat")
               ;; "%(org-read-date) %^{Payee}
   ;; Liabilities:MBNA  
   ;; Expenses:%^{Account}  %^{Amount}"
-              "This is a test entry"
-              ))
+              ;; "This is a test entry"
+              ;; ))
 
 ;; (setq org-capture-templates
 ;;       (append '(("l" "Ledger entries")
