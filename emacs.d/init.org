@@ -1369,6 +1369,7 @@
            body
          (format "int main(int argc, char* argv[]) {\n%s\nreturn 0;\n}\n" body)))
    #+END_SRC
+
 ** Capturing
 
    #+BEGIN_SRC emacs-lisp
@@ -1389,41 +1390,13 @@
     The list of templates should be empty to begin with.
 
     #+BEGIN_SRC emacs-lisp
-      (setq org-capture-templates '())
-    #+END_SRC
-
-    #+BEGIN_SRC emacs-lisp
-      (add-to-list 'org-capture-templates
-                   '("s" "Scheduled Action"
-                     entry (file+datetree+prompt "~/Dropbox/org/calendar.org")
-                     "* %?\n%T\n" ))
-
-      (add-to-list 'org-capture-templates
-                   '("t" "Todo" entry (file+headline "~/Dropbox/org/calendar.org" "Tasks")
-                    "* TODO %?\n  SCHEDULED: %t\n"))
+      (setq org-capture-templates
+            '(("s" "Scheduled Action" entry (file+datetree+prompt "~/Dropbox/org/calendar.org")
+                     "* %?\n%T\n")
+              ("t" "Todo" entry (file+headline "~/Dropbox/org/calendar.org" "Tasks")
+               "* TODO %?\n  SCHEDULED: %t\n")))
     #+END_SRC
     
-    One of the most common captures will be school assignments.
-
-    #+BEGIN_SRC emacs-lisp
-      (add-to-list 'org-capture-templates
-                   '("1" "Assignment (CIS 381)"
-                     entry (file+datetree+prompt "~/Dropbox/org/calendar.org" "CIS 381")
-                     "* TODO %? :cis381:\nDEADLINE: %T\n" ))
-      (add-to-list 'org-capture-templates
-                   '("2" "Assignment (CIS 467)"
-                     entry (file+datetree+prompt "~/Dropbox/org/calendar.org" "CIS 467")
-                     "**** TODO %? :cis467:\nDEADLINE: %T\n" ))
-      (add-to-list 'org-capture-templates
-                   '("3" "Assignment (CIS 481)"
-                     entry (file+datetree+prompt "~/Dropbox/org/calendar.org" "CIS 481")
-                     "**** TODO %? :cis481:\nDEADLINE: %T\n" ))
-      (add-to-list 'org-capture-templates
-                   '("4" "Assignment (CIS 499)"
-                     entry (file+datetree+prompt "~/Dropbox/org/calendar.org" "CIS 499")
-                     "**** TODO %? :cis499:\nDEADLINE: %T\n" ))
-    #+END_SRC
-
 ** Habits
 
    Org-mode has a nice feature called org-habit that I can use to track day to

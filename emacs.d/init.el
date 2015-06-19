@@ -1179,35 +1179,11 @@ automatically updates the diff to reflect the change."
 
 ;;     The list of templates should be empty to begin with.
 
-(setq org-capture-templates '())
-
-(add-to-list 'org-capture-templates
-             '("s" "Scheduled Action"
-               entry (file+datetree+prompt "~/Dropbox/org/calendar.org")
-               "* %?\n%T\n" ))
-
-(add-to-list 'org-capture-templates
-             '("t" "Todo" entry (file+headline "~/Dropbox/org/calendar.org" "Tasks")
-              "* TODO %?\n  SCHEDULED: %t\n"))
-
-;; One of the most common captures will be school assignments.
-
-(add-to-list 'org-capture-templates
-             '("1" "Assignment (CIS 381)"
-               entry (file+datetree+prompt "~/Dropbox/org/calendar.org" "CIS 381")
-               "* TODO %? :cis381:\nDEADLINE: %T\n" ))
-(add-to-list 'org-capture-templates
-             '("2" "Assignment (CIS 467)"
-               entry (file+datetree+prompt "~/Dropbox/org/calendar.org" "CIS 467")
-               "**** TODO %? :cis467:\nDEADLINE: %T\n" ))
-(add-to-list 'org-capture-templates
-             '("3" "Assignment (CIS 481)"
-               entry (file+datetree+prompt "~/Dropbox/org/calendar.org" "CIS 481")
-               "**** TODO %? :cis481:\nDEADLINE: %T\n" ))
-(add-to-list 'org-capture-templates
-             '("4" "Assignment (CIS 499)"
-               entry (file+datetree+prompt "~/Dropbox/org/calendar.org" "CIS 499")
-               "**** TODO %? :cis499:\nDEADLINE: %T\n" ))
+(setq org-capture-templates
+      '(("s" "Scheduled Action" entry (file+datetree+prompt "~/Dropbox/org/calendar.org")
+               "* %?\n%T\n")
+        ("t" "Todo" entry (file+headline "~/Dropbox/org/calendar.org" "Tasks")
+         "* TODO %?\n  SCHEDULED: %t\n")))
 
 ;; Habits
 
