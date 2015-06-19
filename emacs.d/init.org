@@ -594,7 +594,10 @@
                ;; Org stuff
                (evil-leader/set-key
                  "oa" 'org-agenda-list
-                 "oc" 'org-capture)
+                 "oc" 'org-capture
+                 "os" 'org-search-view
+                 "ot" 'org-todo-list
+                 "oT" 'aw/interactive-org-todo)
 
                ;; Misc
                (evil-leader/set-key
@@ -1389,10 +1392,14 @@
 
     #+BEGIN_SRC emacs-lisp
       (setq org-capture-templates
-            '(("s" "Scheduled Action" entry (file+datetree+prompt "~/Dropbox/org/calendar.org")
-                     "* %?\n%T\n")
+            '(("j" "Journal Entry" plain (file+datetree "~/Dropbox/org/journal.org")
+               "    %?\n    %u" :empty-lines 1)
+              ("s" "Scheduled Action" entry (file+datetree+prompt "~/Dropbox/org/calendar.org")
+                  "* %?\n%T\n")
               ("t" "Todo" entry (file+headline "~/Dropbox/org/calendar.org" "Tasks")
-               "* TODO %?\n  SCHEDULED: %t\n")))
+                "* TODO %?\n  SCHEDULED: %t\n")
+              ("l" "Ledger Test" plain (file "~/Dropbox/ledger.dat")
+               "%(org-read-date) %^{Payee}")))
     #+END_SRC
     
 ** Habits
@@ -1532,8 +1539,6 @@
   next procrastination session. If you have a fix for any of these, let me know!
 
   - ibuffer going full frame messes up my frame layout
-  - evil-mode
-    - terminal emacs does not expand org headings with tab
   - magit
     - magit-filenotify to auto refresh the status buffer
   - org stuff

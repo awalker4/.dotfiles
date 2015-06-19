@@ -499,7 +499,10 @@ PACKAGE is installed and the current version is deleted."
         ;; Org stuff
         (evil-leader/set-key
           "oa" 'org-agenda-list
-          "oc" 'org-capture)
+          "oc" 'org-capture
+          "os" 'org-search-view
+          "ot" 'org-todo-list
+          "oT" 'aw/interactive-org-todo)
 
         ;; Misc
         (evil-leader/set-key
@@ -1178,10 +1181,14 @@ automatically updates the diff to reflect the change."
 ;;     The list of templates should be empty to begin with.
 
 (setq org-capture-templates
-      '(("s" "Scheduled Action" entry (file+datetree+prompt "~/Dropbox/org/calendar.org")
-               "* %?\n%T\n")
+      '(("j" "Journal Entry" plain (file+datetree "~/Dropbox/org/journal.org")
+         "    %?\n    %u" :empty-lines 1)
+        ("s" "Scheduled Action" entry (file+datetree+prompt "~/Dropbox/org/calendar.org")
+            "* %?\n%T\n")
         ("t" "Todo" entry (file+headline "~/Dropbox/org/calendar.org" "Tasks")
-         "* TODO %?\n  SCHEDULED: %t\n")))
+          "* TODO %?\n  SCHEDULED: %t\n")
+        ("l" "Ledger Test" plain (file "~/Dropbox/ledger.dat")
+         "%(org-read-date) %^{Payee}")))
 
 ;; Habits
 
