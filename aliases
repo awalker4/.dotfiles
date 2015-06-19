@@ -10,8 +10,6 @@ alias du='du -h'
 alias userctl='systemctl --user'
 alias psg='ps -aux | grep'
 alias play='mplayer'
-alias bal='ledger bal'
-alias ball='ledger bal assets liabilities'
 alias xclip='xclip -selection c'
 alias off='sudo shutdown 0'
 alias reboot='sudo reboot'
@@ -41,6 +39,23 @@ alias gco='git checkout'
 alias glog='git log --oneline --decorate --color --graph'
 # Get deleted files out of the repo
 alias grm="git status | grep deleted | awk '{print \$3}' | xargs git rm"
+
+# Ledger
+alias bal='ledger bal'
+alias ball='ledger bal assets liabilities'
+alias reg='ledger reg'
+
+xact() {
+    ledger xact $@
+    echo "\n"
+    echo "Is this correct? Y/N "
+    read -rs -k 1 ans
+    if [[ $ans == "y" ]]; then
+        ledger xact $@ >> ${LEDGER_FILE}
+        printf "xact written to ${LEDGER_FILE}\n"
+    fi
+    
+}
 
 
 # Package management
