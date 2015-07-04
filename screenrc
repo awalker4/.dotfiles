@@ -33,6 +33,9 @@ vbell "off"
 # Don't kill window after its child process dies.
 zombie "^["
 
+# Fast key presses won't get messed up
+maptimeout 5
+
 # Allow ssh-agent to work through screen sessions.
 unsetenv SSH_AUTH_SOCK
 setenv SSH_AUTH_SOCK $HOME/.screen/ssh-auth-sock.$HOSTNAME
