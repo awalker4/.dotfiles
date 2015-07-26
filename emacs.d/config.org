@@ -68,6 +68,7 @@
          expand-region         ; Increase selected region by semantic units
          flycheck              ; On-the-fly syntax checking
          fullframe             ; Make certain modes take up the whole frame
+         function-args         ; Completion for C/C++ functions
          gist                  ; Quickly post code snippets to Github
          helm                  ; Super powerful completion tool
          helm-ag
@@ -85,8 +86,6 @@
          markdown-mode         ; Emacs Major mode for Markdown-formatted files.
          move-text             ; Move current line or region with M-up or M-down
          multi-term            ; Better terminals
-         multiple-cursors      ; Multiple cursors for Emacs.
-         org-trello            ; two-way sync between org and Trello
          paredit               ; minor mode for editing parentheses
          powerline             ; Rewrite of Powerline
          projectile            ; Easy navigation for files in a project
@@ -1121,6 +1120,17 @@
 
       (semantic-mode 1)
     #+END_SRC
+*** function-args
+
+    #+BEGIN_SRC emacs-lisp
+      (require 'function-args)
+      (fa-config-default)
+      (define-key c-mode-map  [(control tab)] 'moo-complete)
+      (define-key c++-mode-map  [(control tab)] 'moo-complete)
+      (define-key c-mode-map (kbd "M-o")  'fa-show)
+      (define-key c++-mode-map (kbd "M-o")  'fa-show)
+    #+END_SRC
+
 ** Source Control
 
    Magit is awesome. Open it up with the entire frame.
