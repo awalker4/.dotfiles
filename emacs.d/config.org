@@ -6,7 +6,7 @@
 
 #+TITLE: Emacs configuration file
 #+AUTHOR: Austin Walker
-
+     
 * About
   
   This is an Emacs configuration file written in [[http://orgmode.org][Org mode]]. It began as a
@@ -23,25 +23,12 @@
      (defconst emacs-start-time (current-time))
    #+END_SRC
 
-   Emacs can only load =.el=-files. We can use =C-c C-v t= to run
-   =org-babel-tangle=, which extracts the code blocks from the current file
-   into a source-specific file (in this case a =.el=-file).
-
-   To avoid doing this each time a change is made we can add a function to
-   the =after-save-hook= ensuring to always tangle and byte-compile the
-   =org=-document after changes.
+   Emacs starts up by loading init.el. Thanks to the wonders of =org babel=, I can keep all of my
+   configuration in this file and load it from init.el with a single function, shown below. It's
+   commented out so I don't get stuck in recursion.
 
    #+BEGIN_SRC emacs-lisp
-     (defun tangle-init ()
-        "If the current buffer is 'init.org' the code-blocks are
-      tangled, and the tangled file is compiled."
-        (when (equal (buffer-file-name)
-                     "/home/austin/.dotfiles/emacs.d/init.org")
-          ;; Avoid running hooks when tangling.
-          (let ((prog-mode-hook nil))
-            (org-babel-tangle))))
-
-      (add-hook 'after-save-hook 'tangle-init)
+    ;; (org-babel-load-file "~/.emacs.d/config.org")
    #+END_SRC
    
    I'm adding code blocks to this file all the time. Org-mode provides a few
@@ -547,6 +534,7 @@
                  "ei" 'aw/edit-init-org
                  "eI" 'aw/edit-init-el
                  "el" 'aw/edit-ledger-file
+                 "en" 'aw/edit-org-notes
                  "eo" 'aw/edit-org-calendar
                  "es" 'aw/switch-to-scratch
                  "x" 'helm-M-x)
@@ -619,11 +607,15 @@
      #+BEGIN_SRC emacs-lisp
        (defun aw/edit-init-org ()
          (interactive)
-         (find-file (concat user-emacs-directory "init.org")))
+         (find-file (concat user-emacs-directory "config.org")))
 
        (defun aw/edit-init-el ()
          (interactive)
          (find-file (concat user-emacs-directory "init.el")))
+
+       (defun aw/edit-org-notes ()
+         (interactive)
+         (find-file (concat org-directory "/notes.org")))
 
        (defun aw/edit-org-calendar ()
          (interactive)
@@ -1571,3 +1563,6 @@
 
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+  
+[[http://www.gnu.org/software/emacs/manual/html_node/emacs/Time-Stamps.html][hellop]]
