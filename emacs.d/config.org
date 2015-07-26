@@ -39,7 +39,7 @@
    #+BEGIN_SRC emacs-lisp
      (defun aw/init-org-elisp-template ()
         (when (equal (buffer-file-name)
-                     "/home/austin/.dotfiles/emacs.d/init.org")
+                     "/home/austin/.dotfiles/emacs.d/config.org")
            (setq-local org-structure-template-alist
                        '(("s" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC" "<src lang="emacs lisp">\n?\n</src>")))))
 
@@ -534,6 +534,7 @@
                  "ei" 'aw/edit-init-org
                  "eI" 'aw/edit-init-el
                  "el" 'aw/edit-ledger-file
+                 "ej" 'aw/edit-journal
                  "en" 'aw/edit-org-notes
                  "eo" 'aw/edit-org-calendar
                  "es" 'aw/switch-to-scratch
@@ -552,7 +553,6 @@
                ;; Buffer and file stuff
                (evil-leader/set-key
                  "bg" 'aw/helm-do-grep-all-buffers
-                 "bh" 'ff-find-other-file
                  "bk" 'kill-buffer
                  "bl" 'ibuffer
                  "bm" 'bookmark-jump
@@ -576,6 +576,7 @@
                (evil-leader/set-key
                  "pf" 'helm-projectile-find-file
                  "pg" 'helm-projectile-grep
+                 "ph" 'projectile-find-other-file
                  "pp" 'projectile-switch-project
                  "ps" 'helm-spotify)
 
@@ -612,6 +613,10 @@
        (defun aw/edit-init-el ()
          (interactive)
          (find-file (concat user-emacs-directory "init.el")))
+
+       (defun aw/edit-journal ()
+         (interactive)
+         (find-file (concat org-directory "/journal.org")))
 
        (defun aw/edit-org-notes ()
          (interactive)
