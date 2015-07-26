@@ -6,7 +6,7 @@
 
 #+TITLE: Emacs configuration file
 #+AUTHOR: Austin Walker
-     
+
 * About
   
   This is an Emacs configuration file written in [[http://orgmode.org][Org mode]]. It began as a
@@ -55,30 +55,25 @@
      (defvar required-packages
        '(ac-octave             ; Auto-completion for octave
          auto-compile          ; Automatically compile Emacs Lisp libraries
-         cider                 ; Clojure repl
          csharp-mode           ; Mode for C# files
          expand-region         ; Increase selected region by semantic units
          flycheck              ; On-the-fly syntax checking
          fullframe             ; Make certain modes take up the whole frame
-         gist                  ; Quickly post code snippets to Github
          idle-require          ; load elisp libraries while Emacs is idle
          ibuffer-tramp         ; sort ibuffer based on tramp connection
          jedi                  ; Python auto-completion for Emacs
          js2-mode              ; Javascript editing done right
-         magit                 ; Git integration for Emacs
          move-text             ; Move current line or region with M-up or M-down
          multi-term            ; Better terminals
-         powerline             ; Rewrite of Powerline
          skewer-mode           ; Use the browser as a Javascript repl
          slime                 ; Superior Lisp Interaction Mode for Emacs
          solarized-theme       ; Great color theme
          undo-tree             ; Treat undo history as a tree
-         yasnippet             ; Snippet engine
          zenburn-theme         ; Nice looking low-contrast theme
          )
        "Packages which should be installed upon launch")
-   #+END_SRC
-
+    #+END_SRC
+    
 *** Package Setup
 
    Managing extensions for Emacs is simplified using =package= which is
@@ -417,7 +412,6 @@
 
       :config
       (add-hook 'after-init-hook 'global-company-mode))
-
    #+END_SRC
    
 ** Visual
@@ -546,10 +540,10 @@
       :ensure t
       :diminish helm-mode
       :bind (("C-x b" . helm-mini)
-            ("C-x C-f" . helm-find-files)
-            ("C-c h" . helm-command-prefix)
-            ("M-x" . helm-M-x)
-            ("M-y" . helm-show-kill-ring))
+             ("C-x C-f" . helm-find-files)
+             ("C-c h" . helm-command-prefix)
+             ("M-x" . helm-M-x)
+             ("M-y" . helm-show-kill-ring))
 
       :init
       (setq helm-quick-update                     t ; do not display invisible candidates
@@ -561,10 +555,13 @@
             helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
             helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
             helm-ff-file-name-history-use-recentf t)
-        (when (executable-find "curl")
-          (setq helm-google-suggest-use-curl-p t))
+      (when (executable-find "curl")
+        (setq helm-google-suggest-use-curl-p t))
 
       :config
+      (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
+      (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+
       (helm-mode 1))
 
     (use-package helm-ag
@@ -572,6 +569,7 @@
 
     (use-package helm-gtags
       :ensure t
+      :diminish helm-gtags-mode
       :init
       (setq helm-gtags-ignore-case t
             helm-gtags-auto-update t
@@ -585,7 +583,14 @@
       (add-hook 'eshell-mode-hook 'helm-gtags-mode)
       (add-hook 'c-mode-hook 'helm-gtags-mode)
       (add-hook 'c++-mode-hook 'helm-gtags-mode)
-      (add-hook 'asm-mode-hook 'helm-gtags-mode))
+      (add-hook 'asm-mode-hook 'helm-gtags-mode)
+
+      (define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
+      (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
+      (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
+      (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
+      (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+      (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history))
 
     (use-package helm-projectile
       :ensure t
@@ -593,18 +598,6 @@
       (helm-projectile-on))
 
     (use-package helm-spotify)
-
-    (eval-after-load 'helm
-      '(progn
-         (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
-         (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
-
-         (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)))
-
-    (eval-after-load "helm-regexp"
-      '(setq helm-source-moccur
-             (helm-make-source "Moccur"
-                 'helm-source-multi-occur :follow 1)))
   #+END_SRC
 
   I'd like to easily run helm-occur on all buffers that are backed by files. ([[http://stackoverflow.com/questions/14726601/sublime-text-2s-goto-anything-or-instant-search-for-emacs][Source]])
@@ -635,23 +628,6 @@
 
     (define-key helm-map (kbd "DEL") 'helm-backspace)
   #+END_SRC
-  
-  I use =winnner-mode= to occasionally return to a window layout. After using a
-  helm buffer, =winner-undo= will display again, which isn't helpful. We can
-  use a regex match to ignore it.
-
-** Helm-gtags
-   
-   #+BEGIN_SRC emacs-lisp
-
-
-     (define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
-     (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
-     (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
-     (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
-     (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
-     (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
-   #+END_SRC
   
 * Evil Mode
   
@@ -853,8 +829,6 @@
        (interactive)
        (org-todo-list '(4)))
    #+END_SRC
-* Company
-  
 * Text Editing
 ** Buffer Management
    
@@ -900,10 +874,12 @@
    Start yasnippet
 
    #+BEGIN_SRC emacs-lisp
-     (require 'yasnippet)
-     (yas-global-mode 1)
+     (use-package yasnippet
+       :diminish yas-minor-mode
+       :config
+       (yas-global-mode 1))
    #+END_SRC
-
+   
 * Programming
 ** Base Environment
 
@@ -1049,6 +1025,8 @@
      
      #+BEGIN_SRC emacs-lisp
        (use-package clojure-mode)
+
+       (use-package cider)
      #+END_SRC
      
 **** Emacs Lisp
@@ -1164,14 +1142,22 @@
     #+END_SRC
 
 ** Source Control
-
-   Magit is awesome. Open it up with the entire frame.
-
+   
+   Magit is awesome!
+   
    #+BEGIN_SRC emacs-lisp
-     (fullframe magit-status magit-mode-quit-window)
-     (define-key custom-bindings-map (kbd "C-c m") 'magit-status)
-   #+END_SRC
+     (use-package magit
+       :bind ("C-c m" . magit-status)
+       :init
+       (setq magit-push-always-verify nil)
 
+       :config
+       (fullframe magit-status magit-mode-quit-window))
+
+     (use-package magit-svn)
+     (use-package gist)
+   #+END_SRC
+   
 *** Diffs
 
     =ediff= is a powerful tool for dealing with changes to a file. You can diff
