@@ -243,7 +243,7 @@ Plug 'vim-scripts/AutoComplPop'
 
 " Visual
 Plug 'bling/vim-airline' " Status line
-Plug 'altercation/vim-colors-solarized' " Solarized colorscheme
+"Plug 'altercation/vim-colors-solarized' " Solarized colorscheme
 
 " Navigation
 Plug 'kien/ctrlp.vim'
@@ -272,12 +272,12 @@ let g:ctrlp_open_multiple_files = '2vjr'
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " Syntax highlighting
 syntax on
-set background=dark
+"set background=dark
 
 " Make popups readable
 hi Pmenusel ctermbg=red
 
-colorscheme solarized
+"colorscheme solarized
 
 
 " Highlight Word (Thanks Steve Losh!)
