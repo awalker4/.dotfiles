@@ -36,10 +36,19 @@ source ~/.dotfiles/aliases
 ########################################
 # => General
 ########################################
-TERM=xterm-256color
-EDITOR=vim
+export TERM=xterm-256color
+export EDITOR=vim
+export LEDGER_FILE="$HOME/Dropbox/ledger.dat"
+export PATH=$PATH:$HOME/bin:/usr/local/bin:$HOME/.gem/ruby/2.2.0/bin:/home/austin/.cabal/bin/
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk/jre
 
 #Don't save duplicate lines
 export HISTCONTROL=erasedups
 
 shopt -s autocd
+
+# Context search through history (like zsj)
+bind '"\e[A": history-search-backward'
+bind '"\e[B": history-search-forward'
+
+bind 'set completion-ignore-case on'
