@@ -279,7 +279,6 @@ hi Pmenusel ctermbg=red
 
 "colorscheme solarized
 
-
 " Highlight Word (Thanks Steve Losh!)
 "
 " This mini-plugin provides a few mappings for highlighting words temporarily.

@@ -913,8 +913,16 @@
                           :foreground "#183bc8"
                           :weight 'normal)
       (add-hook 'prog-mode-hook 'whitespace-mode)
+    #+END_SRC
+    
+    =which-function= is a minor mode that will show use the mode line to me what function I'm
+    in. This is really helpful for super long functions.
+    
+    #+BEGIN_SRC emacs-lisp
+      (which-function-mode 1)
 
     #+END_SRC
+
 *** Paredit
 
     #+BEGIN_SRC emacs-lisp
@@ -925,6 +933,24 @@
         (add-hook 'emacs-lisp-mode-hook 'paredit-mode))
 
     #+END_SRC
+*** sr-speedbar
+
+    When I'm exploring a new code base, it's really nice to be able to see what else is in the
+    current directory. =sr-speedbar= will follow my current buffer to show me a list of other
+    files. You can even expand a file and get a tree of all the tags inside. This feature is super
+    useful for C++ files.
+
+    TODO: integrate speedbar with evil
+    #+BEGIN_SRC emacs-lisp
+      (use-package sr-speedbar
+        :ensure t
+        :init
+        (setq sr-speedbar-right-side nil)
+        (setq sr-speedbar-skip-other-window-p t)
+        (setq speedbar-use-images nil)
+        (setq sr-speedbar-width 25))
+    #+END_SRC
+
 ** Language Settings
 *** C#
 
@@ -1253,6 +1279,10 @@
        (setq projectile-completion-system 'helm)
        (setq projectile-enable-caching t)
 
+       ; Used for helm-projectile-grep
+       (setq grep-find-ignored-directories nil)
+       (setq grep-find-ignored-files nil)
+
        :config
        (projectile-global-mode))
 
@@ -1289,8 +1319,8 @@
 
    Some modes don't need to be in the terminal.
    #+BEGIN_SRC emacs-lisp
-     (add-hook 'term-mode-hook (lambda()
-                                 (yas-minor-mode -1)))
+     ;; (add-hook 'term-mode-hook (lambda()
+     ;;                             (yas-minor-mode -1)))
    #+END_SRC
   
   #+BEGIN_SRC emacs-lisp
