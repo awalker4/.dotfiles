@@ -658,6 +658,7 @@
        (define-key evil-normal-state-map "J" 'windmove-down)
        (define-key evil-normal-state-map "K" 'windmove-up)
        (define-key evil-normal-state-map "L" 'windmove-right)
+       (define-key evil-normal-state-map "\M-." 'nil) ; Reserve for helm-gtags
 
        (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
        (key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
@@ -755,7 +756,7 @@
          "pg" 'helm-projectile-grep
          "ph" 'projectile-find-other-file
          "pp" 'projectile-switch-project
-         "ps" 'helm-spotify)
+         "ps" 'helm-semantic-or-imenu)
 
        ;; Org stuff
        (evil-leader/set-key
