@@ -74,6 +74,7 @@ elif [[ -x /usr/bin/apt ]]; then
     alias apti='sudo apt-get install'
 elif [[ -x /bin/rpm ]]; then
     alias yumi='sudo yum install -y'
+    alias yumr='sudo yum remove'
     alias yumq='yum search'
     alias yumup='sudo yum update'
     alias rpmq='rpm -qa | grep'
