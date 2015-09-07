@@ -67,7 +67,7 @@ elif [[ -x /usr/bin/pacman ]]; then
     alias pacr='sudo pacman -R'
     alias pacq='pacman -Q | grep'
 elif [[ -x /usr/bin/apt ]]; then
-    alias apti='sudo apt-get install'
+    alias apti='sudo apt-get install -y'
 elif [[ -x /bin/rpm ]]; then
     alias yumi='sudo yum install -y'
     alias yumr='sudo yum remove'
