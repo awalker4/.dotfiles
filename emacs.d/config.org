@@ -570,6 +570,8 @@
     (use-package helm-gtags
       :ensure t
       :diminish helm-gtags-mode
+      :bind (("M-." . helm-gtags-dwim)
+             ("M-," . helm-gtags-pop-stack))
       :init
       (setq helm-gtags-ignore-case t
             helm-gtags-auto-update t
@@ -587,8 +589,6 @@
 
       (define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
       (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
-      (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
-      (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
       (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
       (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history))
 
@@ -674,9 +674,7 @@
        (evil-mode 1))
 
      (use-package evil-nerd-commenter
-       :ensure t
-       :config
-       (evilnc-default-hotkeys))
+       :ensure t)
 
      (use-package evil-surround
        :ensure t
@@ -703,7 +701,7 @@
 
        :config
        (global-evil-leader-mode)
-       (evil-leader/set-leader ",")
+       (evil-leader/set-leader "SPC")
        (evil-leader/set-key
          "f" 'helm-find-files
          "m" 'compile
@@ -736,6 +734,12 @@
          "bo" 'helm-occur
          "bs" 'helm-mini
          "bw" 'write-file)
+
+       ;; Nerd commenter
+       (evil-leader/set-key
+         "cc" 'evilnc-copy-and-comment-lines
+         "ci" 'evilnc-comment-or-uncomment-lines
+         )
 
        ;; Help stuff
        (evil-leader/set-key
