@@ -94,6 +94,10 @@ alias ff='firefox 2>/dev/null &'
 # Redshift will toggle on the USR1 signal
 alias redkill='pkill -USR1 redshift'
 
+if [[ -x /usr/local/bin/nvim ]]; then
+    alias vim='nvim'
+fi
+
 ## Functions ##
 
 # Generic extracting
