@@ -31,18 +31,13 @@ if [[ -f ~/.dircolors/dircolors.ansi-dark ]]; then
     eval $(dircolors ~/.dircolors/dircolors.ansi-dark)
 fi
 
-# Get aliases from file
+# Get aliases, variables from files
+source ~/.dotfiles/variables
 source ~/.dotfiles/aliases
 
 ########################################
 # => General
 ########################################
-export TERM=xterm-256color
-export EDITOR=vim
-export LEDGER_FILE="$HOME/Dropbox/ledger.dat"
-export PATH=$PATH:$HOME/bin:/usr/local/bin:$HOME/.gem/ruby/2.2.0/bin:/home/austin/.cabal/bin/
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk/jre
-
 #Don't save duplicate lines
 export HISTCONTROL=erasedups
 

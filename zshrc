@@ -92,17 +92,12 @@ setopt no_rm_star_silent
 ########################################
 # Variables
 ########################################
-export EDITOR=vim
-export LEDGER_FILE="$HOME/Dropbox/ledger.dat"
-export PATH=$PATH:$HOME/bin:/usr/local/bin:$HOME/.gem/ruby/2.2.0/bin:/home/austin/.cabal/bin/
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk/jre
-
+source ~/.dotfiles/variables
 source ~/.dotfiles/aliases
+
 ########################################
 # Colors
 ########################################
-export TERM=xterm-256color
-
 # Get ls to play nicely with solarized
 if [[ ! -d ~/.dircolors ]]; then
     echo "Retrieving dircolors..."

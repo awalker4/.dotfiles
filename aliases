@@ -1,35 +1,53 @@
-# This file is used to keep all my aliases between bash and zsh
+########################################
+# ~/.dotfiles/aliases
+# Keeps all my aliases between bash and zsh
+#
+# Sections:
+#   -> General Shell
+#   -> Editors
+#   -> Git
+#   -> Ledger
+#   -> Distro Specific
+#   -> Misc Programs
+#   -> Functions
+########################################
 
+########################################
 # General shell
+########################################
+alias cp='cp -iv'
+alias du='du -h'
+alias h='history'
+alias la='ls -a --color'
+alias lal='ls -lah --color'
+alias ll='ls -oh --color'
+alias ls='ls -h --color'
+alias md='mkdir -pv'
+alias mv='mv -v'
+alias off='sudo shutdown 0'
+alias po='popd'
+alias pu='pushd'
+alias psg='ps -aux | grep'
+alias rd='rmdir'
+alias reboot='sudo reboot'
+alias rm='rm -v'
+
+
+########################################
+# Editors
+########################################
+if [[ -x /usr/local/bin/nvim ]]; then
+    alias vim='nvim'
+fi
+
+alias em='emacsclient -c --no-wait'
 alias realias='vim ~/.dotfiles/aliases; source ~/.dotfiles/aliases'
 alias vi='vim'
-alias em='emacsclient -c --no-wait'
-alias h='history'
-alias grep='grep --color'
-alias du='du -h'
-alias diff='colordiff'
-alias userctl='systemctl --user'
-alias psg='ps -aux | grep'
-alias play='mpv'
-alias xclip='xclip -selection c'
-alias off='sudo shutdown 0'
-alias reboot='sudo reboot'
 
-# Files and directories
-alias cp='cp -iv'
-alias mv='mv -v'
-alias rm='rm -v'
-alias md='mkdir -pv'
-alias rd='rmdir'
-alias pu='pushd'
-alias po='popd'
 
-alias ls='ls -h --color'
-alias ll='ls -oh --color'
-alias lal='ls -lah --color'
-alias la='ls -a --color'
-
+########################################
 # Git
+########################################
 alias ga='git add'
 alias gd='git diff'
 alias gc='git commit -m'
@@ -38,10 +56,14 @@ alias gpll='git pull'
 alias gst='git status'
 alias gco='git checkout'
 alias glog='git log --oneline --decorate --color --graph'
+
 # Get deleted files out of the repo
 alias grm="git status | grep deleted | awk '{print \$3}' | xargs git rm"
 
+
+########################################
 # Ledger
+########################################
 alias bal='ledger bal'
 alias ball='ledger bal assets liabilities --depth 2 -R -X $'
 alias reg='ledger reg --tail 15'
@@ -55,7 +77,19 @@ xact() {
 }
 
 
-# Package management
+########################################
+# Distro Specific
+########################################
+# Files
+if [[ -x /usr/bin/dolphin ]]; then
+    alias dol='dolphin "$(pwd)" 2>/dev/null &' # Dolphin (KDE)
+elif [[ -x /usr/bin/nautilus ]]; then
+    alias naut='nautilus "$(pwd)"' # Nautilus (Gnome)
+elif [[ -x /usr/bin/thunar ]]; then
+    alias thu='thunar "$(pwd)"' # Thunar (XFCE)
+fi
+
+# Packages
 if [[ -x /usr/bin/yaourt ]]; then
     alias pacs='yaourt -S'
     alias pacu='yaourt -U'
@@ -76,29 +110,30 @@ elif [[ -x /bin/rpm ]]; then
     alias rpmq='rpm -qa | grep'
 fi
 
-# File explorer
-if [[ -x /usr/bin/dolphin ]]; then
-    alias dol='dolphin "$(pwd)" 2>/dev/null &' # Open dolphin at this location
-elif [[ -x /usr/bin/thunar ]]; then
-    alias thu='thunar "$(pwd)"' # Open thunar
-fi
-
 if [[ -x /usr/bin/vendor_perl/mimeopen ]]; then
     alias open='mimeopen'
 else
     alias open='xdg-open'
 fi
 
-# Various programs
+
+########################################
+# Misc Programs
+########################################
+alias diff='colordiff'
 alias ff='firefox 2>/dev/null &'
+alias grep='grep --color'
+alias play='mpv'
+alias userctl='systemctl --user'
+alias xclip='xclip -selection c'
+
 # Redshift will toggle on the USR1 signal
 alias redkill='pkill -USR1 redshift'
 
-if [[ -x /usr/local/bin/nvim ]]; then
-    alias vim='nvim'
-fi
 
-## Functions ##
+########################################
+# Functions
+########################################
 
 # Generic extracting
 extract() {
