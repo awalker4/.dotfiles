@@ -208,9 +208,15 @@
 
 *** use-package
 
-    I'm slowly phasing out the package list above in favor of =use-package=.
+    I'm slowly phasing out the package list above in favor of =use-package=. We just need to
+    bootstrap it by ensuring it's installed first.
 
    #+BEGIN_SRC emacs-lisp
+     (unless (package-installed-p 'use-package)
+       (package-refresh-contents)
+       (package-install 'use-package)
+       (package-install 'diminish))
+
      (eval-when-compile
        (require 'use-package))
      (require 'diminish)
@@ -1178,6 +1184,7 @@
    
    #+BEGIN_SRC emacs-lisp
      (use-package magit
+       :ensure t
        :bind ("C-c m" . magit-status)
        :init
        (setq magit-push-always-verify nil)
