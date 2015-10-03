@@ -66,6 +66,7 @@ alias grm="git status | grep deleted | awk '{print \$3}' | xargs git rm"
 ########################################
 alias bal='ledger bal'
 alias ball='ledger bal assets liabilities --depth 2 -R -X $'
+alias bud='ledger bal Budget --no-total'
 alias reg='ledger reg --tail 15'
 
 xact() {
