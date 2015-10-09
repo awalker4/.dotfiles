@@ -83,11 +83,13 @@ xact() {
 ########################################
 # Files
 if [[ -x /usr/bin/dolphin ]]; then
-    alias dol='dolphin "$(pwd)" 2>/dev/null &' # Dolphin (KDE)
+    alias dir='dolphin "$(pwd)" 2>/dev/null &' # Dolphin (KDE)
 elif [[ -x /usr/bin/nautilus ]]; then
-    alias naut='nautilus "$(pwd)"' # Nautilus (Gnome)
+    alias dir='nautilus "$(pwd)"' # Nautilus (Gnome)
+elif [[ -x /usr/bin/nemo ]]; then
+    alias dir='nemo "$(pwd)"' # Nemo (Cinnamon)
 elif [[ -x /usr/bin/thunar ]]; then
-    alias thu='thunar "$(pwd)"' # Thunar (XFCE)
+    alias dir='thunar "$(pwd)"' # Thunar (XFCE)
 fi
 
 # Packages
