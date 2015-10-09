@@ -64,16 +64,18 @@ alias grm="git status | grep deleted | awk '{print \$3}' | xargs git rm"
 ########################################
 # Ledger
 ########################################
-alias bal='ledger bal'
+alias ledger='ledger --strict'
+
+alias bal='ledger bal -R'
 alias ball='ledger bal assets liabilities --depth 2 -R -X $'
 alias bud='ledger bal Budget --no-total'
-alias reg='ledger reg --tail 15'
+alias reg='ledger reg -R --tail 15'
 
 xact() {
     ledger xact $@
     read -p "\nIs this correct? Y/N " ans
     case $ans in
-        [Yy]* ) ledger xact $@ >> ${LEDGER_FILE}; printf "xact written to ${LEDGER_FILE}\n"
+        [Yy]* ) ledger xact $@ >> ${LEDGER_CURRENT_FILE}; printf "xact written to ${LEDGER_CURRENT_FILE}\n"
     esac
 }
 

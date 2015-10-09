@@ -808,7 +808,7 @@
 
      (defun aw/edit-ledger-file ()
        (interactive)
-       (find-file "~/Dropbox/ledger.dat"))
+       (find-file "~/Dropbox/ledger/ledger-2015.dat"))
 
      (defun aw/switch-to-scratch ()
        (interactive)
