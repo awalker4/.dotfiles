@@ -67,8 +67,10 @@ alias grm="git status | grep deleted | awk '{print \$3}' | xargs git rm"
 alias ledger='ledger --strict'
 
 alias bal='ledger bal -R'
-alias ball='ledger bal assets liabilities --depth 2 -R -X $'
-alias bud='ledger bal Budget --no-total'
+alias ball='ledger -R -X $ --current --depth 2 bal assets liabilities'
+alias bud='ledger --flat --no-total --empty bal Budget '
+alias budr='ledger -d "d>=[this month]" reg Budget and'
+alias cashflow='ledger --current --invert --real --wide -sV -S "amount" -p "this month" reg income and not 401k and not %Disburse expenses liabilities:loans'
 alias reg='ledger reg -R --tail 15'
 
 xact() {
