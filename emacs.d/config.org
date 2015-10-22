@@ -24,8 +24,7 @@
    #+END_SRC
 
    Emacs starts up by loading init.el. Thanks to the wonders of =org babel=, I can keep all of my
-   configuration in this file and load it from init.el with a single function, shown below. It's
-   commented out so I don't get stuck in recursion.
+   configuration in this file and load it from init.el with a single function, shown below.
 
    #+BEGIN_SRC emacs-lisp
     ;; (org-babel-load-file "~/.emacs.d/config.org")
@@ -712,13 +711,14 @@
          "f" 'helm-find-files
          "m" 'compile
          "t" 'multi-term-dedicated-toggle
-         "ei" 'aw/edit-init-org
-         "eI" 'aw/edit-init-el
+         "ei" (lambda () (interactive) (aw/edit-init-file "config.org"))
+         "eI" (lambda () (interactive) (aw/edit-init-file "init.el"))
          "el" 'aw/edit-ledger-file
-         "ej" 'aw/edit-journal
-         "en" 'aw/edit-org-notes
-         "eo" 'aw/edit-org-calendar
+         "ej" (lambda () (interactive) (aw/edit-org-file "journal.org"))
+         "en" (lambda () (interactive) (aw/edit-org-file "notes.org"))
+         "eo" (lambda () (interactive) (aw/edit-org-file "calendar.org"))
          "es" 'aw/switch-to-scratch
+         "ew" (lambda () (interactive) (aw/edit-org-file "work.org"))
          "x" 'helm-M-x)
 
        ;; Window stuff
@@ -786,29 +786,13 @@
 ** Evil Functions
    
    #+BEGIN_SRC emacs-lisp
-     (defun aw/edit-init-org ()
+     (defun aw/edit-init-file (file)
        (interactive)
-       (find-file (concat user-emacs-directory "config.org")))
+       (find-file (concat user-emacs-directory file)))
 
-     (defun aw/edit-init-el ()
+     (defun aw/edit-org-file (file)
        (interactive)
-       (find-file (concat user-emacs-directory "init.el")))
-
-     (defun aw/edit-journal ()
-       (interactive)
-       (find-file (concat org-directory "/journal.org")))
-
-     (defun aw/edit-org-notes ()
-       (interactive)
-       (find-file (concat org-directory "/notes.org")))
-
-     (defun aw/edit-org-calendar ()
-       (interactive)
-       (find-file (concat org-directory "/calendar.org")))
-
-     (defun aw/edit-ledger-file ()
-       (interactive)
-       (find-file "~/Dropbox/ledger/ledger-2015.dat"))
+       (find-file (concat org-directory "/" file)))
 
      (defun aw/switch-to-scratch ()
        (interactive)
@@ -1400,12 +1384,13 @@
    I keep my schedule with =org=agenda=.
    
    #+BEGIN_SRC emacs-lisp
-     (setq org-agenda-start-on-weekday nil              ; Show agenda from today.
-           org-agenda-files '("~/Dropbox/org")          ; A list of agenda files.
-           org-agenda-default-appointment-duration 60   ; 1 hour appointments
-           org-agenda-span 1)                           ; Show only today by default
+      (setq org-agenda-start-on-weekday nil              ; Show agenda from today.
+            org-agenda-files '("~/org")                  ; A list of agenda files.
+            org-agenda-default-appointment-duration 60   ; 1 hour appointments
+            org-agenda-span 1                            ; Show only today by default
+            org-directory "~/org")
 
-     (define-key custom-bindings-map (kbd "C-c a") 'org-agenda-list)
+      (define-key custom-bindings-map (kbd "C-c a") 'org-agenda-list)
    #+END_SRC
    
    Show the agenda buffer in a full frame.
@@ -1466,11 +1451,11 @@
 
     #+BEGIN_SRC emacs-lisp
       (setq org-capture-templates
-            '(("j" "Journal Entry" plain (file+datetree "~/Dropbox/org/journal.org")
+            '(("j" "Journal Entry" plain (file+datetree (concat org-directory "/journal.org"))
                "    %?\n    %u" :empty-lines 1)
-              ("s" "Scheduled Action" entry (file+datetree+prompt "~/Dropbox/org/calendar.org")
+              ("s" "Scheduled Action" entry (file+datetree+prompt (concat org-directory "/calendar.org"))
                   "* %?\n%T\n")
-              ("t" "Todo" entry (file+headline "~/Dropbox/org/calendar.org" "Tasks")
+              ("t" "Todo" entry (file+headline (concat org-directory "/calendar.org") "Tasks")
                 "* TODO %?\n  SCHEDULED: %t\n")
               ("l" "Ledger Test" plain (file "~/Dropbox/ledger.dat")
                "%(org-read-date) %^{Payee}")))
@@ -1492,8 +1477,6 @@
    with my calendar.
 
    #+BEGIN_SRC emacs-lisp
-    ;; Set to the location of your Org files on your local system
-    (setq org-directory "~/Dropbox/org")
     ;; Set to the name of the file where new notes will be stored
     (setq org-mobile-inbox-for-pull "~/Dropbox/org/flagged.org")
     ;; Set to <your Dropbox root directory>/MobileOrg.
