@@ -1,4 +1,7 @@
 export EDITOR=vim
+export HISTFILE=~/.dotfiles/local/shell_history
+export HISTFILESIZE=10000
+export HISTSIZE=10000
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk/jre
 export LEDGER_CURRENT_FILE="$HOME/Dropbox/ledger/ledger-2015.dat"
 export LEDGER_FILE="$HOME/Dropbox/ledger/ledger.dat"

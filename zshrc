@@ -8,7 +8,6 @@
 #   -> Completion
 #   -> History
 #   -> Variables
-#   -> Colors
 #   -> Keybindings
 #   -> Prompt
 ########################################
@@ -55,11 +54,6 @@ zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 
 ########################################
 # History
 ########################################
-HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=10000
-# Show command timestamps and durations
-setopt extended_history
 # Use fcntl to lock the history file
 setopt hist_fcntl_lock
 # When trimming history, dups are the first to go
@@ -94,16 +88,6 @@ setopt no_rm_star_silent
 ########################################
 source ~/.dotfiles/variables
 source ~/.dotfiles/aliases
-
-########################################
-# Colors
-########################################
-# Get ls to play nicely with solarized
-if [[ ! -d ~/.dircolors ]]; then
-    echo "Retrieving dircolors..."
-    git clone https://github.com/seebi/dircolors-solarized.git  ~/.dircolors
-fi
-    eval $(dircolors ~/.dircolors/dircolors.ansi-dark)
 
 ########################################
 # Functions

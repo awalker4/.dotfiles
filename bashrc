@@ -26,11 +26,6 @@ if [[ -f ~/.dotfiles/local/bashrc ]]; then
     . ~/.dotfiles/local/bashrc
 fi
 
-# Get ls to play nicely with solarized
-if [[ -f ~/.dircolors/dircolors.ansi-dark ]]; then
-    eval $(dircolors ~/.dircolors/dircolors.ansi-dark)
-fi
-
 # Get aliases, variables from files
 source ~/.dotfiles/variables
 source ~/.dotfiles/aliases
