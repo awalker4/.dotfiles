@@ -86,15 +86,15 @@ xact() {
 ########################################
 # Distro Specific
 ########################################
-# Files
+# Files - ls + g(ui)
 if [[ -x /usr/bin/dolphin ]]; then
-    alias dir='dolphin "$(pwd)" 2>/dev/null &' # Dolphin (KDE)
+    alias lsg='dolphin "$(pwd)" 2>/dev/null &' # Dolphin (KDE)
 elif [[ -x /usr/bin/nautilus ]]; then
-    alias dir='nautilus "$(pwd)"' # Nautilus (Gnome)
+    alias lsg='nautilus "$(pwd)"' # Nautilus (Gnome)
 elif [[ -x /usr/bin/nemo ]]; then
-    alias dir='nemo "$(pwd)"' # Nemo (Cinnamon)
+    alias lsg='nemo "$(pwd)"' # Nemo (Cinnamon)
 elif [[ -x /usr/bin/thunar ]]; then
-    alias dir='thunar "$(pwd)"' # Thunar (XFCE)
+    alias lsg='thunar "$(pwd)"' # Thunar (XFCE)
 fi
 
 # Packages
