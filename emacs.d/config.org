@@ -794,6 +794,10 @@
        (interactive)
        (find-file (concat org-directory "/" file)))
 
+     (defun aw/edit-ledger-file ()
+       (interactive)
+       (find-file (concat aw/ledger-dir "/" "ledger-2015.dat")))
+
      (defun aw/switch-to-scratch ()
        (interactive)
        (switch-to-buffer "*scratch*"))
@@ -1536,39 +1540,15 @@
        (kbd "M-l") 'org-metaright)
    #+END_SRC
 * Ledger
+  
+  I use John Wiegley's amazing [[http://ledger-cli.org][ledger-cli]] to keep track of my finances. Ledger reads from a simple
+  plaintext file to generate any financial report you could ever want.
 
   #+BEGIN_SRC emacs-lisp
+    (setq aw/ledger-dir "~/Dropbox/ledger")
+
     (use-package ledger-mode
       :mode "\\.dat\\'")
-  #+END_SRC
-
-  #+BEGIN_SRC emacs-lisp
-    ;; (add-to-list 'org-capture-templates
-    ;;              '("l" "Ledger Entries"))
-
-    ;; (add-to-list 'org-capture-templates
-    ;;              '("r" "Test ledger entry" plain (file "~/ledger.dat")
-                  ;; "%(org-read-date) %^{Payee}
-      ;; Liabilities:MBNA  
-      ;; Expenses:%^{Account}  %^{Amount}"
-                  ;; "This is a test entry"
-                  ;; ))
-
-    ;; (setq org-capture-templates
-    ;;       (append '(("l" "Ledger entries")
-    ;;                 ("lm" "MBNA" plain
-    ;;                  (file "~/personal/ledger")
-    ;;                  "%(org-read-date) %^{Payee}
-    ;;   Liabilities:MBNA  
-    ;;   Expenses:%^{Account}  %^{Amount}
-    ;; ")
-    ;;                 ("lc" "Cash" plain
-    ;;                  (file "~/personal/ledger")
-    ;;                  "%(org-read-date) * %^{Payee}
-    ;;   Expenses:Cash 
-    ;;   Expenses:%^{Account}  %^{Amount}
-    ;; "))
-    ;;               org-capture-templates))
   #+END_SRC
 
 * Wrap-up
