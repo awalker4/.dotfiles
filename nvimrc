@@ -190,7 +190,7 @@ map <leader>nw :vne<cr><C-l>
 map <leader>em :vsp makefile<cr>
 
 " Edit Vimrc
-map <leader>ei :e ~/.nvimrc<cr>
+map <leader>ei :e $MYVIMRC<cr>
 
 " Splits
 map <leader>sp :sp<cr>

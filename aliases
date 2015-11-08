@@ -37,7 +37,7 @@ alias sl='ls'
 ########################################
 # Editors
 ########################################
-if [[ -x /usr/local/bin/nvim ]]; then
+if [[ -x /usr/bin/nvim || -x /usr/local/bin/nvim ]]; then
     alias vim='nvim'
 fi
 
