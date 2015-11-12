@@ -90,11 +90,11 @@
 
    Packages can be fetched from different mirrors, [[http://melpa.org][melpa]] is the largest
    archive and is well maintained.
-
+   
    #+BEGIN_SRC emacs-lisp
      (setq package-archives
-           '(("gnu" . "http://elpa.gnu.org/packages/")
-             ("MELPA" . "http://melpa.org/packages/")))
+           '(("gnu" . "https://elpa.gnu.org/packages/")
+             ("MELPA" . "https://melpa.org/packages/")))
    #+END_SRC
 
    We can define a predicate that tells us whether or not the newest version
@@ -691,6 +691,11 @@
        :config
        (global-evil-visualstar-mode t))
 
+     (use-package evil-args
+       :ensure t
+       :config
+       (define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
+       (define-key evil-outer-text-objects-map "a" 'evil-outer-arg))
    #+END_SRC
    
 ** Evil-leader
@@ -1180,6 +1185,11 @@
        :config
        (fullframe magit-status magit-mode-quit-window))
 
+     ; Play nicely with evil
+     (use-package evil-magit
+       :ensure t
+       :init
+       (setq evil-magit-state 'motion))
      (use-package magit-svn)
      (use-package gist)
    #+END_SRC
@@ -1587,6 +1597,7 @@
   - start working on a better latex workflow
   - Hard line wrapping gets annoying when programming
   - This whole file needs to be better organized
+  - restclient mode is cool
 
 * License
 
