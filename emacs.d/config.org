@@ -46,33 +46,6 @@
    #+END_SRC
 
 ** Packages
-*** Package List
-    
-    This is a list of everything that should be installed using package.el.
-    
-    #+BEGIN_SRC emacs-lisp
-     (defvar required-packages
-       '(ac-octave             ; Auto-completion for octave
-         auto-compile          ; Automatically compile Emacs Lisp libraries
-         csharp-mode           ; Mode for C# files
-         expand-region         ; Increase selected region by semantic units
-         flycheck              ; On-the-fly syntax checking
-         fullframe             ; Make certain modes take up the whole frame
-         idle-require          ; load elisp libraries while Emacs is idle
-         ibuffer-tramp         ; sort ibuffer based on tramp connection
-         jedi                  ; Python auto-completion for Emacs
-         js2-mode              ; Javascript editing done right
-         move-text             ; Move current line or region with M-up or M-down
-         multi-term            ; Better terminals
-         skewer-mode           ; Use the browser as a Javascript repl
-         slime                 ; Superior Lisp Interaction Mode for Emacs
-         solarized-theme       ; Great color theme
-         undo-tree             ; Treat undo history as a tree
-         zenburn-theme         ; Nice looking low-contrast theme
-         )
-       "Packages which should be installed upon launch")
-    #+END_SRC
-    
 *** Package Setup
 
    Managing extensions for Emacs is simplified using =package= which is
@@ -97,118 +70,8 @@
              ("MELPA" . "https://melpa.org/packages/")))
    #+END_SRC
 
-   We can define a predicate that tells us whether or not the newest version
-   of a package is installed.
-
-   #+BEGIN_SRC emacs-lisp
-   (defun newest-package-installed-p (package)
-     "Return true if the newest available PACKAGE is installed."
-     (when (package-installed-p package)
-       (let* ((local-pkg-desc (or (assq package package-alist)
-                                  (assq package package--builtins)))
-              (newest-pkg-desc (assq package package-archive-contents)))
-         (and local-pkg-desc newest-pkg-desc
-              (version-list-= (package-desc-vers (cdr local-pkg-desc))
-                              (package-desc-vers (cdr newest-pkg-desc)))))))
-   #+END_SRC
-
-   Let's write a function to install a package if it is not installed or
-   upgrades it if a new version has been released. Here our predicate comes
-   in handy.
-
-   #+BEGIN_SRC emacs-lisp
-     (defun upgrade-or-install-package (package)
-       "Unless the newest available version of PACKAGE is installed
-     PACKAGE is installed and the current version is deleted."
-       (unless (newest-package-installed-p package)
-         (let ((get-desc (if (version< emacs-version "24.4") 'cdr 'cadr))
-               (pkg-desc (assq package package-alist)))
-           (when pkg-desc
-             (if (version< emacs-version "24.4")
-                 (package-delete (symbol-name package)
-                                 (package-version-join
-                                  (package-desc-vers (get-desc pkg-desc))))
-               (package-delete pkg-desc)))
-           (and (assq package package-archive-contents)
-                (package-install package)))))
-   #+END_SRC
-
-   Also, we will need a function to find all dependencies from a given package.
-
-   #+BEGIN_SRC emacs-lisp
-   (defun dependencies (package)
-     "Returns a list of dependencies from a given PACKAGE."
-     (let* ((pkg-desc (assq package package-alist))
-            (reqs (and pkg-desc (package-desc-reqs (cdr pkg-desc)))))
-       (mapcar 'car reqs)))
-   #+END_SRC
-
-   The =package-refresh-contents= function downloads archive descriptions,
-   this is a major bottleneck in this configuration. To avoid this we can
-   try to only check for updates once every day or so. Here are three
-   variables. The first specifies how often we should check for updates. The
-   second specifies whether one should update during the initialization. The
-   third is a path to a file where a time-stamp is stored in order to check
-   when packages were updated last.
-
-   #+BEGIN_SRC emacs-lisp
-   (defvar days-between-updates 7)
-   (defvar do-package-update-on-init t)
-   (defvar package-last-update-file
-     (expand-file-name (concat user-emacs-directory ".package-last-update")))
-   #+END_SRC
-
-   The tricky part is figuring out when packages were last updated. Here is
-   a hacky way of doing it, using [[http://www.gnu.org/software/emacs/manual/html_node/emacs/Time-Stamps.html][time-stamps]]. By adding a time-stamp to the
-   a file, we can determine whether or not to do an update. After that we
-   must run the =time-stamp=-function to update the time-stamp.
-
-   #+BEGIN_SRC emacs-lisp
-   (require 'time-stamp)
-   ;; Open the package-last-update-file
-   (with-temp-file package-last-update-file
-     (if (file-exists-p package-last-update-file)
-         (progn
-           ;; Insert it's original content's.
-           (insert-file-contents package-last-update-file)
-           (let ((start (re-search-forward time-stamp-start nil t))
-                 (end (re-search-forward time-stamp-end nil t)))
-             (when (and start end)
-               ;; Assuming we have found a time-stamp, we check determine if it's
-               ;; time to update.
-               (setq do-package-update-on-init
-                     (<= days-between-updates
-                         (days-between
-                          (current-time-string)
-                          (buffer-substring-no-properties start end))))
-               ;; Remember to update the time-stamp.
-               (when do-package-update-on-init
-                 (time-stamp)))))
-       ;; If no such file exists it is created with a time-stamp.
-       (insert "Time-stamp: <>")
-       (time-stamp)))
-   #+END_SRC
-
-   #+BEGIN_SRC emacs-lisp
-     (when (and do-package-update-on-init
-                (y-or-n-p "Update all packages?"))
-       (package-refresh-contents)
-
-       (dolist (p required-packages)
-         (when (not (package-installed-p p))
-           (package-install p))))
-   #+END_SRC
-   
-   Force =list-packages= to use the whole frame.
-
-   #+BEGIN_SRC emacs-lisp
-     (fullframe list-packages quit-window)
-   #+END_SRC
-
-*** use-package
-
-    I'm slowly phasing out the package list above in favor of =use-package=. We just need to
-    bootstrap it by ensuring it's installed first.
+    I use the great and powerful =use-package= to keep package configuration simple.
+    We just need to bootstrap =use-package= by ensuring it's installed first.
 
    #+BEGIN_SRC emacs-lisp
      (unless (package-installed-p 'use-package)
@@ -222,11 +85,22 @@
      (require 'bind-key)
    #+END_SRC
 
-*** Requires
+*** Package List
+
+    Still need to organize these.
 
     #+BEGIN_SRC emacs-lisp
-      (require 'fullframe)
+         (use-package ac-octave :ensure t)            ; Auto-completion for octave
+         (use-package auto-compile :ensure t)         ; Automatically compile Emacs Lisp libraries
+         (use-package expand-region :ensure t)        ; Increase selected region by semantic units
+         (use-package idle-require :ensure t)         ; load elisp libraries while Emacs is idle
+         (use-package ibuffer-tramp :ensure t)        ; sort ibuffer based on tramp connection
+         (use-package move-text :ensure t)            ; Move current line or region with M-up or M-down
+         (use-package multi-term :ensure t)           ; Better terminals
+         (use-package skewer-mode :ensure t)          ; Use the browser as a Javascript repl
+         (use-package slime :ensure t)                ; Superior Lisp Interaction Mode for Emacs
     #+END_SRC
+
 ** Sane defaults
 
    These are what /I/ consider to be saner defaults.
@@ -240,21 +114,26 @@
            electric-pair-mode 1          ; Insert brackets, parentheses in pairs
            ring-bell-function 'ignore    ; Quiet.
            byte-compile-warnings nil     ; Don't show warnings when compiling elisp
-           require-final-newline t       ; End files with \n
-           ;; Save undo history between sessions, if you have an undo-dir
-           undo-tree-auto-save-history
-           (file-exists-p
-            (concat user-emacs-directory "undo"))
-           undo-tree-history-directory-alist
-           ;; Put undo-history files in a directory, if it exists.
-           (let ((undo-dir (concat user-emacs-directory "undo")))
-             (and (file-exists-p undo-dir)
-                  (list (cons "." undo-dir)))))
+           require-final-newline t)      ; End files with \n
    #+END_SRC
    
+   Undo settings
+
    #+BEGIN_SRC emacs-lisp
-     (require 'undo-tree)
-     (diminish 'undo-tree-mode)
+     (use-package undo-tree
+       :ensure t
+       :diminish undo-tree-mode
+
+       :init
+       ;; Save undo history between sessions, if you have an undo-dir
+       (setq undo-tree-auto-save-history
+             (file-exists-p
+              (concat user-emacs-directory "undo"))
+             undo-tree-history-directory-alist
+             ;; Put undo-history files in a directory, if it exists.
+             (let ((undo-dir (concat user-emacs-directory "undo")))
+               (and (file-exists-p undo-dir)
+                    (list (cons "." undo-dir))))))
    #+END_SRC
    
    Some variables are buffer-local, so changing them using =setq= will only
@@ -262,7 +141,7 @@
    buffer-local variable's default value.
    
    #+BEGIN_SRC emacs-lisp
-     (setq-default fill-column 100                    ; Maximum line width.
+     (setq-default fill-column 100                   ; Maximum line width.
                    indent-tabs-mode nil              ; Use spaces instead of tabs.
                    split-width-threshold 100         ; Split verticly by default.
                    compilation-scroll-output 1       ; Follow compilation buffer
@@ -362,6 +241,14 @@
      (setq bookmark-save-flag 1)
    #+END_SRC
    
+   Force =list-packages= to use the whole frame.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package fullframe
+                  :ensure t)
+     (fullframe list-packages quit-window)
+   #+END_SRC
+
 ** Keybindings
    
    I keep my global key bindings in a custom keymap. By loading this map in its
@@ -438,6 +325,10 @@
    the font correctly. ([[https://www.reddit.com/r/emacs/comments/3a5kim/emacsclient_does_not_respect_themefont_setting/][Source]])
    
    #+BEGIN_SRC emacs-lisp
+     (use-package solarized-theme)
+     (use-package zenburn-theme
+       :ensure t)
+
      (defun aw/load-theme ()
        (load-theme 'zenburn t)
        (when (member "Inconsolata" (font-family-list))
@@ -762,7 +653,7 @@
 
        ;; Git stuff
        (evil-leader/set-key
-         "gb" 'magit-blame-mode
+         "gb" 'magit-blame
          "gs" 'magit-status)
 
        ;; Projectile/Helm stuff
@@ -893,38 +784,49 @@
     #+BEGIN_SRC emacs-lisp
       (setq linum-delay t linum-eager nil)
       (add-hook 'prog-mode-hook 'linum-mode)
-      (add-hook 'prog-mode-hook 'flycheck-mode)
+
+      (use-package flycheck
+        :ensure t
+        :init
+        ;; Flycheck gets to be a bit much when warning about checkdoc issues.
+        (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
+
+        :config
+        (add-hook 'prog-mode-hook 'flycheck-mode))
     #+END_SRC
 
     White space stuff ([[http://www.reddit.com/r/emacs/comments/2keh6u/show_tabs_and_trailing_whitespaces_only/][Source]])
 
     #+BEGIN_SRC emacs-lisp
-      (require 'whitespace)
-      (setq whitespace-display-mappings
-         ;; all numbers are Unicode codepoint in decimal. try (insert-char 182 ) to see it
-        '(
-          (space-mark 32 [183] [46]) ; 32 SPACE, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
-          (newline-mark 10 [182 10]) ; 10 LINE FEED
-          (tab-mark 9 [187 9] [9655 9] [92 9]) ; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
-          ))
-      (setq whitespace-style '(face tabs trailing tab-mark))
-      (set-face-attribute 'whitespace-tab nil
-                          :background "#f0f0f0"
-                          :foreground "#00a8a8"
-                          :weight 'bold)
-      (set-face-attribute 'whitespace-trailing nil
-                          :background "#e4eeff"
-                          :foreground "#183bc8"
-                          :weight 'normal)
-      (add-hook 'prog-mode-hook 'whitespace-mode)
+      (use-package whitespace
+        :init
+        (setq whitespace-display-mappings
+              ;; all numbers are Unicode codepoint in decimal. try (insert-char 182 ) to see it
+              '((space-mark 32 [183] [46])              ; 32 SPACE, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
+                (newline-mark 10 [182 10])              ; 10 LINE FEED
+                (tab-mark 9 [187 9] [9655 9] [92 9])))  ; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
+
+        (setq whitespace-style '(face tabs trailing tab-mark))
+
+        :config
+        (set-face-attribute 'whitespace-tab nil
+                            :background "#f0f0f0"
+                            :foreground "#00a8a8"
+                            :weight 'bold)
+        (set-face-attribute 'whitespace-trailing nil
+                            :background "#e4eeff"
+                            :foreground "#183bc8"
+                                :weight 'normal))
+        (add-hook 'prog-mode-hook 'whitespace-mode)
     #+END_SRC
     
     =which-function= is a minor mode that will show use the mode line to me what function I'm
     in. This is really helpful for super long functions.
     
     #+BEGIN_SRC emacs-lisp
-      (which-function-mode 1)
-
+      (use-package which-function
+        :config
+        (which-function-mode 1))
     #+END_SRC
 
 *** Paredit
@@ -958,13 +860,11 @@
 ** Language Settings
 *** C#
 
-    Omnisharp gives us IDE capabilities for C#. Let's enable it for
-    =csharp-mode=
-
     #+BEGIN_SRC emacs-lisp
-      (add-hook 'csharp-mode-hook 'omnisharp-mode)
+      (use-package csharp-mode
 
-      ;;(omnisharp-imenu-support t)
+        :config
+        (add-hook 'csharp-mode-hook 'omnisharp-mode))
     #+END_SRC
 
     Allow company to use OmniSharp for autocompletion.
@@ -973,14 +873,17 @@
        ;;(eval-after-load 'company
          ;;'(add-to-list 'company-backends 'company-omnisharp))
     #+END_SRC
+
 *** C++
 
     By default, .h files are opened in C mode. I'll mostly be using them for C++
     projects, though.
 
     #+BEGIN_SRC emacs-lisp
-    (add-to-list 'auto-mode-alist '("\\.h\\'" . c++-mode))
+            (use-package c++-mode
+              :mode "\\.h\\'")
     #+END_SRC
+
 *** FSP
 
     FSP (Finite state processes) is a notation that formally describes concurrent
@@ -1024,10 +927,10 @@
     =tex-mode=.
 
     #+BEGIN_SRC emacs-lisp
-    (add-to-list 'auto-mode-alist '("\\.tex\\'" . latex-mode))
+      (use-package latex-mode
+       :mode "\\.tex\\'" )
     #+END_SRC
 
-    TODO flycheck
     #+BEGIN_SRC emacs-lisp
       (evil-leader/set-key-for-mode 'latex-mode
         "at" 'tex-compile)
@@ -1035,10 +938,10 @@
     #+END_SRC
 
 *** Lisps
-    
+
     This advice makes =eval-last-sexp= (bound to =C-x C-e=) replace the sexp with
     the value.
-    
+
     #+BEGIN_SRC emacs-lisp
        (defadvice eval-last-sexp (around replace-sexp (arg) activate)
          "Replace sexp when called with a prefix argument."
@@ -1054,9 +957,11 @@
 **** Clojure
      
      #+BEGIN_SRC emacs-lisp
-       (use-package clojure-mode)
+       (use-package clojure-mode
+         :ensure t)
 
-       (use-package cider)
+       (use-package cider
+         :ensure t)
      #+END_SRC
      
 **** Emacs Lisp
@@ -1071,13 +976,6 @@
        (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
        (add-hook 'emacs-lisp-mode-hook 'flyspell-prog-mode) ;; Requires Ispell
      #+END_SRC
-     
-     Flycheck gets to be a bit much when warning about checkdoc issues, so we
-     should disable those.
-     
-     #+BEGIN_SRC emacs-lisp
-       (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
-     #+END_SRC
 
 *** Markdown
 
@@ -1091,9 +989,8 @@
     Make it so =.m= files are loaded in =octave-mode=.
 
     #+BEGIN_SRC emacs-lisp
-      ;; (autoload 'octave-mode "octave-mode" nil t)
-      ;; (setq auto-mode-alist
-      ;;       (cons '("\\.m$" . octave-mode) auto-mode-alist))
+      (use-package octave-mode
+        :mode "\\.m$")
     #+END_SRC
 
 *** Python
@@ -1103,13 +1000,15 @@
      instructions from the site.
 
      #+BEGIN_SRC emacs-lisp
-     (require 'jedi)
-     ;; (add-hook 'python-mode-hook 'jedi:setup)
-     ;; (setq jedi:server-command
-     ;;      (cons "python3" (cdr jedi:server-command))
-     ;;      python-shell-interpreter "python3")
-     (setq jedi:complete-on-dot t)
-     ;;(add-hook 'python-mode-hook 'jedi:ac-setup)
+       (use-package jedi
+         :init
+         (setq jedi:complete-on-dot t))
+       ;; (add-hook 'python-mode-hook 'jedi:setup)
+       ;; (setq jedi:server-command
+       ;;      (cons "python3" (cdr jedi:server-command))
+       ;;      python-shell-interpreter "python3")
+
+       ;;(add-hook 'python-mode-hook 'jedi:ac-setup)
      #+END_SRC
 
 *** Web Editing
@@ -1142,9 +1041,15 @@
 **** CSS
 **** JavaScript
      #+BEGIN_SRC emacs-lisp
-       (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-       (add-hook 'js2-mode-hook 'ac-js2-mode)
-       (setq js2-highlight-level 1)
+       (use-package js2-mode
+         :ensure t
+         ;; :mode "\\.js\\"
+
+         :init
+         (setq js2-highlight-level 1)
+
+         :config
+         (add-hook 'js2-mode-hook 'ac-js2-mode))
      #+END_SRC
 ** CEDET
 *** Semantic
@@ -1384,13 +1289,11 @@
   =Org-mode= makes up a massive part of my emacs usage. 
   
   #+BEGIN_SRC emacs-lisp
-      (add-to-list 'auto-mode-alist '("\.txt\\'" . org-mode))
-  #+END_SRC
-  
-  Expand a fold when trying to edit it.
-  
-  #+BEGIN_SRC emacs-lisp
-      (setq org-catch-invisible-edits 'show)
+    (use-package org-mode
+      :mode "\\.txt\\'"
+
+      :init
+      (setq org-catch-invisible-edits 'show)) ; Expand a fold when trying to edit it
   #+END_SRC
   
 ** Agenda
@@ -1549,6 +1452,7 @@
        (kbd "M-k") 'org-metaup
        (kbd "M-l") 'org-metaright)
    #+END_SRC
+
 * Ledger
   
   I use John Wiegley's amazing [[http://ledger-cli.org][ledger-cli]] to keep track of my finances. Ledger reads from a simple
@@ -1603,7 +1507,7 @@
 
   My Emacs configurations written in Org mode.
 
-  Copyright (c) 2014 Austin Walker
+  Copyright (c) 2015 Austin Walker
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1617,6 +1521,3 @@
 
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-  
-[[http://www.gnu.org/software/emacs/manual/html_node/emacs/Time-Stamps.html][hellop]]
