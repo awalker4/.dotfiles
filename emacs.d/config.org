@@ -146,7 +146,7 @@
                    split-width-threshold 100         ; Split verticly by default.
                    compilation-scroll-output 1       ; Follow compilation buffer
                    compilation-ask-about-save nil    ; Automatically save when compiling
-                   auto-fill-function 'do-auto-fill) ; Auto-fill-mode everywhere.
+                   auto-fill-function nil)           ; Auto fill is annoying
      (diminish 'auto-fill-function)
    #+END_SRC
    
@@ -824,7 +824,7 @@
     in. This is really helpful for super long functions.
     
     #+BEGIN_SRC emacs-lisp
-      (use-package which-function
+      (use-package which-func
         :config
         (which-function-mode 1))
     #+END_SRC
@@ -1426,7 +1426,7 @@
        (interactive)
        (cancel-timer my-org-mobile-sync-timer))
 
-     (my-org-mobile-sync-start)
+     ;; (my-org-mobile-sync-start)
    #+END_SRC
 
 ** Keybindings
