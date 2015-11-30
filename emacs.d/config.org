@@ -613,6 +613,7 @@
          "ej" (lambda () (interactive) (aw/edit-org-file "journal.org"))
          "en" (lambda () (interactive) (aw/edit-org-file "notes.org"))
          "eo" (lambda () (interactive) (aw/edit-org-file "calendar.org"))
+         "er" (lambda () (interactive) (aw/edit-org-file "refile.org"))
          "es" 'aw/switch-to-scratch
          "ew" (lambda () (interactive) (aw/edit-org-file "work.org"))
          "x" 'helm-M-x)
@@ -1293,7 +1294,15 @@
       :mode "\\.txt\\'"
 
       :init
-      (setq org-catch-invisible-edits 'show)) ; Expand a fold when trying to edit it
+      (setq org-catch-invisible-edits 'show) ; Expand a fold when trying to edit it
+
+      ;; TODO: autofill in org (maybe others) but not prog-mode
+      (defun aw/org-setup ()
+        (turn-on-auto-revert-mode)
+        (turn-on-auto-fill))
+
+      :config
+      (add-hook 'org-mode-hook 'aw/org-setup))
   #+END_SRC
   
 ** Agenda
@@ -1348,10 +1357,21 @@
    #+END_SRC
 
 ** Capturing
-
+   
+   Notes that I capture are generally sent to =refile.org= for further review. We can use Helm to
+   quickly refile them to any headline within my =org-agenda-files=.
+   
    #+BEGIN_SRC emacs-lisp
-     (setq org-default-notes-file (concat org-directory "/calendar.org"))
-     (define-key custom-bindings-map (kbd "C-c o") 'org-capture)
+     (setq org-refile-use-outline-path t)
+     (setq org-outline-path-complete-in-steps nil)
+     (setq org-refile-targets '((nil :maxlevel . 9)
+                                (org-agenda-files :maxlevel . 9)))
+
+     (defun aw/verify-refile-target ()
+       "Exclude todo keywords with a done state from refile targets"
+       (not (member (nth 2 (org-heading-components)) org-done-keywords)))
+
+     (setq org-refile-target-verify-function 'aw/verify-refile-target)
    #+END_SRC
 
    The capture buffer should start in insert state. Note that the usual function
@@ -1364,18 +1384,14 @@
 
 *** Capture templates
 
-    The list of templates should be empty to begin with.
-
     #+BEGIN_SRC emacs-lisp
       (setq org-capture-templates
             '(("j" "Journal Entry" plain (file+datetree (concat org-directory "/journal.org"))
-               "    %?\n    %u" :empty-lines 1)
+               "    %?    %u" :empty-lines 1)
               ("s" "Scheduled Action" entry (file+datetree+prompt (concat org-directory "/calendar.org"))
-                  "* %?\n%T\n")
-              ("t" "Todo" entry (file+headline (concat org-directory "/calendar.org") "Tasks")
-                "* TODO %?\n  SCHEDULED: %t\n")
-              ("l" "Ledger Test" plain (file "~/Dropbox/ledger.dat")
-               "%(org-read-date) %^{Payee}")))
+                  "* %?\n %t\n")
+              ("t" "Todo" entry (file+headline (concat org-directory "/refile.org") "Tasks")
+                "* TODO %?\n  SCHEDULED: %t\n")))
     #+END_SRC
     
 ** Habits
@@ -1462,6 +1478,7 @@
     (setq aw/ledger-dir "~/Dropbox/ledger")
 
     (use-package ledger-mode
+      :ensure t
       :mode "\\.dat\\'")
   #+END_SRC
 
