@@ -70,7 +70,7 @@ alias ledger='ledger --strict'
 alias bal='ledger bal -R'
 alias balcash='ledger -R -X $ --current --flat bal assets:bank liabilities:credit'
 alias balnet='ledger -R -X $ --current --depth 2 bal assets liabilities'
-alias bud='ledger --flat --no-total --empty bal Budget '
+alias bud='ledger --flat --no-total bal Budget '
 alias budr='ledger -d "d>=[this month]" -S "date" reg Budget and'
 alias reg='ledger reg -R --tail 15'
 
