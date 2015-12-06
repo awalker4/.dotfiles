@@ -1,5 +1,5 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""
-" ~/.nvimrc
+" nvimrc
 " nvim settings
 "
 " Inspired by Steve Losh's vimrc
@@ -246,6 +246,7 @@ Plug 'kien/ctrlp.vim'
 Plug 'tpope/vim-unimpaired' " Some nice bracket maps
 Plug 'nelstrom/vim-visual-star-search' " Use visual selection for * and #
 
+Plug 'tommcdo/vim-exchange' " Swap text objects
 Plug 'scrooloose/nerdcommenter' " Quick commenting
 Plug 'scrooloose/syntastic' " Show syntax errors
 Plug 'tpope/vim-surround' " Quickly surround text
