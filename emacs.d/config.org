@@ -673,7 +673,9 @@
        ;; Org stuff
        (evil-leader/set-key
          "oa" 'org-agenda-list
+         "oA" 'org-agenda
          "oc" 'org-capture
+         "or" 'org-refile
          "os" 'org-search-view
          "ot" 'org-todo-list
          "oT" 'aw/interactive-org-todo)
@@ -694,7 +696,7 @@
 
      (defun aw/edit-org-file (file)
        (interactive)
-       (find-file (concat org-directory "/" file)))
+       (find-file (concat org-directory file)))
 
      (defun aw/edit-ledger-file ()
        (interactive)
@@ -1319,7 +1321,7 @@
             org-agenda-files '("~/org")                  ; A list of agenda files.
             org-agenda-default-appointment-duration 60   ; 1 hour appointments
             org-agenda-span 1                            ; Show only today by default
-            org-directory "~/org")
+            org-directory "~/org/")
 
       (define-key custom-bindings-map (kbd "C-c a") 'org-agenda-list)
    #+END_SRC
@@ -1391,11 +1393,11 @@
 
     #+BEGIN_SRC emacs-lisp
       (setq org-capture-templates
-            '(("j" "Journal Entry" plain (file+datetree (concat org-directory "/journal.org"))
+            '(("j" "Journal Entry" plain (file+datetree (concat org-directory "journal.org"))
                "    %?    %u" :empty-lines 1)
-              ("s" "Scheduled Action" entry (file+datetree+prompt (concat org-directory "/calendar.org"))
+              ("s" "Scheduled Action" entry (file+datetree+prompt (concat org-directory "calendar.org"))
                   "* %?\n %t\n")
-              ("t" "Todo" entry (file+headline (concat org-directory "/refile.org") "Tasks")
+              ("t" "Todo" entry (file+headline (concat org-directory "refile.org") "Tasks")
                 "* TODO %?\n  SCHEDULED: %t\n")))
     #+END_SRC
     
