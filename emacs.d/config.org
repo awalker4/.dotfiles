@@ -1312,6 +1312,34 @@
       (add-hook 'org-mode-hook 'aw/org-setup))
   #+END_SRC
   
+  Of course, I use git to keep my org files under control. We should periodically make sure everything is in sync.
+
+  #+BEGIN_SRC emacs-lisp
+    (defun aw/org-revert-all-org-buffers ()
+      "This is a copy of org-mode's function but without a prompt"
+      (interactive)
+      (save-excursion
+        (save-window-excursion
+          (mapc
+           (lambda (b)
+             (when (and (with-current-buffer b (derived-mode-p 'org-mode))
+                        (with-current-buffer b buffer-file-name))
+               (org-pop-to-buffer-same-window b)
+               (revert-buffer t 'no-confirm)))
+           (buffer-list))
+          (when (and (featurep 'org-id) org-id-track-globally)
+            (org-id-locations-load)))))
+
+    (defun aw/sync-org-directory ()
+      (interactive)
+      (let ((default-directory org-directory))
+        (org-save-all-org-buffers)
+        (shell-command "./maintainOrgFiles &> /dev/null")
+        (aw/org-revert-all-org-buffers)))
+
+    (run-with-idle-timer 600 t 'aw/sync-org-directory)
+  #+END_SRC
+
 ** Agenda
    
    I keep my schedule with =org=agenda=.
@@ -1329,7 +1357,7 @@
    Show the agenda buffer in a full frame.
 
    #+BEGIN_SRC emacs-lisp
-     ;; (fullframe org-agenda-mode org-agenda-quit)
+    (fullframe org-agenda org-agenda-Quit)
    #+END_SRC
 
    When editing org-files with source-blocks, we want the source blocks to
@@ -1340,6 +1368,24 @@
            org-confirm-babel-evaluate nil)
    #+END_SRC
    
+   I'm just starting to play around with custom agenda commands.
+
+   #+BEGIN_SRC emacs-lisp
+     (setq org-agenda-custom-commands
+           '(("w" "Work"
+              ((tags-todo "+WORK-bugBacklog-backlog"
+                          ((org-agenda-overriding-header "Tasks")
+                           (org-agenda-remove-tags t)
+                           (org-agenda-skip-function
+                            '(org-agenda-skip-entry-if 'todo '("STALLED" "STARTED")))))
+               (todo "BLOCKED"
+                     ((org-agenda-overriding-header "Blocked")))
+               (todo "FIXED"
+                     ((org-agenda-overriding-header "Awaiting verification")))
+               (todo "STALLED|STARTED"
+                     ((org-agenda-overriding-header "Stories")))))))
+   #+END_SRC
+
 ** Babel
 
    Org-babel is awesome for literate programming, and it even works with
