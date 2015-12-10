@@ -141,12 +141,12 @@
    buffer-local variable's default value.
    
    #+BEGIN_SRC emacs-lisp
-     (setq-default fill-column 100                   ; Maximum line width.
-                   indent-tabs-mode nil              ; Use spaces instead of tabs.
-                   split-width-threshold 100         ; Split verticly by default.
-                   compilation-scroll-output 1       ; Follow compilation buffer
-                   compilation-ask-about-save nil    ; Automatically save when compiling
-                   auto-fill-function nil)           ; Auto fill is annoying
+     (setq-default fill-column 100                        ; Maximum line width.
+                   indent-tabs-mode nil                   ; Use spaces instead of tabs.
+                   split-width-threshold 100              ; Split verticly by default.
+                   compilation-auto-jump-to-first-error t ; Follow compilation buffer
+                   compilation-ask-about-save nil         ; Automatically save when compiling
+                   auto-fill-function nil)                ; Auto fill is annoying
      (diminish 'auto-fill-function)
    #+END_SRC
    
@@ -1302,6 +1302,7 @@
 
       :init
       (setq org-catch-invisible-edits 'show) ; Expand a fold when trying to edit it
+      (setq org-link-search-must-match-exact-headline nil)
 
       ;; TODO: autofill in org (maybe others) but not prog-mode
       (defun aw/org-setup ()
@@ -1337,7 +1338,7 @@
         (shell-command "./maintainOrgFiles &> /dev/null")
         (aw/org-revert-all-org-buffers)))
 
-    (run-with-idle-timer 600 t 'aw/sync-org-directory)
+    (run-with-idle-timer 300 t 'aw/sync-org-directory)
   #+END_SRC
 
 ** Agenda
@@ -1371,19 +1372,21 @@
    I'm just starting to play around with custom agenda commands.
 
    #+BEGIN_SRC emacs-lisp
-     (setq org-agenda-custom-commands
-           '(("w" "Work"
-              ((tags-todo "+WORK-bugBacklog-backlog"
-                          ((org-agenda-overriding-header "Tasks")
-                           (org-agenda-remove-tags t)
-                           (org-agenda-skip-function
-                            '(org-agenda-skip-entry-if 'todo '("STALLED" "STARTED")))))
-               (todo "BLOCKED"
-                     ((org-agenda-overriding-header "Blocked")))
-               (todo "FIXED"
-                     ((org-agenda-overriding-header "Awaiting verification")))
-               (todo "STALLED|STARTED"
-                     ((org-agenda-overriding-header "Stories")))))))
+          (setq org-agenda-custom-commands
+                '(("w" "Work"
+                   ((tags-todo "+WORK-bugBacklog-backlog"
+                               ((org-agenda-overriding-header "Tasks")
+                                (org-agenda-remove-tags t)
+                                (org-agenda-sorting-strategy
+                                 '(todo-state-down priority-down))
+                                (org-agenda-skip-function
+                                 '(org-agenda-skip-entry-if 'todo '("STALLED" "STARTED" "BLOCKED")))))
+                    (todo "BLOCKED"
+                          ((org-agenda-overriding-header "Blocked")))
+                    (todo "FIXED"
+                          ((org-agenda-overriding-header "Awaiting verification")))
+                    (todo "STALLED|STARTED|QA"
+                          ((org-agenda-overriding-header "Stories")))))))
    #+END_SRC
 
 ** Babel
@@ -1438,13 +1441,15 @@
 *** Capture templates
 
     #+BEGIN_SRC emacs-lisp
-      (setq org-capture-templates
-            '(("j" "Journal Entry" plain (file+datetree (concat org-directory "journal.org"))
-               "    %?    %u" :empty-lines 1)
-              ("s" "Scheduled Action" entry (file+datetree+prompt (concat org-directory "calendar.org"))
-                  "* %?\n %t\n")
-              ("t" "Todo" entry (file+headline (concat org-directory "refile.org") "Tasks")
-                "* TODO %?\n  SCHEDULED: %t\n")))
+            (setq org-capture-templates
+                  '(("a" "Teamforge Artifact" entry (file+headline (concat org-directory "refile.org") "Tasks")
+                     "* TODO artf%^{artifact} - %^{description}\n [[teamforge:\\1][Teamforge Link]]" :immediate-finish 1)
+                    ("j" "Journal Entry" plain (file+datetree (concat org-directory "journal.org"))
+                     "    %?    %u" :empty-lines 1)
+                    ("s" "Scheduled Action" entry (file+datetree+prompt (concat org-directory "calendar.org"))
+                        "* %?\n %t\n")
+                    ("t" "Todo" entry (file+headline (concat org-directory "refile.org") "Tasks")
+                      "* TODO %?\n  SCHEDULED: %t\n")))
     #+END_SRC
     
 ** Habits
