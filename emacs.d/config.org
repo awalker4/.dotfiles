@@ -249,6 +249,12 @@
      (fullframe list-packages quit-window)
    #+END_SRC
 
+   If I haven't modified a buffer and it changes on disk, revert it. Really useful for when I pull down changes to my org files.
+
+   #+BEGIN_SRC emacs-lisp
+     (global-auto-revert-mode t)
+   #+END_SRC
+
 ** Keybindings
 
    I keep my global key bindings in a custom keymap. By loading this map in its
@@ -334,7 +340,7 @@
        (when (member "Inconsolata" (font-family-list))
          (set-face-attribute 'default nil :font "Inconsolata-13")
          (add-to-list 'default-frame-alist
-                      '(font . "Inconsolata-12"))))
+                      '(font . "Inconsolata-13"))))
 
      (defun aw/load-theme-in-frame (frame)
        (select-frame frame)
@@ -664,6 +670,7 @@
 
        ;; Projectile/Helm stuff
        (evil-leader/set-key
+         "pd" 'projectile-dired
          "pf" 'helm-projectile-find-file
          "pg" 'helm-projectile-grep
          "ph" 'projectile-find-other-file
@@ -675,6 +682,7 @@
          "oa" 'org-agenda-list
          "oA" 'org-agenda
          "oc" 'org-capture
+         "ol" 'org-store-link
          "or" 'org-refile
          "os" 'org-search-view
          "ot" 'org-todo-list
@@ -1363,16 +1371,12 @@
 
     (defun aw/sync-org-directory ()
       "Save all org buffers and then run my script to sync everything with my git remote.
-    If there are new changes, revert all org buffers"
+    If there are new changes, my org buffers should auto revert"
       (interactive)
       (let ((default-directory org-directory))
         (org-save-all-org-buffers)
         (save-window-excursion
-          (shell-command "./maintainOrgFiles" "*maintainOrgFiles"))
-        (with-current-buffer "*maintainOrgFiles"
-          (beginning-of-buffer
-           (if (word-search-forward "Pulling remote changes" nil t)
-               (aw/org-revert-all-org-buffers))))))
+          (shell-command "./maintainOrgFiles" "*maintainOrgFiles"))))
 
     (run-with-idle-timer 300 t 'aw/sync-org-directory)
   #+END_SRC
@@ -1463,7 +1467,7 @@
     #+BEGIN_SRC emacs-lisp
       (setq org-capture-templates
             '(("a" "Teamforge Artifact" entry (file+headline (concat org-directory "refile.org") "Refile")
-               "* TODO artf%^{artifact} - %^{description}\n [[teamforge:\\1][Teamforge Link]]" :immediate-finish 1)
+               "* TODO artf%^{artifact} - %^{description}\n [[teamforge:%\\1][Teamforge Link]]" :immediate-finish 1)
               ("j" "Journal Entry" plain (file+datetree (concat org-directory "journal.org"))
                "    %?    %u" :empty-lines 1)
               ("s" "Scheduled Action" entry (file+datetree+prompt (concat org-directory "calendar.org"))
