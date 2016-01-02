@@ -610,11 +610,11 @@
        (evil-leader/set-leader "SPC")
        (evil-leader/set-key
          "f" 'helm-find-files
-         "m" 'compile
          "t" 'multi-term-dedicated-toggle
+         "eb" (lambda () (interactive) (aw/edit-ledger-file "budget/budget-2016.dat"))
          "ei" (lambda () (interactive) (aw/edit-init-file "config.org"))
          "eI" (lambda () (interactive) (aw/edit-init-file "init.el"))
-         "el" 'aw/edit-ledger-file
+         "el" (lambda () (interactive) (aw/edit-ledger-file "ledger-2016.dat"))
          "ej" (lambda () (interactive) (aw/edit-org-file "journal.org"))
          "en" (lambda () (interactive) (aw/edit-org-file "notes.org"))
          "eo" (lambda () (interactive) (aw/edit-org-file "calendar.org"))
@@ -664,9 +664,10 @@
 
        ;; Projectile/Helm stuff
        (evil-leader/set-key
-         "pf" 'helm-projectile-find-file
+         "pf" 'helm-projectile-find-file-dwim
          "pg" 'helm-projectile-grep
          "ph" 'projectile-find-other-file
+         "pm" 'projectile-compile-project
          "pp" 'projectile-switch-project
          "ps" 'helm-semantic-or-imenu)
 
@@ -686,8 +687,8 @@
          "vb" 'eval-buffer
          "vv" 'eval-last-sexp)
        )
-
    #+END_SRC
+
 ** Evil Functions
 
    #+BEGIN_SRC emacs-lisp
@@ -699,9 +700,9 @@
        (interactive)
        (find-file (concat org-directory file)))
 
-     (defun aw/edit-ledger-file ()
+     (defun aw/edit-ledger-file (file)
        (interactive)
-       (find-file (concat aw/ledger-dir "/" "ledger-2015.dat")))
+       (find-file (concat aw/ledger-dir "/" file)))
 
      (defun aw/switch-to-scratch ()
        (interactive)
@@ -822,6 +823,8 @@
       (add-hook 'prog-mode-hook #'hl-line-mode)
     #+END_SRC
 
+    TODO - bug-reference-mode
+
     White space stuff ([[http://www.reddit.com/r/emacs/comments/2keh6u/show_tabs_and_trailing_whitespaces_only/][Source]])
 
     #+BEGIN_SRC emacs-lisp
@@ -863,7 +866,8 @@
         :ensure t
         :diminish paredit-mode
         :config
-        (add-hook 'emacs-lisp-mode-hook 'paredit-mode))
+        (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
+        (add-hook 'clojure-mode-hook 'paredit-mode))
 
     #+END_SRC
 *** sr-speedbar
@@ -883,12 +887,28 @@
         (setq speedbar-use-images nil)
         (setq sr-speedbar-width 25))
     #+END_SRC
+** Compilation
+
+   I only need the output of the compilation buffer if there are any errors. Otherwise, we can close it when it finishes. ([[http://emacs.stackexchange.com/questions/62/hide-compilation-window][Source]])
+
+   #+BEGIN_SRC emacs-lisp
+     (setq compilation-finish-function
+       (lambda (buf str)
+         (if (null (string-match ".*exited abnormally.*" str))
+             ;;no errors, make the compilation window go away in a few seconds
+             (progn
+               (run-at-time
+                "1 sec" nil 'delete-windows-on
+                (get-buffer-create "*compilation*"))
+               (message "No Compilation Errors!")))))
+   #+END_SRC
 
 ** Language Settings
 *** C#
 
     #+BEGIN_SRC emacs-lisp
       (use-package csharp-mode
+        :ensure t
 
         :config
         (add-hook 'csharp-mode-hook 'omnisharp-mode))
@@ -991,6 +1011,11 @@
          :ensure t)
      #+END_SRC
 
+    #+BEGIN_SRC emacs-lisp
+      (evil-leader/set-key-for-mode 'clojure-mode
+        "vv" 'cider-eval-last-sexp
+        "vV" 'cider-eval-last-sexp-to-repl)
+    #+END_SRC
 **** Emacs Lisp
 
      #+BEGIN_SRC emacs-lisp
@@ -1225,10 +1250,15 @@
        (setq grep-find-ignored-directories nil)
        (setq grep-find-ignored-files nil)
 
-       :config
-       (projectile-global-mode))
+       ; Save all project buffers whenever I compile
+       (defun aw/projectile-setup ()
+         (setq compilation-save-buffers-predicate 'projectile-project-buffer-p))
 
+       :config
+       (add-hook 'projectile-mode-hook 'aw/projectile-setup)
+       (projectile-global-mode))
    #+END_SRC
+
 * System Stuff
 ** Terminals
 

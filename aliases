@@ -65,7 +65,7 @@ alias grm="git status | grep deleted | awk '{print \$3}' | xargs git rm"
 ########################################
 # Ledger
 ########################################
-alias ledger='ledger --strict'
+alias ledger='ledger --strict --explicit'
 
 alias bal='ledger bal -R'
 alias balcash='ledger -R -X $ --current --flat bal assets:bank liabilities:credit'
