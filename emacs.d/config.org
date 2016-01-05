@@ -144,8 +144,6 @@
      (setq-default fill-column 100                        ; Maximum line width.
                    indent-tabs-mode nil                   ; Use spaces instead of tabs.
                    split-width-threshold 100              ; Split verticly by default.
-                   compilation-auto-jump-to-first-error t ; Follow compilation buffer
-                   compilation-ask-about-save nil         ; Automatically save when compiling
                    auto-fill-function nil)                ; Auto fill is annoying
      (diminish 'auto-fill-function)
    #+END_SRC
@@ -626,7 +624,6 @@
          "eo" (lambda () (interactive) (aw/edit-org-file "calendar.org"))
          "er" (lambda () (interactive) (aw/edit-org-file "refile.org"))
          "es" 'aw/switch-to-scratch
-         "ew" (lambda () (interactive) (aw/edit-org-file "work.org"))
          "x" 'helm-M-x)
 
        ;; Window stuff
@@ -676,7 +673,9 @@
          "ph" 'projectile-find-other-file
          "pm" 'projectile-compile-project
          "pp" 'projectile-switch-project
-         "ps" 'helm-semantic-or-imenu)
+         "pr" 'projectile-run-shell-command-in-root
+         "ps" 'helm-semantic-or-imenu
+         "pt" 'projectile-test-project)
 
        ;; Org stuff
        (evil-leader/set-key
@@ -896,6 +895,13 @@
         (setq sr-speedbar-width 25))
     #+END_SRC
 ** Compilation
+
+   #+BEGIN_SRC emacs-lisp
+     (setq-default
+      compilation-auto-jump-to-first-error t    ; Take me to the first error
+      compilation-ask-about-save nil            ; Don't worry about saving buffers
+      compilation-scroll-output 'first-error)   ; Follow compilation buffer until we hit an error
+   #+END_SRC
 
    I only need the output of the compilation buffer if there are any errors. Otherwise, we can close it when it finishes. ([[http://emacs.stackexchange.com/questions/62/hide-compilation-window][Source]])
 
