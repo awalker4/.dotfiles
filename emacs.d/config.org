@@ -669,7 +669,7 @@
        (evil-leader/set-key
          "pd" 'projectile-dired
          "pf" 'helm-projectile-find-file-dwim
-         "pg" 'helm-projectile-grep
+         "pg" 'helm-projectile-ag
          "ph" 'projectile-find-other-file
          "pm" 'projectile-compile-project
          "pp" 'projectile-switch-project
@@ -1274,6 +1274,15 @@
    #+END_SRC
 
 * System Stuff
+
+** Dired
+
+   By default, dired shows file sizes in bytes. We can change the switches used by ls to make things human readable.
+
+   #+BEGIN_SRC emacs-lisp
+     (setq dired-listing-switches "-alh")
+   #+END_SRC
+
 ** Terminals
 
    Multi-term makes working with many terminals a bit nicer. I can easily create
