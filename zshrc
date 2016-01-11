@@ -67,6 +67,10 @@ setopt inc_append_history
 # Don't save the history command
 setopt hist_no_store
 
+# Search history like bash
+bindkey  '^[[A'  history-beginning-search-backward
+bindkey  '^[[B'  history-beginning-search-forward
+
 ########################################
 # Job Control
 ########################################
@@ -113,8 +117,6 @@ bindkey '^Z' fancy-ctrl-z
 ########################################
 
 bindkey -e
-bindkey '\e[A' history-search-backward
-bindkey '\e[B' history-search-forward
 
 bindkey '\ew' kill-region                             # [Esc-w] - Kill from the cursor to the mark
 bindkey -s '\el' 'ls\n'                               # [Esc-l] - run command: ls
@@ -163,8 +165,6 @@ autoload -U edit-command-line
 zle -N edit-command-line
 bindkey '\C-x\C-e' edit-command-line
 
-bindkey '^[[A' up-line-or-search
-bindkey '^[[B' down-line-or-search
 bindkey '^[^[[C' emacs-forward-word
 bindkey '^[^[[D' emacs-backward-word
 

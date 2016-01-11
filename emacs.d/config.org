@@ -1283,6 +1283,26 @@
        (projectile-global-mode))
    #+END_SRC
 
+   =projectile-find-file-dwim= is a handy way to immediately jump around a project if there's a
+   filename under the point. One thing it can't do is line numbers, such as =hello.cpp:42=. This
+   function will jump to a line number if it's there, otherwise just call the regular function.
+   (Adapted from the advice found [[http://stackoverflow.com/questions/3139970/open-a-file-at-line-with-filenameline-syntax][here]])
+
+   #+BEGIN_SRC emacs-lisp
+     (defun aw/projectile-find-file-with-line-number-maybe ()
+       (interactive)
+       (let* ((file (if (region-active-p)
+                        (buffer-substring (region-beginning) (region-end))
+                      (or (thing-at-point 'filename) ""))))
+         (if (string-match "\\(.*?\\):\\([0-9]+\\)$" file)
+             (let* ((file-name (file-relative-name (file-truename (match-string 1 file)) (projectile-project-root)))
+                    (line-num (string-to-number (match-string 2 file))))
+               (find-file (expand-file-name file-name (projectile-project-root)))
+               (goto-line line-num)))))
+
+     (advice-add 'helm-projectile-find-file-dwim :before-until #'aw/projectile-find-file-with-line-number-maybe)
+   #+END_SRC
+
 * System Stuff
 
 ** Dired
