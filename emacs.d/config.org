@@ -1288,17 +1288,25 @@
    function will jump to a line number if it's there, otherwise just call the regular function.
    (Adapted from the advice found [[http://stackoverflow.com/questions/3139970/open-a-file-at-line-with-filenameline-syntax][here]])
 
+   When I have time I'd like to add this capability right into Projectile, since I'm duplicating
+   quite a bit of code here.
+
    #+BEGIN_SRC emacs-lisp
      (defun aw/projectile-find-file-with-line-number-maybe ()
        (interactive)
        (let* ((file (if (region-active-p)
                         (buffer-substring (region-beginning) (region-end))
-                      (or (thing-at-point 'filename) ""))))
+                      (or (thing-at-point 'filename) "")))
+              (project-files (projectile-current-project-files)))
          (if (string-match "\\(.*?\\):\\([0-9]+\\)$" file)
-             (let* ((file-name (file-relative-name (file-truename (match-string 1 file)) (projectile-project-root)))
-                    (line-num (string-to-number (match-string 2 file))))
-               (find-file (expand-file-name file-name (projectile-project-root)))
-               (goto-line line-num)))))
+             (let* ((file-name (match-string 1 file))
+                    (line-num (string-to-number (match-string 2 file)))
+                    (file-match (car (-filter (lambda (project-file)
+                                                (string-match file-name project-file))
+                                              project-files))))
+               (when file-match
+                 (find-file (expand-file-name file-match (projectile-project-root)))
+                 (goto-line line-num))))))
 
      (advice-add 'helm-projectile-find-file-dwim :before-until #'aw/projectile-find-file-with-line-number-maybe)
    #+END_SRC
