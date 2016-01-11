@@ -571,6 +571,8 @@
        (key-chord-define evil-normal-state-map "[b" 'previous-buffer)
        (key-chord-define evil-normal-state-map "]b" 'next-buffer)
 
+       (key-chord-define evil-normal-state-map "gf" 'helm-projectile-find-file-dwim)
+
        (evil-mode 1))
 
      (use-package evil-nerd-commenter
