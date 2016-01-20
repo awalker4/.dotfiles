@@ -16,10 +16,12 @@
 # General shell
 ########################################
 alias cp='cp -iv'
+alias df='df -h'
 alias du='du -h'
 alias h='history'
 alias la='ls -a --color'
 alias lal='ls -lah --color'
+alias lb='lsblk'
 alias ll='ls -oh --color'
 alias ls='ls -h --color'
 alias md='mkdir -pv'

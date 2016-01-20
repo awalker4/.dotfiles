@@ -689,7 +689,8 @@
          "os" 'org-search-view
          "ot" 'org-todo-list
          "oT" 'aw/interactive-org-todo
-         "ow" '(lambda () (interactive) (org-agenda "nil" "w")))
+         "ow" '(lambda () (interactive) (org-agenda "nil" "w"))
+         "ox" 'org-latex-export-to-pdf)
 
        ;; Misc
        (evil-leader/set-key
@@ -1499,6 +1500,7 @@
       'org-babel-load-languages
       '((emacs-lisp . t)
         (C . t)
+        (gnuplot . t)
         (sh . t)
         (python . t)
         (octave . t)))
