@@ -550,8 +550,12 @@
 
 ** Evil setup
 
+   See [[http://stackoverflow.com/questions/22878668/emacs-org-mode-evil-mode-tab-key-not-working][this Stack Overflow post]] for an explanation on =evil-want-C-i-jump=.
    #+BEGIN_SRC emacs-lisp
      (use-package evil
+       :init
+       (setq evil-want-C-i-jump nil)
+
        :ensure t
        :config
        (define-key evil-normal-state-map "H" 'windmove-left)
@@ -608,9 +612,6 @@
    #+BEGIN_SRC emacs-lisp
      (use-package evil-leader
        :ensure t
-       :init
-       (setq evil-want-C-i-jump nil)
-
        :config
        (global-evil-leader-mode)
        (evil-leader/set-leader "SPC")
@@ -1649,6 +1650,8 @@
 
     (use-package ledger-mode
       :ensure t
+      :init
+      (setq ledger-clear-whole-transactions 1)
       :mode "\\.dat\\'")
   #+END_SRC
 
