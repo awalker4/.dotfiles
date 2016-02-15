@@ -687,7 +687,7 @@
        (evil-leader/set-key
          "hc" 'describe-key-briefly
          "hf" 'describe-function
-         "hg" 'helm-google-suggest
+         "hg" 'aw/search-ddg
          "hv" 'describe-variable
          "hm" 'man)
 
@@ -772,6 +772,12 @@
      (defun aw/interactive-org-todo ()
        (interactive)
        (org-todo-list '(4)))
+
+     (defun aw/search-ddg (text)
+       (interactive "sSearch DDG: ")
+       (browse-url
+        (concat "https://duckduckgo.com/?q="
+                (replace-regexp-in-string " " "+" text))))
    #+END_SRC
 * Text Editing
 ** Buffer Management
@@ -1565,7 +1571,7 @@
 
     #+BEGIN_SRC emacs-lisp
       (setq org-capture-templates
-            '(("a" "Teamforge Artifact" entry (file+headline (concat org-directory "refile.org") "Refile")
+            '(("a" "Teamforge Artifact" entry (file+headline (concat org-directory "notes.org") "Refile")
                "* TODO artf%^{artifact} - %^{description}\n [[teamforge:%\\1][Teamforge Link]]" :immediate-finish 1)
               ("j" "Journal Entry" plain (file+datetree (concat org-directory "journal.org"))
                "    %?    %u" :empty-lines 1)
