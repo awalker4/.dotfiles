@@ -1,6 +1,4 @@
 #+BABEL: :cache yes
-#+LATEX_HEADER: \usepackage{parskip}
-#+LATEX_HEADER: \usepackage{inconsolata}
 #+PROPERTY: header-args :tangle yes :comments org
 #+STARTUP: hidestars
 
@@ -994,23 +992,6 @@
    #+END_SRC
 
 ** Language Settings
-*** C#
-
-    #+BEGIN_SRC emacs-lisp
-      (use-package csharp-mode
-        :ensure t
-
-        :config
-        (add-hook 'csharp-mode-hook 'omnisharp-mode))
-    #+END_SRC
-
-    Allow company to use OmniSharp for autocompletion.
-
-    #+BEGIN_SRC emacs-lisp
-       ;;(eval-after-load 'company
-         ;;'(add-to-list 'company-backends 'company-omnisharp))
-    #+END_SRC
-
 *** C++
 
     By default, .h files are opened in C mode. I'll mostly be using them for C++
@@ -1378,7 +1359,6 @@
    #+END_SRC
 
 * System Stuff
-
 ** Dired
 
    By default, dired shows file sizes in bytes. We can change the switches used by ls to make things human readable.
@@ -1713,6 +1693,8 @@
       :ensure t
       :init
       (setq ledger-clear-whole-transactions 1)
+      :config
+      (add-to-list 'evil-emacs-state-modes 'ledger-report-mode)
       :mode "\\.dat\\'")
   #+END_SRC
 
@@ -1772,3 +1754,16 @@
 
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+* Refile
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package ox-reveal
+      :ensure t
+      :init
+      (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/"))
+
+
+    (use-package htmlize
+      :ensure t)
+  #+END_SRC
