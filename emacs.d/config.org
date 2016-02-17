@@ -458,7 +458,13 @@
                (select-window first-win)
                (if this-win-2nd (other-window 1))))))
    #+END_SRC
+* Refile
+  Stuff that I'm still playing around with.
 
+  #+BEGIN_SRC emacs-lisp
+    (add-hook 'text-mode-hook #'bug-reference-mode)
+    (add-hook 'prog-mode-hook #'bug-reference-prog-mode)
+  #+END_SRC
 * Helm
 
   Helm is an amazing completion tool for finding almost anything. We can
@@ -488,38 +494,21 @@
         (setq helm-google-suggest-use-curl-p t))
 
       :config
+      (defun helm-backspace ()
+        (interactive)
+        (condition-case nil
+            (backward-delete-char 1)
+          (error
+           (helm-keyboard-quit))))
+
       (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
       (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+      (define-key helm-map (kbd "DEL") 'helm-backspace)
 
       (helm-mode 1))
 
     (use-package helm-ag
       :ensure t)
-
-    (use-package helm-gtags
-      :ensure t
-      :diminish helm-gtags-mode
-      :bind (("M-." . helm-gtags-dwim)
-             ("M-," . helm-gtags-pop-stack))
-      :init
-      (setq helm-gtags-ignore-case t
-            helm-gtags-auto-update t
-            helm-gtags-use-input-at-cursor t
-            helm-gtags-pulse-at-cursor t
-            helm-gtags-prefix-key "\C-cg"
-            helm-gtags-suggested-key-mapping t)
-
-      :config
-      (add-hook 'dired-mode-hook 'helm-gtags-mode)
-      (add-hook 'eshell-mode-hook 'helm-gtags-mode)
-      (add-hook 'c-mode-hook 'helm-gtags-mode)
-      (add-hook 'c++-mode-hook 'helm-gtags-mode)
-      (add-hook 'asm-mode-hook 'helm-gtags-mode)
-
-      (define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
-      (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
-      (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
-      (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history))
 
     (use-package helm-projectile
       :ensure t
@@ -548,16 +537,36 @@
   close the buffer. ([[http://oremacs.com/2014/12/21/helm-backspace/][Source]])
 
   #+BEGIN_SRC emacs-lisp
-    (defun helm-backspace ()
-      (interactive)
-      (condition-case nil
-          (backward-delete-char 1)
-        (error
-         (helm-keyboard-quit))))
-
-    (define-key helm-map (kbd "DEL") 'helm-backspace)
   #+END_SRC
 
+** helm-gtags
+   
+   #+BEGIN_SRC emacs-lisp
+        (use-package helm-gtags
+          :ensure t
+          :diminish helm-gtags-mode
+          :bind (("M-." . helm-gtags-dwim)
+                 ("M-," . helm-gtags-pop-stack))
+          :init
+          (setq helm-gtags-ignore-case t
+                helm-gtags-auto-update t
+                helm-gtags-use-input-at-cursor t
+                helm-gtags-pulse-at-cursor t
+                helm-gtags-prefix-key "\C-cg"
+                helm-gtags-suggested-key-mapping t)
+
+          :config
+          (add-hook 'dired-mode-hook 'helm-gtags-mode)
+          (add-hook 'eshell-mode-hook 'helm-gtags-mode)
+          (add-hook 'c-mode-hook 'helm-gtags-mode)
+          (add-hook 'c++-mode-hook 'helm-gtags-mode)
+          (add-hook 'asm-mode-hook 'helm-gtags-mode)
+
+          (define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
+          (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
+          (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+          (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history))
+   #+END_SRC
 * Evil Mode
 
   Evil mode makes it possible to use Vi's modal editing within Emacs. It's
@@ -696,6 +705,7 @@
        ;; Git stuff
        (evil-leader/set-key
          "gb" 'magit-blame
+         "gi" 'aw/edit-gitignore
          "gs" 'magit-status)
 
        ;; Projectile/Helm stuff
@@ -780,6 +790,10 @@
        (browse-url
         (concat "https://duckduckgo.com/?q="
                 (replace-regexp-in-string " " "+" text))))
+
+     (defun aw/edit-gitignore ()
+       (interactive)
+       (find-file (expand-file-name ".gitignore" (magit-toplevel))))
    #+END_SRC
 * Text Editing
 ** Buffer Management
@@ -833,6 +847,17 @@
        (yas-global-mode 1))
    #+END_SRC
 
+** Editing Large Files
+
+   =VLF-mode= allows me to open up huge files in batches, which is really useful when going through
+   massive log files. Here I just require it so I have the option of using it. More configuration to follow.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package vlf
+       :ensure t
+       :config
+       (require 'vlf-setup))
+   #+END_SRC
 * Programming
 ** Base Environment
 
