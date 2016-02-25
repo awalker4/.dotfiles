@@ -190,8 +190,8 @@ map <leader>h :silent! noh<Bar> call clearmatches()<Bar> echo<cr>
 " => Leader shortcuts
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " Set the leader key
-let mapleader=","
-let g:mapleader=","
+let mapleader=" "
+let g:mapleader=" "
 
 """"""""""""""""""""""""""""""
 " => Buffer/window shortcuts
@@ -202,8 +202,8 @@ map <leader>nw :vne<cr><C-l>
 " Edit Makefile
 map <leader>em :vsp makefile<cr>
 
-" Edit Vimrc
-map <leader>ev :vsp ~/.vimrc<cr>
+" Vimrc (Edit Init)
+map <leader>ei :vsp ~/.vimrc<cr>
 
 """"""""""""""""""""""""""""""
 " => Make shortcuts
