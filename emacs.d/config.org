@@ -1337,14 +1337,21 @@
 
    When I have time I'd like to add this capability right into Projectile, since I'm duplicating
    quite a bit of code here.
+   
+   TODO - gf or <SPC>pf should
+   - Check if in project
+     - If yes, jump to project file
+     - If no, check list of all project files
+     - Otherwise, find-file
 
    #+BEGIN_SRC emacs-lisp
      (defun aw/projectile-find-file-with-line-number-maybe ()
        (interactive)
-       (let* ((file (if (region-active-p)
+       (let* ((projectile-require-project-root nil)
+              (file (if (region-active-p)
                         (buffer-substring (region-beginning) (region-end))
                       (or (thing-at-point 'filename) "")))
-              (project-files (projectile-current-project-files)))
+              (project-files (projectile-all-project-files)))
          (if (string-match "\\(.*?\\):\\([0-9]+\\)$" file)
              (let* ((file-name (match-string 1 file))
                     (line-num (string-to-number (match-string 2 file)))
