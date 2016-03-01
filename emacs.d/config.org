@@ -249,6 +249,7 @@
 
    #+BEGIN_SRC emacs-lisp
      (global-auto-revert-mode t)
+     (diminish 'auto-revert-mode)
    #+END_SRC
 
 ** Keybindings
@@ -700,9 +701,10 @@
          "hv" 'describe-variable
          "hm" 'man)
 
-       ;; Git stuff
+       ;; Git/VC stuff
        (evil-leader/set-key
          "gb" 'magit-blame
+         "gD" 'aw/projectile-svn-diff
          "gi" 'aw/edit-gitignore
          "gs" 'magit-status)
 
@@ -792,6 +794,14 @@
      (defun aw/edit-gitignore ()
        (interactive)
        (find-file (expand-file-name ".gitignore" (magit-toplevel))))
+
+     (defun aw/projectile-svn-diff ()
+           (interactive)
+           (let ((default-directory (projectile-project-root)))
+             (shell-command "svn diff" "*svn-diff*")
+             (with-current-buffer "*svn-diff*"
+               (diff-mode)))
+           (display-buffer "*svn-diff*"))
    #+END_SRC
 * Text Editing
 ** Buffer Management
@@ -900,6 +910,7 @@
 
     #+BEGIN_SRC emacs-lisp
       (use-package whitespace
+        :diminish whitespace-mode
         :init
         (setq whitespace-display-mappings
               ;; all numbers are Unicode codepoint in decimal. try (insert-char 182 ) to see it
@@ -963,6 +974,7 @@
    #+BEGIN_SRC emacs-lisp
      (setq-default
       compilation-auto-jump-to-first-error t    ; Take me to the first error
+      compilation-always-kill t                 ; Restart compilation without prompt
       compilation-ask-about-save nil            ; Don't worry about saving buffers
       compilation-scroll-output 'first-error)   ; Follow compilation buffer until we hit an error
    #+END_SRC
@@ -972,14 +984,15 @@
 
    #+BEGIN_SRC emacs-lisp
      (setq compilation-finish-function
-       (lambda (buf str)
-         (if (null (string-match ".*exited abnormally.*" str))
-             ;;no errors, make the compilation window go away in a few seconds
-             (progn
-               (run-at-time
-                "1 sec" nil 'delete-windows-on
-                (get-buffer-create "*compilation*"))
-               (message "No Compilation Errors!")))))
+           (lambda (buf str)
+             (if (and (null (string-match ".*exited abnormally.*" str))
+                      (null (string-match ".*interrupt.*" str)))
+                 ;;no errors, make the compilation window go away in a few seconds
+                 (progn
+                   (run-at-time
+                    "1 sec" nil 'delete-windows-on
+                    (get-buffer-create "*compilation*"))
+                   (message "No Compilation Errors!")))))
    #+END_SRC
 
    When gcc hits an error, it spits out a number of lines that say something like =In file included
@@ -1705,6 +1718,20 @@
       :mode "\\.dat\\'")
   #+END_SRC
 
+* Refile
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package ox-reveal
+      :ensure t
+      :init
+      (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/"))
+
+
+    (use-package htmlize
+      :ensure t)
+    
+  #+END_SRC
+
 * Wrap-up
 
   We're ready to load the minor mode containing my global keybindings.
@@ -1733,15 +1760,13 @@
   next procrastination session. If you have a fix for any of these, let me know!
 
   - ibuffer going full frame messes up my frame layout
-  - magit
-    - magit-filenotify to auto refresh the status buffer
   - org stuff
     - org-agenda should use evil keys, also probably magit and ibuffer
     - I need to sort out my org-capture workflow
   - start working on a better latex workflow
   - Hard line wrapping gets annoying when programming
-  - This whole file needs to be better organized
   - restclient mode is cool
+  - log files should use auto-revert-tail-mode
 
 * License
 
@@ -1761,16 +1786,3 @@
 
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-* Refile
-
-  #+BEGIN_SRC emacs-lisp
-    (use-package ox-reveal
-      :ensure t
-      :init
-      (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/"))
-
-
-    (use-package htmlize
-      :ensure t)
-  #+END_SRC
