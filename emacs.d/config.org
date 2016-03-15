@@ -217,12 +217,6 @@
      (eval-after-load 'auto-complete-config `(ac-config-default))
    #+END_SRC
 
-   Automaticly revert =doc-view=-buffers when the file changes on disk.
-
-   #+BEGIN_SRC emacs-lisp
-   (add-hook 'doc-view-mode-hook 'auto-revert-mode)
-   #+END_SRC
-
    Use Shift+arrow keys to jump around windows.
 
    #+BEGIN_SRC emacs-lisp
@@ -708,17 +702,12 @@
          "gi" 'aw/edit-gitignore
          "gs" 'magit-status)
 
-       ;; Projectile/Helm stuff
+       ;; Compiling
        (evil-leader/set-key
-         "pd" 'projectile-dired
-         "pf" 'helm-projectile-find-file-dwim
-         "pg" 'helm-projectile-ag
-         "ph" 'projectile-find-other-file
-         "pm" 'projectile-compile-project
-         "pp" 'projectile-switch-project
-         "pr" 'projectile-run-shell-command-in-root
-         "ps" 'helm-semantic-or-imenu
-         "pt" 'projectile-test-project)
+         "mm" 'projectile-compile-project
+         "mn" 'next-error
+         "mp" 'previous-error
+         "mt" 'projectile-test-project)
 
        ;; Org stuff
        (evil-leader/set-key
@@ -732,6 +721,16 @@
          "oT" 'aw/interactive-org-todo
          "ow" '(lambda () (interactive) (org-agenda "nil" "w"))
          "ox" 'org-latex-export-to-pdf)
+
+       ;; Projectile/Helm stuff
+       (evil-leader/set-key
+         "pd" 'projectile-dired
+         "pf" 'helm-projectile-find-file-dwim
+         "pg" 'helm-projectile-ag
+         "ph" 'projectile-find-other-file
+         "pp" 'projectile-switch-project
+         "pr" 'projectile-run-shell-command-in-root
+         "ps" 'helm-semantic-or-imenu)
 
        ;; Misc
        (evil-leader/set-key

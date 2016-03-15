@@ -24,6 +24,7 @@ alias lal='ls -lah --color'
 alias lb='lsblk'
 alias ll='ls -oh --color'
 alias ls='ls -h --color'
+mcd() { mkdir $1 && cd $1; }
 alias md='mkdir -pv'
 alias mv='mv -v'
 alias off='sudo shutdown 0'
@@ -40,9 +41,9 @@ alias sl='ls'
 ########################################
 # Editors
 ########################################
-if [[ -x /usr/bin/nvim || -x /usr/local/bin/nvim ]]; then
-    alias vim='nvim'
-fi
+#if [[ -x /usr/bin/nvim || -x /usr/local/bin/nvim ]]; then
+    #alias vim='nvim'
+#fi
 
 alias em='emacsclient -c --no-wait'
 alias realias='vim ~/.dotfiles/aliases; source ~/.dotfiles/aliases'
