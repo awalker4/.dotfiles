@@ -658,6 +658,7 @@
          "eo" (lambda () (interactive) (aw/edit-org-file "calendar.org"))
          "er" (lambda () (interactive) (aw/edit-org-file "refile.org"))
          "es" 'aw/switch-to-scratch
+         "eS" 'aw/generate-scratch-buffer
          "x" 'helm-M-x)
 
        ;; Window stuff
@@ -678,6 +679,7 @@
          "bl" 'ibuffer
          "bm" 'bookmark-jump
          "bo" 'helm-occur
+         "br" 'rename-buffer
          "bs" 'helm-mini
          "bw" 'write-file)
 
@@ -795,12 +797,18 @@
        (find-file (expand-file-name ".gitignore" (magit-toplevel))))
 
      (defun aw/projectile-svn-diff ()
-           (interactive)
-           (let ((default-directory (projectile-project-root)))
-             (shell-command "svn diff" "*svn-diff*")
-             (with-current-buffer "*svn-diff*"
-               (diff-mode)))
-           (display-buffer "*svn-diff*"))
+       (interactive)
+       (let ((default-directory (projectile-project-root)))
+         (shell-command "svn diff" "*svn-diff*")
+         (with-current-buffer "*svn-diff*"
+           (diff-mode)))
+       (display-buffer "*svn-diff*"))
+
+     (defun aw/generate-scratch-buffer ()
+       "Create and switch to a temporary scratch buffer with a random
+          name."
+       (interactive)
+       (switch-to-buffer (make-temp-name "scratch-")))
    #+END_SRC
 * Text Editing
 ** Buffer Management
@@ -1478,6 +1486,7 @@
       (turn-on-flyspell))
 
     (use-package org-mode
+      :pin manual
       :mode "\\.txt\\'"
 
       :init
@@ -1536,7 +1545,7 @@
    #+BEGIN_SRC emacs-lisp
           (setq org-agenda-custom-commands
                 '(("w" "Work"
-                   ((tags-todo "+WORK-bugBacklog-backlog"
+                   ((tags-todo "+WORK-backlog"
                                ((org-agenda-overriding-header "Tasks")
                                 (org-agenda-remove-tags t)
                                 (org-agenda-sorting-strategy
