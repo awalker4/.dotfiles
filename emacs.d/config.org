@@ -1682,7 +1682,7 @@
        (interactive)
        (cancel-timer my-org-mobile-sync-timer))
 
-     ;; (my-org-mobile-sync-start)
+     (my-org-mobile-sync-start)
    #+END_SRC
 
 ** Keybindings
