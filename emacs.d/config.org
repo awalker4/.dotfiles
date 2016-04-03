@@ -1,6 +1,5 @@
 #+BABEL: :cache yes
 #+PROPERTY: header-args :tangle yes :comments org
-#+STARTUP: hidestars
 
 #+TITLE: Emacs configuration file
 #+AUTHOR: Austin Walker
@@ -1497,15 +1496,30 @@
             org-catch-invisible-edits 'show                ; Expand a fold when trying to edit it
             org-confirm-babel-evaluate nil                 ; Don't ask to evaluate src blocks
             org-directory "~/org/"
+            org-hide-emphasis-markers t                    ; Don't show markup characters
             org-link-search-must-match-exact-headline nil  ; Create internal links with only a partial match
             org-outline-path-complete-in-steps nil         ; Refile in a single go
             org-refile-use-outline-path t                  ; Show full paths for refiling
             org-return-follows-link t                      ; Hit return to open links
-            org-src-fontify-natively t)                    ; Highlight src blocks natively
+            org-src-fontify-natively t                     ; Highlight src blocks natively
+            org-startup-folded t                           ; Start buffer folded
+            org-startup-indented t)                        ; Indent sections based on their header level
+
+                                            ; Show dots instead of dashes
+      (font-lock-add-keywords 'org-mode
+                              '(("^ +\\([-*]\\) "
+                                 (0 (prog1 ()
+                                      (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
       :config
       (add-hook 'org-mode-hook #'aw/org-setup)
       (fullframe org-agenda org-agenda-Quit))
+
+    (use-package org-bullets
+      :ensure t
+      :config
+      (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
   #+END_SRC
 
   Of course, I use git to keep my org files under control. We should periodically make sure everything is in sync.
@@ -1629,7 +1643,7 @@
               ("j" "Journal Entry" plain (file+datetree (concat org-directory "journal.org"))
                "    %?    %u" :empty-lines 1)
               ("s" "Scheduled Action" entry (file+datetree+prompt (concat org-directory "calendar.org"))
-                  "* %?\n %t\n")
+                  "* %?\n%t\n")
               ("t" "Todo" entry (file+headline (concat org-directory "calendar.org") "Tasks")
                 "* TODO %?\n  SCHEDULED: %t\n")))
     #+END_SRC
