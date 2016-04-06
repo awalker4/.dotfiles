@@ -457,6 +457,15 @@
   #+BEGIN_SRC emacs-lisp
     (add-hook 'text-mode-hook #'bug-reference-mode)
     (add-hook 'prog-mode-hook #'bug-reference-prog-mode)
+
+    (use-package helm-org-rifle
+      :ensure t)
+
+    (use-package abbrev
+      :diminish abbrev-mode
+      :config
+      (if (file-exists-p abbrev-file-name)
+          (quietly-read-abbrev-file)))
   #+END_SRC
 * Helm
 
@@ -716,6 +725,7 @@
          "oa" 'org-agenda-list
          "oA" 'org-agenda
          "oc" 'org-capture
+         "og" 'helm-org-rifle
          "ol" 'org-store-link
          "or" 'org-refile
          "os" 'org-search-view
