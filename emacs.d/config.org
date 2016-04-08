@@ -456,6 +456,15 @@
   #+BEGIN_SRC emacs-lisp
     (add-hook 'text-mode-hook #'bug-reference-mode)
     (add-hook 'prog-mode-hook #'bug-reference-prog-mode)
+
+    (use-package helm-org-rifle
+      :ensure t)
+
+    (use-package abbrev
+      :diminish abbrev-mode
+      :config
+      (if (file-exists-p abbrev-file-name)
+          (quietly-read-abbrev-file)))
   #+END_SRC
 * Helm
 
@@ -715,6 +724,7 @@
          "oa" 'org-agenda-list
          "oA" 'org-agenda
          "oc" 'org-capture
+         "og" 'helm-org-rifle
          "ol" 'org-store-link
          "or" 'org-refile
          "os" 'org-search-view
@@ -803,11 +813,11 @@
            (diff-mode)))
        (display-buffer "*svn-diff*"))
 
-     (defun aw/generate-scratch-buffer ()
+     (defun aw/generate-scratch-buffer (name)
        "Create and switch to a temporary scratch buffer with a random
           name."
-       (interactive)
-       (switch-to-buffer (make-temp-name "scratch-")))
+       (interactive "sBuffer name: ")
+       (switch-to-buffer name))
    #+END_SRC
 * Text Editing
 ** Buffer Management
@@ -1489,7 +1499,7 @@
       :mode "\\.txt\\'"
 
       :init
-      (setq org-agenda-files '("~/org")
+      (setq org-agenda-files '("~/org" "~/work")
             org-agenda-default-appointment-duration 60     ; 1 hour appointments
             org-agenda-span 1                              ; Show only today by default
             org-agenda-start-on-weekday 0                  ; Show agenda from Sunday.
@@ -1525,21 +1535,6 @@
   Of course, I use git to keep my org files under control. We should periodically make sure everything is in sync.
 
   #+BEGIN_SRC emacs-lisp
-    (defun aw/org-revert-all-org-buffers ()
-      "This is a copy of org-mode's function but without a prompt"
-      (interactive)
-      (save-excursion
-        (save-window-excursion
-          (mapc
-           (lambda (b)
-             (when (and (with-current-buffer b (derived-mode-p 'org-mode))
-                        (with-current-buffer b buffer-file-name))
-               (org-pop-to-buffer-same-window b)
-               (revert-buffer t 'no-confirm)))
-           (buffer-list))
-          (when (and (featurep 'org-id) org-id-track-globally)
-            (org-id-locations-load)))))
-
     (defun aw/sync-org-directory ()
       "Save all org buffers and then run my script to sync everything with my git remote.
     If there are new changes, my org buffers should auto revert"
@@ -1644,7 +1639,7 @@
                "    %?    %u" :empty-lines 1)
               ("s" "Scheduled Action" entry (file+datetree+prompt (concat org-directory "calendar.org"))
                   "* %?\n%t\n")
-              ("t" "Todo" entry (file+headline (concat org-directory "calendar.org") "Tasks")
+              ("t" "Todo" entry (file+datetree+prompt (concat org-directory "calendar.org"))
                 "* TODO %?\n  SCHEDULED: %t\n")))
     #+END_SRC
 
