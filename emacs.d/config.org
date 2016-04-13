@@ -1672,8 +1672,6 @@
    #+BEGIN_SRC emacs-lisp
      (defvar my-org-mobile-sync-timer nil)
 
-     (defvar my-org-mobile-sync-secs (* 60 20))
-
      (defun my-org-mobile-sync-pull-and-push ()
        (org-mobile-pull)
        (org-mobile-push)
@@ -1684,7 +1682,7 @@
        "Start automated `org-mobile-push'"
        (interactive)
        (setq my-org-mobile-sync-timer
-             (run-with-idle-timer my-org-mobile-sync-secs t
+             (run-with-idle-timer 300 t
                                   'my-org-mobile-sync-pull-and-push)))
 
      (defun my-org-mobile-sync-stop ()
