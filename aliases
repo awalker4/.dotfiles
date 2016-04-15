@@ -96,7 +96,7 @@ cashflow() {
         period="$@"
     fi
 
-    ledger --current --invert --real --wide -sV -S "amount" -p $period reg income expenses equity:cash liabilities:loans and not %Disburse
+    ledger --current --invert --real --wide -sV -S "amount" -p "$period" reg income expenses equity:cash liabilities:loans and not %Disburse
 }
 
 xact() {
