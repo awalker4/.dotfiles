@@ -1635,7 +1635,7 @@
     #+BEGIN_SRC emacs-lisp
       (setq org-capture-templates
             '(("a" "Teamforge Artifact" entry (file+headline (concat org-directory "work.org") "Refile")
-               "* TODO artf%^{artifact} - %^{description}\n [[teamforge:%\\1][Teamforge Link]]" :immediate-finish 1)
+               "* OPEN artf%^{artifact} - %^{description}\n [[teamforge:%\\1][Teamforge Link]]" :immediate-finish 1)
               ("j" "Journal Entry" plain (file+datetree (concat org-directory "journal.org"))
                "    %?    %u" :empty-lines 1)
               ("s" "Scheduled Action" entry (file+datetree+prompt (concat org-directory "calendar.org"))
