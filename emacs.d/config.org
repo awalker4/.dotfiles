@@ -1726,12 +1726,20 @@
     (setq aw/ledger-dir "~/Dropbox/ledger")
 
     (use-package ledger-mode
+      :mode "\\.dat\\'"
       :ensure t
       :init
       (setq ledger-clear-whole-transactions 1)
+
       :config
-      (add-to-list 'evil-emacs-state-modes 'ledger-report-mode)
-      :mode "\\.dat\\'")
+      (defun aw/clean-ledger-on-save ()
+        (interactive)
+        (let ((curr-line (line-number-at-pos)))
+          (ledger-mode-clean-buffer)
+          (line-move (- curr-line 1))))
+
+      (add-hook 'before-save-hook 'aw/clean-ledger-on-save t)
+      (add-to-list 'evil-emacs-state-modes 'ledger-report-mode))
   #+END_SRC
 
 * Refile
