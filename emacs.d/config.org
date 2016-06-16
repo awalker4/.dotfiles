@@ -111,7 +111,8 @@
            electric-pair-mode 1          ; Insert brackets, parentheses in pairs
            ring-bell-function 'ignore    ; Quiet.
            byte-compile-warnings nil     ; Don't show warnings when compiling elisp
-           require-final-newline t)      ; End files with \n
+           require-final-newline t       ; End files with \n
+           vc-follow-symlinks t)         ; Don't ask about symlinks
    #+END_SRC
 
    Undo settings
@@ -814,11 +815,11 @@
            (diff-mode)))
        (display-buffer "*svn-diff*"))
 
-     (defun aw/generate-scratch-buffer (name)
+     (defun aw/generate-scratch-buffer ()
        "Create and switch to a temporary scratch buffer with a random
           name."
-       (interactive "sBuffer name: ")
-       (switch-to-buffer name))
+       (interactive)
+       (switch-to-buffer (make-temp-name "scratch")))
    #+END_SRC
 * Text Editing
 ** Buffer Management
