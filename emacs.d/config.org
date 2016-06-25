@@ -1734,11 +1734,12 @@
       :config
       (defun aw/clean-ledger-on-save ()
         (interactive)
-        (let ((curr-line (line-number-at-pos)))
-          (ledger-mode-clean-buffer)
-          (line-move (- curr-line 1))))
+        (if (eq major-mode 'ledger-mode)
+            (let ((curr-line (line-number-at-pos)))
+              (ledger-mode-clean-buffer)
+              (line-move (- curr-line 1)))))
 
-      (add-hook 'before-save-hook 'aw/clean-ledger-on-save t)
+      (add-hook 'before-save-hook 'aw/clean-ledger-on-save)
       (add-to-list 'evil-emacs-state-modes 'ledger-report-mode))
   #+END_SRC
 

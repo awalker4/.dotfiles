@@ -1,7 +1,6 @@
 # Ignore settings for this machine
 emacs.d/
 !emacs.d/config.org
-!emacs.d/init.el
 !emacs.d/eshell/alias
 
 *.elc
