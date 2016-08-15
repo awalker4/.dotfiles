@@ -496,6 +496,7 @@
         (setq helm-google-suggest-use-curl-p t))
 
       :config
+      ; When I haven't entered anything, backspace should get me out of helm
       (defun helm-backspace ()
         (interactive)
         (condition-case nil
@@ -526,7 +527,7 @@
     (defun aw/helm-do-grep-all-buffers ()
       "multi-occur in all buffers backed by files."
       (interactive)
-      (helm-multi-occur
+      (helm-multi-occur-1
        (delq nil
              (mapcar (lambda (b)
                        (when (buffer-file-name b) (buffer-name b)))
@@ -669,6 +670,7 @@
          "es" 'aw/switch-to-scratch
          "eS" 'aw/generate-scratch-buffer
          "ew" (lambda () (interactive) (aw/edit-org-file "work.org"))
+         "eW" (lambda () (interactive) (find-file "~/.dotfiles/local/bashrc"))
          "x" 'helm-M-x)
 
        ;; Window stuff
@@ -680,7 +682,9 @@
          "3" 'split-window-right
          "#" 'aw/split-window-right-and-switch
          "=" 'balance-windows
-         "+" 'aw/toggle-window-split)
+         "+" 'aw/toggle-window-split
+         "<up>" 'text-scale-increase
+         "<down>" 'text-scale-decrease)
 
        ;; Buffer and file stuff
        (evil-leader/set-key
