@@ -22,6 +22,7 @@ alias h='history'
 alias la='ls -a --color'
 alias lal='ls -lah --color'
 alias lb='lsblk'
+alias less='less -Rni'
 alias ll='ls -oh --color'
 alias ls='ls -h --color'
 mcd() { mkdir $1 && cd $1; }
