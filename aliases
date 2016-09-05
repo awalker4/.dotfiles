@@ -15,6 +15,7 @@
 ########################################
 # General shell
 ########################################
+alias cal='cal -y'
 alias cp='cp -iv'
 alias df='df -h'
 alias du='du -hsc'
@@ -85,6 +86,7 @@ alias ledger='ledger --strict --explicit'
 
 alias bal='ledger bal -R'
 alias balcash='ledger -R -X $ --current --flat bal assets:bank liabilities:credit'
+alias balfid='ledger -R -V --current bal assets:fidelity'
 alias balnet='ledger -R -X $ --current --depth 2 bal assets liabilities'
 alias bud='ledger --flat --current bal Budget '
 alias budr='ledger -d "d>=[this month]" -S "date" reg Budget and'

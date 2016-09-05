@@ -23,6 +23,10 @@
 autoload -Uz compinit
 compinit
 
+# Move by bash-style subwords
+autoload -U select-word-style
+select-word-style bash
+
 ########################################
 # Directories
 ########################################

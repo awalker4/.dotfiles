@@ -665,6 +665,7 @@
          "el" (lambda () (interactive) (aw/edit-ledger-file "ledger-2016.dat"))
          "ej" (lambda () (interactive) (aw/edit-org-file "journal.org"))
          "en" (lambda () (interactive) (aw/edit-org-file "notes.org"))
+         "eN" (lambda () (interactive) (aw/edit-org-file "school.org"))
          "eo" (lambda () (interactive) (aw/edit-org-file "calendar.org"))
          "er" (lambda () (interactive) (aw/edit-org-file "refile.org"))
          "es" 'aw/switch-to-scratch
@@ -971,6 +972,7 @@
         :diminish paredit-mode
         :config
         (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
+        (add-hook 'scheme-mode-hook 'paredit-mode)
         (add-hook 'clojure-mode-hook 'paredit-mode))
 
     #+END_SRC
@@ -1134,7 +1136,21 @@
        (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
        (add-hook 'emacs-lisp-mode-hook 'flyspell-prog-mode) ;; Requires Ispell
      #+END_SRC
+**** Racket
 
+Use racket in geiser-mode.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package racket-mode
+    :ensure t)
+  (use-package geiser-mode
+    :ensure t)
+
+  (setq geiser-default-implementation 'racket)
+
+  (evil-leader/set-key-for-mode 'scheme-mode
+    "vv" 'geiser-eval-last-sexp)
+#+END_SRC
 *** Markdown
 
     #+BEGIN_SRC emacs-lisp
@@ -1575,6 +1591,18 @@
                           ((org-agenda-overriding-header "Stories")))))))
    #+END_SRC
 
+   Mark tasks as complete when all subtasks are done.
+
+#+BEGIN_SRC emacs-lisp
+  (defun org-summary-todo (n-done n-not-done)
+    "Switch entry to DONE when all subentries are done, to TODO otherwise."
+    (let (org-log-done org-log-states)   ; turn off logging
+      (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+
+  (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+
+  (setq org-hierarchical-todo-statistics 'nil)
+#+END_SRC
 ** Babel
 
    Org-babel is awesome for literate programming, and it even works with
