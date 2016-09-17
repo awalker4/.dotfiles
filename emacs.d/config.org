@@ -972,7 +972,7 @@
         :diminish paredit-mode
         :config
         (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
-        (add-hook 'scheme-mode-hook 'paredit-mode)
+        (add-hook 'racket-mode-hook 'paredit-mode)
         (add-hook 'clojure-mode-hook 'paredit-mode))
 
     #+END_SRC
@@ -1142,14 +1142,8 @@ Use racket in geiser-mode.
 
 #+BEGIN_SRC emacs-lisp
   (use-package racket-mode
-    :ensure t)
-  (use-package geiser-mode
-    :ensure t)
-
-  (setq geiser-default-implementation 'racket)
-
-  (evil-leader/set-key-for-mode 'scheme-mode
-    "vv" 'geiser-eval-last-sexp)
+    :ensure t
+    :mode ".rkt")
 #+END_SRC
 *** Markdown
 
