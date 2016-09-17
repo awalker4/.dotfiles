@@ -1603,14 +1603,16 @@ Use racket in geiser-mode.
    compiled languages. To create C source blocks we just need to enable
 
    #+BEGIN_SRC emacs-lisp
-     (org-babel-do-load-languages
-      'org-babel-load-languages
-      '((emacs-lisp . t)
-        (C . t)
-        (gnuplot . t)
-        (sh . t)
-        (python . t)
-        (octave . t)))
+     (with-eval-after-load 'org
+       (org-babel-do-load-languages
+        'org-babel-load-languages
+        '((emacs-lisp . t)
+          (C . t)
+          (dot . t)
+          (gnuplot . t)
+          (sh . t)
+          (python . t)
+          (octave . t))))
    #+END_SRC
 
    #+BEGIN_SRC emacs-lisp
@@ -1754,7 +1756,6 @@ Use racket in geiser-mode.
 
     (use-package ledger-mode
       :mode "\\.dat\\'"
-      :ensure t
       :init
       (setq ledger-clear-whole-transactions 1)
 
