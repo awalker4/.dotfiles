@@ -570,6 +570,40 @@
           (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
           (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history))
    #+END_SRC
+* Ivy
+
+I'm just starting to play around with Ivy, and it may end up replacing a lot of Helm functionality for me.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ivy
+    :ensure t
+    :diminish ivy-mode
+
+    :config
+    (ivy-mode 1)
+    ;; add ‘recentf-mode’ and bookmarks to ‘ivy-switch-buffer’.
+    (setq ivy-use-virtual-buffers t)
+    ;; number of result lines to display
+    (setq ivy-height 10)
+    ;; does not count candidates
+    (setq ivy-count-format "")
+    ;; no regexp by default
+    (setq ivy-initial-inputs-alist nil)
+    ;; configure regexp engine.
+    (setq ivy-re-builders-alist
+          ;; fuzzy matching
+          '((t . ivy--regex-fuzzy))))
+
+  (use-package flx
+    :ensure t)
+
+  (use-package counsel
+    :ensure t)
+
+  (use-package counsel-projectile
+    :ensure t)
+#+END_SRC
+
 * Evil Mode
 
   Evil mode makes it possible to use Vi's modal editing within Emacs. It's
@@ -672,7 +706,7 @@
          "eS" 'aw/generate-scratch-buffer
          "ew" (lambda () (interactive) (aw/edit-org-file "work.org"))
          "eW" (lambda () (interactive) (find-file "~/.dotfiles/local/bashrc"))
-         "x" 'helm-M-x)
+         "x" 'counsel-M-x)
 
        ;; Window stuff
        (evil-leader/set-key
@@ -695,7 +729,7 @@
          "bm" 'bookmark-jump
          "bo" 'helm-occur
          "br" 'rename-buffer
-         "bs" 'helm-mini
+         "bs" 'ivy-switch-buffer
          "bw" 'write-file)
 
        ;; Nerd commenter
@@ -742,11 +776,12 @@
 
        ;; Projectile/Helm stuff
        (evil-leader/set-key
+         "pb" 'counsel-projectile-switch-to-buffer
          "pd" 'projectile-dired
-         "pf" 'helm-projectile-find-file-dwim
-         "pg" 'helm-projectile-ag
+         "pf" 'counsel-projectile-find-file
+         "pg" 'counsel-git-grep
          "ph" 'projectile-find-other-file
-         "pp" 'projectile-switch-project
+         "pp" 'counsel-projectile
          "pr" 'projectile-run-shell-command-in-root
          "ps" 'helm-semantic-or-imenu)
 
@@ -1141,10 +1176,7 @@
 Use racket in geiser-mode.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package racket-mode
-    :ensure t)
-  (use-package geiser-mode
-    :ensure t)
+  (use-package racket-mode)
 
   (setq geiser-default-implementation 'racket)
 
@@ -1242,6 +1274,7 @@ Use racket in geiser-mode.
     #+BEGIN_SRC emacs-lisp
       (use-package function-args
         :ensure t
+        :diminish FA
         :config
         (fa-config-default)
         (define-key c-mode-map  [(control tab)] 'moo-complete)
