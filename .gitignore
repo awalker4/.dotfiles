@@ -7,3 +7,4 @@ emacs.d/
 *.dat
 /local/
 /local
+emacs.d/init.el
