@@ -1814,27 +1814,24 @@ Use racket in geiser-mode.
         "Replace date of current transaction with date + num days.
        Currently only works with the format %Y/%m/%d"
         (save-excursion
-          (save-restriction
-            (ledger-navigate-beginning-of-xact)
-            (let* ((beg (point))
-                   (end (re-search-forward ledger-iso-date-regexp))
-                   (xact-date (filter-buffer-substring beg end)))
-              (delete-region beg end)
-              (insert (aw/add-to-date xact-date num))))))
+          (ledger-navigate-beginning-of-xact)
+          (let* ((beg (point))
+                 (end (re-search-forward ledger-iso-date-regexp))
+                 (xact-date (filter-buffer-substring beg end)))
+            (delete-region beg end)
+            (insert
+             (format-time-string
+              "%Y/%m/%d"
+              (time-add (aw/encoded-date xact-date)
+                        (days-to-time num)))))))
 
-      (defun aw/add-to-date (date num)
-        "Given a date in the form %Y/%m/%d, add num days to date.
-       format-time-string doesn't like this format, so transform it first."
-        (let ((l (parse-time-string (aw/transform-date date))))
-          (format-time-string "%Y/%m/%d"
-                              (time-add (encode-time 0 0 0 (nth 3 l) (nth 4 l) (nth 5 l))
-                                        (days-to-time num)))))
-
-      (defun aw/transform-date (date)
-        "Given a date in the form %Y/%m/%d, return date in the form %Y-%m-%d"
-        (interactive)
+      (defun aw/encoded-date (date)
+        "Given a date in the form %Y/%m/%d, return encoded time string"
         (string-match "\\([0-9][0-9][0-9][0-9]\\)/\\([0-9][0-9]\\)/\\([0-9][0-9]\\)" date)
-        (concat (match-string 1 date) "-" (match-string 2 date) "-" (match-string 3 date)))
+        (let* ((fixed-date
+                (concat (match-string 1 date) "-" (match-string 2 date) "-" (match-string 3 date)))
+               (d (parse-time-string fixed-date)))
+          (encode-time 0 0 0 (nth 3 d) (nth 4 d) (nth 5 d))))
 
       (add-to-list 'evil-emacs-state-modes 'ledger-report-mode)
       (add-hook 'before-save-hook 'aw/clean-ledger-on-save)
