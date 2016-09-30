@@ -1007,7 +1007,7 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
         :diminish paredit-mode
         :config
         (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
-        (add-hook 'scheme-mode-hook 'paredit-mode)
+        (add-hook 'racket-mode-hook 'paredit-mode)
         (add-hook 'clojure-mode-hook 'paredit-mode))
 
     #+END_SRC
@@ -1176,12 +1176,8 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
 Use racket in geiser-mode.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package racket-mode)
-
-  (setq geiser-default-implementation 'racket)
-
-  (evil-leader/set-key-for-mode 'scheme-mode
-    "vv" 'geiser-eval-last-sexp)
+    (use-package racket-mode
+      :mode "\\.rkt")
 #+END_SRC
 *** Markdown
 
@@ -1806,8 +1802,44 @@ Use racket in geiser-mode.
               (ledger-mode-clean-buffer)
               (line-move (- curr-line 1)))))
 
+      (defun ledger-increment-date ()
+        (interactive)
+        (aw/ledger-change-date 1))
+
+      (defun ledger-decrement-date ()
+        (interactive)
+        (aw/ledger-change-date -1))
+
+      (defun aw/ledger-change-date (num)
+        "Replace date of current transaction with date + num days.
+       Currently only works with the format %Y/%m/%d"
+        (save-excursion
+          (save-restriction
+            (ledger-navigate-beginning-of-xact)
+            (let* ((beg (point))
+                   (end (re-search-forward ledger-iso-date-regexp))
+                   (xact-date (filter-buffer-substring beg end)))
+              (delete-region beg end)
+              (insert (aw/add-to-date xact-date num))))))
+
+      (defun aw/add-to-date (date num)
+        "Given a date in the form %Y/%m/%d, add num days to date.
+       format-time-string doesn't like this format, so transform it first."
+        (let ((l (parse-time-string (aw/transform-date date))))
+          (format-time-string "%Y/%m/%d"
+                              (time-add (encode-time 0 0 0 (nth 3 l) (nth 4 l) (nth 5 l))
+                                        (days-to-time num)))))
+
+      (defun aw/transform-date (date)
+        "Given a date in the form %Y/%m/%d, return date in the form %Y-%m-%d"
+        (interactive)
+        (string-match "\\([0-9][0-9][0-9][0-9]\\)/\\([0-9][0-9]\\)/\\([0-9][0-9]\\)" date)
+        (concat (match-string 1 date) "-" (match-string 2 date) "-" (match-string 3 date)))
+
+      (add-to-list 'evil-emacs-state-modes 'ledger-report-mode)
       (add-hook 'before-save-hook 'aw/clean-ledger-on-save)
-      (add-to-list 'evil-emacs-state-modes 'ledger-report-mode))
+      (define-key ledger-mode-map (kbd "C-M-.") 'ledger-increment-date)
+      (define-key ledger-mode-map (kbd "C-M-,") 'ledger-decrement-date))
   #+END_SRC
 
 * Refile
