@@ -16,3 +16,5 @@ ln -s ~/.dotfiles/vimrc ~/.vimrc
 ln -s ~/.dotfiles/Xresources ~/.Xresources
 ln -s ~/.dotfiles/yaourtrc ~/.yaourtrc
 ln -s ~/.dotfiles/zshrc ~/.zshrc
+
+echo '(org-babel-load-file "~/.emacs.d/config.org")' > ~/.dotfiles/emacs.d/init.el
