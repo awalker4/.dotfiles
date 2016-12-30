@@ -110,6 +110,7 @@
            electric-pair-mode 1          ; Insert brackets, parentheses in pairs
            inhibit-startup-message t     ; No splash screen please.
            initial-scratch-message nil   ; Clean scratch buffer.
+           mouse-yank-at-point t         ; Don't move the point to paste with mouse
            ring-bell-function 'ignore    ; Quiet.
            require-final-newline t       ; End files with \n
            scroll-conservatively 10000   ; Don't recenter the point when scrolling
@@ -492,6 +493,7 @@
             helm-recentf-fuzzy-match              t ; fuzzy matching recent files
             helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
             helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
+            helm-ff-newfile-prompt-p            nil ; Don't prompt when I create a file
             helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
             helm-ff-file-name-history-use-recentf t)
       (when (executable-find "curl")
@@ -652,6 +654,7 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
        (key-chord-define evil-normal-state-map "[b" 'previous-buffer)
        (key-chord-define evil-normal-state-map "]b" 'next-buffer)
 
+       ;; (key-chord-define evil-normal-state-map "gd" 'helm-semantic-or-imenu)
        (key-chord-define evil-normal-state-map "gf" 'helm-projectile-find-file-dwim)
 
        (evil-mode 1))
