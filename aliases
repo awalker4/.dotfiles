@@ -87,8 +87,6 @@ alias bal='ledger bal -R'
 alias balcash='ledger -R -X $ --current --flat bal assets:bank liabilities:credit'
 alias balfid='ledger -R -V --current bal assets:fidelity'
 alias balnet='ledger -R -X $ --current --depth 2 bal assets liabilities'
-alias bud='ledger --flat --current bal Budget '
-alias budr='ledger -d "d>=[this month]" -S "date" reg Budget and'
 alias reg='ledger reg -R --tail 15'
 
 cashflow() {
@@ -99,14 +97,6 @@ cashflow() {
     fi
 
     ledger --current --invert --real --wide -sV -S "amount" -p "$period" reg income expenses equity:cash liabilities:loans and not %Disburse
-}
-
-xact() {
-    ledger xact $@
-    read -p "\nIs this correct? Y/N " ans
-    case $ans in
-        [Yy]* ) ledger xact $@ >> ${LEDGER_CURRENT_FILE}; printf "xact written to ${LEDGER_CURRENT_FILE}\n"
-    esac
 }
 
 
