@@ -70,6 +70,10 @@ setopt hist_reduce_blanks
 setopt inc_append_history
 # Don't save the history command
 setopt hist_no_store
+# Do not write events to history that are duplicates of previous events
+setopt hist_ignore_dups
+# When searching history don't display results already cycled through twice
+setopt hist_find_no_dups
 
 # Search history like bash
 autoload history-search-end
