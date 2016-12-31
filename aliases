@@ -81,7 +81,7 @@ alias svnurl='svn info . 2> /dev/null | grep ^URL: | awk "{ print \$2; }"'
 ########################################
 # Ledger
 ########################################
-alias ledger='ledger --strict --explicit'
+alias ledger='ledger --explicit'
 
 alias bal='ledger bal -R'
 alias balcash='ledger -R -X $ --current --flat bal assets:bank liabilities:credit'
