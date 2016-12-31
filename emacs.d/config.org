@@ -729,7 +729,7 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
        ;; Buffer and file stuff
        (evil-leader/set-key
          "bg" 'aw/helm-do-grep-all-buffers
-         "bk" 'kill-buffer
+         "bk" 'kill-this-buffer
          "bl" 'ibuffer
          "bm" 'bookmark-jump
          "bo" 'helm-occur
