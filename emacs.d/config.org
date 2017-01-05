@@ -702,6 +702,7 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
          "ei" (lambda () (interactive) (aw/edit-init-file "config.org"))
          "eI" (lambda () (interactive) (aw/edit-init-file "init.el"))
          "el" (lambda () (interactive) (aw/edit-ledger-file "ledger-2017.dat"))
+         "eL" (lambda () (interactive) (aw/edit-ledger-file "ledger-2016.dat"))
          "ej" (lambda () (interactive) (aw/edit-org-file "journal.org"))
          "en" (lambda () (interactive) (aw/edit-org-file "notes.org"))
          "eN" (lambda () (interactive) (aw/edit-org-file "school.org"))

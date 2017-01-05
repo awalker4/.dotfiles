@@ -87,6 +87,7 @@ alias bal='ledger bal -R'
 alias balcash='ledger -R -X $ --current --flat bal assets:bank liabilities:credit'
 alias balfid='ledger -R -V --current bal assets:fidelity'
 alias balnet='ledger -R -X $ --current --depth 2 bal assets liabilities'
+alias leg='ledger print --tail 5'
 alias reg='ledger reg -R --tail 15'
 
 cashflow() {
@@ -96,7 +97,7 @@ cashflow() {
         period="$@"
     fi
 
-    ledger --current --invert --real --wide -sV -S "amount" -p "$period" reg income expenses equity:cash liabilities:loans and not %Disburse
+    ledger --current --invert --real --wide -sV -S "amount" -p "$period" reg income expenses
 }
 
 
