@@ -698,7 +698,6 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
        (evil-leader/set-key
          "f" 'helm-find-files
          "t" 'multi-term-dedicated-toggle
-         "eb" (lambda () (interactive) (aw/edit-ledger-file "budget/budget-2017.dat"))
          "ei" (lambda () (interactive) (aw/edit-init-file "config.org"))
          "eI" (lambda () (interactive) (aw/edit-init-file "init.el"))
          "el" (lambda () (interactive) (aw/edit-ledger-file "ledger-2017.dat"))
@@ -1793,7 +1792,7 @@ Use racket in geiser-mode.
   plaintext file to generate any financial report you could ever want.
 
   #+BEGIN_SRC emacs-lisp
-    (setq aw/ledger-dir "~/Dropbox/ledger")
+    (setq aw/ledger-dir "~/Dropbox/ledger/data/")
 
     (use-package ledger-mode
       :mode "\\.dat\\'"
