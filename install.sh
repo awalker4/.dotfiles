@@ -5,6 +5,8 @@ mkdir ~/.dotfiles/local
 
 # Link everything from here
 ln -s ~/.dotfiles/.emacs.d ~/.emacs.d/
+
+mv ~/.bashrc ~/.bashrc.old
 ln -s ~/.dotfiles/bashrc ~/.bashrc
 ln -s ~/.dotfiles/emacs.d ~/.emacs.d
 ln -s ~/.dotfiles/gvimrc ~/.gvimrc
