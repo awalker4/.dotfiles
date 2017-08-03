@@ -1855,7 +1855,8 @@ Use racket in geiser-mode.
 
     (use-package htmlize
       :ensure t)
-    
+
+    (use-package yaml-mode :ensure t)
   #+END_SRC
 
 * Wrap-up
