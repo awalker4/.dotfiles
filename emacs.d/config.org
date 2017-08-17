@@ -469,6 +469,9 @@
       :config
       (if (file-exists-p abbrev-file-name)
           (quietly-read-abbrev-file)))
+
+    ;; (use-package auctex)
+    (use-package latex-pretty-symbols :ensure t)
   #+END_SRC
 * Helm
 

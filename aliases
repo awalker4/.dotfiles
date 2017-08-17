@@ -31,6 +31,7 @@ alias mv='mv -v'
 alias off='sudo shutdown 0'
 alias po='popd'
 alias pu='pushd'
+alias prettify-json='python -m json.tool'
 alias prettify-xml='xmllint --format -'
 alias psg='ps -aux | grep -i'
 alias rd='rmdir'
@@ -111,7 +112,7 @@ if [[ -x /usr/bin/dolphin ]]; then
 elif [[ -x /usr/bin/nautilus ]]; then
     alias lsg='nautilus "$(pwd)"' # Nautilus (Gnome)
 elif [[ -x /usr/bin/nemo ]]; then
-    alias lsg='nemo "$(pwd)"' # Nemo (Cinnamon)
+    alias lsg='nemo "$(pwd)"&' # Nemo (Cinnamon)
 elif [[ -x /usr/bin/thunar ]]; then
     alias lsg='thunar "$(pwd)"' # Thunar (XFCE)
 fi
