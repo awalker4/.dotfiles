@@ -325,7 +325,8 @@
    the font correctly. ([[https://www.reddit.com/r/emacs/comments/3a5kim/emacsclient_does_not_respect_themefont_setting/][Source]])
 
    #+BEGIN_SRC emacs-lisp
-     (use-package solarized-theme)
+     (use-package solarized-theme
+       :ensure t)
      (use-package zenburn-theme
        :ensure t)
 
@@ -458,6 +459,11 @@
   Stuff that I'm still playing around with.
 
   #+BEGIN_SRC emacs-lisp
+    (use-package exec-path-from-shell :ensure t
+      :init
+      ;;(exec-path-from-shell-initialize)
+      (exec-path-from-shell-copy-env "SVN_REPO"))
+
     (add-hook 'text-mode-hook #'bug-reference-mode)
     (add-hook 'prog-mode-hook #'bug-reference-prog-mode)
 
@@ -472,7 +478,26 @@
 
     ;; (use-package auctex)
     (use-package latex-pretty-symbols :ensure t)
+    (use-package dockerfile-mode :ensure t)
+
+    (use-package ox-reveal
+      :ensure t
+      :init
+      (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/"))
+
+
+    (use-package htmlize
+      :ensure t)
+
+    (use-package yaml-mode :ensure t)
+
+    (use-package anaconda-mode
+      :ensure t)
+
+    (use-package docker-tramp
+      :ensure t)
   #+END_SRC
+
 * Helm
 
   Helm is an amazing completion tool for finding almost anything. We can
@@ -757,7 +782,8 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
        ;; Git/VC stuff
        (evil-leader/set-key
          "gb" 'magit-blame
-         "gD" 'aw/projectile-svn-diff
+         "gd" 'aw/projectile-svn-diff
+         "gD" 'aw/projectile-svn-diff-rev
          "gi" 'aw/edit-gitignore
          "gs" 'magit-status)
 
@@ -862,6 +888,15 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
          (with-current-buffer "*svn-diff*"
            (diff-mode)))
        (display-buffer "*svn-diff*"))
+
+     (defun aw/projectile-svn-diff-rev (rev)
+       (interactive "sEnter revision number: ")
+       (let ((default-directory (projectile-project-root))
+             (buf (concat "*svn-diff-r" rev "*")))
+         (shell-command (concat "svn --diff log " (getenv "SVN_REPO") " -r " rev " | tail -n +2 | head -n -1") buf)
+         (with-current-buffer buf
+           (diff-mode))
+         (display-buffer buf)))
 
      (defun aw/generate-scratch-buffer ()
        "Create and switch to a temporary scratch buffer with a random
@@ -1845,21 +1880,6 @@ Use racket in geiser-mode.
       (add-hook 'before-save-hook 'aw/clean-ledger-on-save)
       (define-key ledger-mode-map (kbd "C-M-.") 'ledger-increment-date)
       (define-key ledger-mode-map (kbd "C-M-,") 'ledger-decrement-date))
-  #+END_SRC
-
-* Refile
-
-  #+BEGIN_SRC emacs-lisp
-    (use-package ox-reveal
-      :ensure t
-      :init
-      (setq org-reveal-root "http://cdn.jsdelivr.net/reveal.js/3.0.0/"))
-
-
-    (use-package htmlize
-      :ensure t)
-
-    (use-package yaml-mode :ensure t)
   #+END_SRC
 
 * Wrap-up
