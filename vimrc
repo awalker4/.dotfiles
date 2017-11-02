@@ -237,24 +237,26 @@ map <leader>et :tabe %%
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugins
 """"""""""""""""""""""""""""""""""""""""""""""""""
-call plug#begin('~/.vim/plugged')
+if exists(':Plug') == 2
+    call plug#begin('~/.vim/plugged')
 
-Plug 'vim-scripts/AutoComplPop'
+    Plug 'vim-scripts/AutoComplPop'
 
-" Visual
-Plug 'bling/vim-airline' " Status line
-"Plug 'altercation/vim-colors-solarized' " Solarized colorscheme
+    " Visual
+    Plug 'bling/vim-airline' " Status line
+    "Plug 'altercation/vim-colors-solarized' " Solarized colorscheme
 
-" Navigation
-Plug 'kien/ctrlp.vim'
-Plug 'tpope/vim-unimpaired' " Some nice bracket maps
-Plug 'nelstrom/vim-visual-star-search' " Use visual selection for * and #
+    " Navigation
+    Plug 'kien/ctrlp.vim'
+    Plug 'tpope/vim-unimpaired' " Some nice bracket maps
+    Plug 'nelstrom/vim-visual-star-search' " Use visual selection for * and #
 
-Plug 'scrooloose/nerdcommenter' " Quick commenting
-Plug 'scrooloose/syntastic' " Show syntax errors
-Plug 'tpope/vim-surround' " Quickly surround text
+    Plug 'scrooloose/nerdcommenter' " Quick commenting
+    Plug 'scrooloose/syntastic' " Show syntax errors
+    Plug 'tpope/vim-surround' " Quickly surround text
 
-call plug#end()
+    call plug#end()
+endif
 
 """"""""""""""""""""""""""""""
 " => Plugin settings
