@@ -798,11 +798,11 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
   plaintext file to generate any financial report you could ever want.
 
   #+BEGIN_SRC emacs-lisp
-    (setq aw/ledger-dir "~/Dropbox/ledger/data/")
 
     (use-package ledger-mode
       :mode "\\.dat\\'"
       :init
+      (setq aw/ledger-dir "~/Dropbox/ledger/data/")
       (setq ledger-clear-whole-transactions 1)
 
       :config
@@ -848,6 +848,10 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
       (add-hook 'before-save-hook 'aw/clean-ledger-on-save)
       (define-key ledger-mode-map (kbd "C-M-.") 'ledger-increment-date)
       (define-key ledger-mode-map (kbd "C-M-,") 'ledger-decrement-date))
+
+    (use-package flycheck-ledger
+      :config
+      (add-hook 'ledger-mode-hook 'flycheck-mode))
   #+END_SRC
 
 * License
