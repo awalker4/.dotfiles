@@ -657,6 +657,41 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
         (setq speedbar-use-images nil)
         (setq sr-speedbar-width 25))
     #+END_SRC
+** Compilation
+
+   #+BEGIN_SRC emacs-lisp
+     (setq-default
+      compilation-auto-jump-to-first-error t    ; Take me to the first error
+      compilation-always-kill t                 ; Restart compilation without prompt
+      compilation-ask-about-save nil            ; Don't worry about saving buffers
+      compilation-scroll-output 'first-error)   ; Follow compilation buffer until we hit an error
+   #+END_SRC
+
+   I only need the output of the compilation buffer if there are any errors. Otherwise, we can close
+   it when it finishes. ([[http://emacs.stackexchange.com/questions/62/hide-compilation-window][Source]])
+
+   #+BEGIN_SRC emacs-lisp
+     (setq compilation-finish-function
+           (lambda (buf str)
+             (if (and (null (string-match ".*exited abnormally.*" str))
+                      (null (string-match ".*interrupt.*" str)))
+                 ;;no errors, make the compilation window go away in a few seconds
+                 (progn
+                   (run-at-time
+                    "1 sec" nil 'delete-windows-on
+                    (get-buffer-create "*compilation*"))
+                   (message "No Compilation Errors!")))))
+   #+END_SRC
+
+   When gcc hits an error, it spits out a number of lines that say something like =In file included
+   from /path/to/file.h:22=. For whatever reason, =next-error= immediately jumps to the first of the
+   files when I really want to jump straight to the error. This cryptic line will fix the regex
+   that's causing this. ([[http://stackoverflow.com/questions/15489319/how-can-i-skip-in-file-included-from-in-emacs-c-compilation-mode][Source]])
+
+   #+BEGIN_SRC emacs-lisp
+     (setcar (nthcdr 5 (assoc 'gcc-include compilation-error-regexp-alist-alist)) 0)
+   #+END_SRC
+
 ** Projectile
 
    Projectile makes it easy to navigate files in a single project. A project
@@ -822,6 +857,36 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
                 #'(lambda () (define-key ediff-mode-map [?W] 'ediff-toggle-whitespace-sensitivity)))
 
     #+END_SRC
+
+*** Languages
+**** Java and C
+
+     The =c-mode-common-hook= is a general hook that works on all C-like
+     languages (C, C++, Java, etc...).
+
+     #+BEGIN_SRC emacs-lisp
+       (defun c-setup ()
+         (setq c-default-style "linux"
+               c-basic-offset 4))
+
+       (add-hook 'c-mode-common-hook 'c-setup)
+     #+END_SRC
+
+     #+BEGIN_SRC emacs-lisp
+     (defun java-setup ()
+       (setq-local compile-command (concat "javac " (buffer-name))))
+
+     (add-hook 'java-mode-hook 'java-setup)
+     #+END_SRC
+**** C++
+
+     By default, .h files are opened in C mode. I'll mostly be using them for C++
+     projects, though.
+
+     #+BEGIN_SRC emacs-lisp
+             (use-package c++-mode
+               :mode "\\.h\\'")
+     #+END_SRC
 
 * Ledger
 
