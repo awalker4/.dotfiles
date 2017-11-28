@@ -237,7 +237,7 @@ map <leader>et :tabe %%
 """"""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugins
 """"""""""""""""""""""""""""""""""""""""""""""""""
-if exists(':Plug') == 2
+if isdirectory('/home/austin/.vim/plugged')
     call plug#begin('~/.vim/plugged')
 
     Plug 'vim-scripts/AutoComplPop'
