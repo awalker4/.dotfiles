@@ -87,6 +87,42 @@
      (diminish 'auto-fill-function)
    #+END_SRC
 
+   There are some modes that are enabled by default that I don't find
+   particularly useful. We create a list of these modes, and disable all of
+   these.
+
+   Let's apply the same technique for enabling modes that are disabled by
+   default.
+
+   #+BEGIN_SRC emacs-lisp
+     (dolist (mode
+              '(column-number-mode         ; Show column number in mode line.
+                delete-selection-mode      ; Replace selected text.
+                dirtrack-mode              ; directory tracking in *shell*
+                recentf-mode               ; Recently opened files.
+                show-paren-mode))          ; Highlight matching parentheses.
+       (funcall mode 1))
+
+     (when (version< emacs-version "24.4")
+       (eval-after-load 'auto-compile
+         '((auto-compile-on-save-mode 1))))  ; compile .el files on save.
+
+   #+END_SRC
+
+   FIXME: new category for completion
+   We want to have autocompletion by default. Load company mode everywhere.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package company
+       :ensure t
+       :diminish company-mode
+       :init
+       (setq company-idle-delay 0)
+
+       :config
+       (add-hook 'after-init-hook 'global-company-mode))
+   #+END_SRC
+
    Answering /yes/ and /no/ to each question from Emacs can be tedious, a
    single /y/ or /n/ will suffice.
 
@@ -519,6 +555,18 @@
 	(interactive)
 	(switch-to-buffer (make-temp-name "scratch")))
     #+END_SRC
+** Snippets
+
+   Start yasnippet
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package yasnippet
+       :ensure t
+       :diminish yas-minor-mode
+       :config
+       (yas-global-mode 1))
+   #+END_SRC
+
 * Ivy
 
 I'm just starting to play around with Ivy, and it may end up replacing a lot of Helm functionality for me.
