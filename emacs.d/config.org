@@ -370,11 +370,11 @@
 
     #+BEGIN_SRC emacs-lisp
       (use-package evil-leader
-	:ensure t
-	:config
-	(global-evil-leader-mode)
-	(evil-leader/set-leader "SPC")
-	(evil-leader/set-key
+        :ensure t
+        :config
+        (global-evil-leader-mode)
+        (evil-leader/set-leader "SPC")
+        (evil-leader/set-key
           "f" 'find-file
           "t" 'multi-term-dedicated-toggle
           "ei" (lambda () (interactive) (aw/edit-init-file "config.org"))
@@ -395,8 +395,8 @@
           "eW" (lambda () (interactive) (find-file "~/.dotfiles/local/bashrc"))
           "x" 'counsel-M-x)
 
-	;; Window stuff
-	(evil-leader/set-key
+        ;; Window stuff
+        (evil-leader/set-key
           "0" 'delete-window
           "1" 'delete-other-windows
           "2" 'split-window-below
@@ -408,8 +408,8 @@
           "<up>" 'text-scale-increase
           "<down>" 'text-scale-decrease)
 
-	;; Buffer and file stuff
-	(evil-leader/set-key
+        ;; Buffer and file stuff
+        (evil-leader/set-key
           "bg" 'aw/helm-do-grep-all-buffers
           "bk" 'kill-this-buffer
           "bl" 'ibuffer
@@ -419,36 +419,36 @@
           "bs" 'ivy-switch-buffer
           "bw" 'write-file)
 
-	;; Nerd commenter
-	(evil-leader/set-key
+        ;; Nerd commenter
+        (evil-leader/set-key
           "cc" 'evilnc-copy-and-comment-lines
           "ci" 'evilnc-comment-or-uncomment-lines)
 
-	;; Help stuff
-	(evil-leader/set-key
+        ;; Help stuff
+        (evil-leader/set-key
           "hc" 'describe-key-briefly
           "hf" 'describe-function
           "hg" 'aw/search-ddg
           "hv" 'describe-variable
           "hm" 'man)
 
-	;; Git/VC stuff
-	(evil-leader/set-key
+        ;; Git/VC stuff
+        (evil-leader/set-key
           "gb" 'magit-blame
           "gd" 'aw/projectile-svn-diff
           "gD" 'aw/projectile-svn-diff-rev
           "gi" 'aw/edit-gitignore
           "gs" 'magit-status)
 
-	;; Compiling
-	(evil-leader/set-key
+        ;; Compiling
+        (evil-leader/set-key
           "mm" 'projectile-compile-project
           "mn" 'next-error
           "mp" 'previous-error
           "mt" 'projectile-test-project)
 
-	;; Org stuff
-	(evil-leader/set-key
+        ;; Org stuff
+        (evil-leader/set-key
           "oa" 'org-agenda-list
           "oA" 'org-agenda
           "oc" 'org-capture
@@ -461,8 +461,8 @@
           "ow" '(lambda () (interactive) (org-agenda "nil" "w"))
           "ox" 'org-latex-export-to-pdf)
 
-	;; Projectile/Helm stuff
-	(evil-leader/set-key
+        ;; Projectile/Helm stuff
+        (evil-leader/set-key
           "pb" 'counsel-projectile-switch-to-buffer
           "pd" 'projectile-dired
           "pf" 'counsel-projectile-find-file
@@ -472,8 +472,8 @@
           "pr" 'projectile-run-shell-command-in-root
           "ps" 'helm-semantic-or-imenu)
 
-	;; Misc
-	(evil-leader/set-key
+        ;; Misc
+        (evil-leader/set-key
           "vb" 'eval-buffer
           "vv" 'eval-last-sexp))
     #+END_SRC
@@ -482,68 +482,68 @@
 
     #+BEGIN_SRC emacs-lisp
       (defun aw/edit-init-file (file)
-	(interactive)
-	(find-file (concat user-emacs-directory file)))
+        (interactive)
+        (find-file (concat user-emacs-directory file)))
 
       (defun aw/edit-org-file (file)
-	(interactive)
-	(find-file (concat org-directory file)))
+        (interactive)
+        (find-file (concat org-directory file)))
 
       (defun aw/edit-ledger-file (file)
-	(interactive)
-	(find-file (concat aw/ledger-dir "/" file)))
+        (interactive)
+        (find-file (concat aw/ledger-dir "/" file)))
 
       (defun aw/switch-to-scratch ()
-	(interactive)
-	(switch-to-buffer "*scratch*"))
+        (interactive)
+        (switch-to-buffer "*scratch*"))
 
       (defun aw/split-window-right-and-switch ()
-	(interactive)
-	(split-window-right)
-	(other-window 1))
+        (interactive)
+        (split-window-right)
+        (other-window 1))
 
       (defun aw/split-window-below-and-switch ()
-	(interactive)
-	(split-window-below)
-	(other-window 1))
+        (interactive)
+        (split-window-below)
+        (other-window 1))
 
       (defun aw/open-line-above ()
-	(interactive)
-	(save-excursion
+        (interactive)
+        (save-excursion
           (beginning-of-line)
           (open-line 1)))
 
       (defun aw/open-line-below ()
-	(interactive)
-	(save-excursion
+        (interactive)
+        (save-excursion
           (end-of-line)
           (open-line 1)))
 
       (defun aw/interactive-org-todo ()
-	(interactive)
-	(org-todo-list '(4)))
+        (interactive)
+        (org-todo-list '(4)))
 
       (defun aw/search-ddg (text)
-	(interactive "sSearch DDG: ")
-	(browse-url
+        (interactive "sSearch DDG: ")
+        (browse-url
          (concat "https://duckduckgo.com/?q="
                  (replace-regexp-in-string " " "+" text))))
 
       (defun aw/edit-gitignore ()
-	(interactive)
-	(find-file (expand-file-name ".gitignore" (magit-toplevel))))
+        (interactive)
+        (find-file (expand-file-name ".gitignore" (magit-toplevel))))
 
       (defun aw/projectile-svn-diff ()
-	(interactive)
-	(let ((default-directory (projectile-project-root)))
+        (interactive)
+        (let ((default-directory (projectile-project-root)))
           (shell-command "svn diff" "*svn-diff*")
           (with-current-buffer "*svn-diff*"
             (diff-mode)))
-	(display-buffer "*svn-diff*"))
+        (display-buffer "*svn-diff*"))
 
       (defun aw/projectile-svn-diff-rev (rev)
-	(interactive "sEnter revision number: ")
-	(let ((default-directory (projectile-project-root))
+        (interactive "sEnter revision number: ")
+        (let ((default-directory (projectile-project-root))
               (buf (concat "*svn-diff-r" rev "*")))
           (shell-command (concat "svn --diff log " (getenv "SVN_REPO") " -r " rev " | tail -n +2 | head -n -1") buf)
           (with-current-buffer buf
@@ -551,10 +551,10 @@
           (display-buffer buf)))
 
       (defun aw/generate-scratch-buffer ()
-	"Create and switch to a temporary scratch buffer with a random
+        "Create and switch to a temporary scratch buffer with a random
            name."
-	(interactive)
-	(switch-to-buffer (make-temp-name "scratch")))
+        (interactive)
+        (switch-to-buffer (make-temp-name "scratch")))
     #+END_SRC
 ** Snippets
 
