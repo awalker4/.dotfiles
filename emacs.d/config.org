@@ -215,8 +215,6 @@
    #+BEGIN_SRC emacs-lisp
      (use-package eclipse-theme
        :ensure t)
-     (use-package solarized-theme
-       :ensure t)
      (use-package zenburn-theme
        :ensure t)
 
@@ -381,7 +379,10 @@
           "t" 'multi-term-dedicated-toggle
           "ei" (lambda () (interactive) (aw/edit-init-file "config.org"))
           "eI" (lambda () (interactive) (aw/edit-init-file "init.el"))
-          "el" (lambda () (interactive) (aw/edit-ledger-file "ledger-2017.dat"))
+          "el" (lambda () (interactive) (aw/edit-ledger-file
+                                         (concat "ledger-"
+                                                 (format-time-string "%Y" (current-time))
+                                                 ".dat")))
           "eL" (lambda () (interactive) (aw/edit-ledger-file "../notes.org"))
           "ej" (lambda () (interactive) (aw/edit-org-file "journal.org"))
           "en" (lambda () (interactive) (aw/edit-org-file "notes.org"))
