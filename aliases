@@ -100,7 +100,7 @@ cashflow() {
         period="$@"
     fi
 
-    ledger --current --invert --real --wide -sV -S "amount" -p "$period" reg income expenses
+    ledger --current --invert --real --wide -s -X $ -S "amount" -p "$period" reg income expenses
 }
 
 
