@@ -907,36 +907,45 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
 
     #+END_SRC
 
-*** Languages
-**** Java and C
+** Languages
+*** Java and C
 
-     The =c-mode-common-hook= is a general hook that works on all C-like
-     languages (C, C++, Java, etc...).
+    The =c-mode-common-hook= is a general hook that works on all C-like
+    languages (C, C++, Java, etc...).
 
-     #+BEGIN_SRC emacs-lisp
-       (defun c-setup ()
-         (setq c-default-style "linux"
-               c-basic-offset 4))
+    #+BEGIN_SRC emacs-lisp
+      (defun c-setup ()
+        (setq c-default-style "linux"
+              c-basic-offset 4))
 
-       (add-hook 'c-mode-common-hook 'c-setup)
-     #+END_SRC
+      (add-hook 'c-mode-common-hook 'c-setup)
+    #+END_SRC
 
-     #+BEGIN_SRC emacs-lisp
-     (defun java-setup ()
-       (setq-local compile-command (concat "javac " (buffer-name))))
+    #+BEGIN_SRC emacs-lisp
+    (defun java-setup ()
+      (setq-local compile-command (concat "javac " (buffer-name))))
 
-     (add-hook 'java-mode-hook 'java-setup)
-     #+END_SRC
-**** C++
+    (add-hook 'java-mode-hook 'java-setup)
+    #+END_SRC
+*** C++
 
-     By default, .h files are opened in C mode. I'll mostly be using them for C++
-     projects, though.
+    By default, .h files are opened in C mode. I'll mostly be using them for C++
+    projects, though.
 
-     #+BEGIN_SRC emacs-lisp
-             (use-package c++-mode
-               :mode "\\.h\\'")
-     #+END_SRC
+    #+BEGIN_SRC emacs-lisp
+            (use-package c++-mode
+              :mode "\\.h\\'")
+    #+END_SRC
+*** Go
 
+    #+BEGIN_SRC emacs-lisp
+      (use-package go-mode
+        :mode "\\.go\\'"
+
+        :config
+        (add-hook 'go-mode-hook (lambda () (whitespace-mode -1)))
+        (add-hook 'before-save-hook 'gofmt-before-save))
+    #+END_SRC
 * Ledger
 
   I use John Wiegley's amazing [[http://ledger-cli.org][ledger-cli]] to keep track of my finances. Ledger reads from a simple
