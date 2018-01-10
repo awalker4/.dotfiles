@@ -119,12 +119,7 @@ elif [[ -x /usr/bin/thunar ]]; then
 fi
 
 # Packages
-if [[ -x /usr/bin/yaourt ]]; then
-    alias pacs='yaourt -S'
-    alias pacu='yaourt -U'
-    alias pacr='yaourt -R'
-    alias pacq='yaourt -Q | grep'
-elif [[ -x /usr/bin/pacman ]]; then
+if [[ -x /usr/bin/pacman ]]; then
     alias pacs='sudo pacman -S'
     alias pacu='sudo pacman -U'
     alias pacr='sudo pacman -R'
