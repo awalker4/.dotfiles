@@ -755,6 +755,8 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
        (setq projectile-completion-system 'ivy)
        (setq projectile-enable-caching t)
 
+       (setq projectile-switch-project-action 'magit-status)
+
        ; Used for helm-projectile-grep
        (setq grep-find-ignored-directories nil)
        (setq grep-find-ignored-files nil)
