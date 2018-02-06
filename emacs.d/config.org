@@ -909,6 +909,15 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
 
     #+END_SRC
 
+*** REST Client Mode
+
+    This is super useful...
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package restclient
+        :ensure t)
+    #+END_SRC
+
 ** Languages
 *** Java and C
 
