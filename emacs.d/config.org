@@ -5,6 +5,14 @@
 #+AUTHOR: Austin Walker
 
 * Initialization
+** About
+
+This is a literate Emacs config written in org-mode. Every time I set up a new machine, I make sure the following is in my init.el:
+
+echo '(org-babel-load-file "~/.emacs.d/config.org")' > ~/.dotfiles/emacs.d/init.el
+
+And that's all it takes! I can make changes to this file and all the elisp snippets will get evaluated on startup.
+
 ** Package Setup
 
     I use the great and powerful =use-package= to keep package configuration simple.
