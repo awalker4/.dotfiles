@@ -692,6 +692,12 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
         (which-function-mode 1))
     #+END_SRC
 
+    Make scripts executable.
+
+    #+BEGIN_SRC emacs-lisp
+      (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
+    #+END_SRC
+
 *** Paredit
 
     #+BEGIN_SRC emacs-lisp
