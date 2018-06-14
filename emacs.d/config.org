@@ -454,6 +454,7 @@ Do something useful with the title bar.
           "gd" 'aw/projectile-svn-diff
           "gD" 'aw/projectile-svn-diff-rev
           "gi" 'aw/edit-gitignore
+          "gl" 'magit-log-buffer-file
           "gs" 'magit-status)
 
         ;; Compiling
