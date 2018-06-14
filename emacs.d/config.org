@@ -1235,6 +1235,12 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
       (add-hook 'ledger-mode-hook 'flycheck-mode))
   #+END_SRC
 
+* Refile
+
+Fix for everything suddenly starting in motion-state
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'evil-normal-state-modes 'magit-file-mode)
+#+END_SRC
 * License
 
   My Emacs configurations written in Org mode.
