@@ -614,7 +614,10 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
     :ensure t)
 
   (use-package counsel-projectile
-    :ensure t)
+    :ensure t
+
+    :config
+    (setq counsel-projectile-switch-project-action 'magit-status))
 #+END_SRC
 
 * Programming
