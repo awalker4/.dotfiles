@@ -23,6 +23,7 @@ alias la='ls -a --color'
 alias lal='ls -lah --color'
 alias lb='lsblk'
 alias less='less -Rni'
+alias le='less'
 alias ll='ls -oh --color'
 alias ls='ls -h --color'
 mcd() { mkdir -pv $1 && cd $1; }
