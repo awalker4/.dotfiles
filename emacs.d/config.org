@@ -488,6 +488,10 @@ Do something useful with the title bar.
           "pr" 'projectile-run-shell-command-in-root
           "ps" 'helm-semantic-or-imenu)
 
+        ;; Quickrun
+        (evil-local-set-key
+         "rr" 'quickrun)
+
         ;; Misc
         (evil-leader/set-key
           "vb" 'eval-buffer
@@ -702,6 +706,12 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
       (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
     #+END_SRC
 
+    Use quickrun to easily run scripts from the current buffer.
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package quickrun
+        :ensure t)
+    #+END_SRC
 *** Paredit
 
     #+BEGIN_SRC emacs-lisp
