@@ -392,6 +392,7 @@ Do something useful with the title bar.
         (evil-leader/set-key
           "f" 'find-file
           "t" 'multi-term-dedicated-toggle
+          "ed" 'aw/browse-current-dir
           "ei" (lambda () (interactive) (aw/edit-init-file "config.org"))
           "eI" (lambda () (interactive) (aw/edit-init-file "init.el"))
           "el" (lambda () (interactive) (aw/edit-ledger-file
@@ -575,6 +576,11 @@ Do something useful with the title bar.
            name."
         (interactive)
         (switch-to-buffer (make-temp-name "scratch")))
+
+      (defun aw/browse-current-dir ()
+        (interactive)
+        (shell-command
+         (concat "nohup nautilus " (file-name-directory buffer-file-name) " 2> /dev/null")))
     #+END_SRC
 ** Snippets
 
