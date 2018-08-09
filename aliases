@@ -108,15 +108,17 @@ cashflow() {
 ########################################
 # Distro Specific
 ########################################
+browse_files() { nohup "$1" "$(pwd)" >/dev/null 2>&1 & }
+
 # Files - ls + g(ui)
 if [[ -x /usr/bin/dolphin ]]; then
-    alias lsg='dolphin "$(pwd)" 2>/dev/null &' # Dolphin (KDE)
+    alias lsg='browse_files dolphin' # KDE
 elif [[ -x /usr/bin/nautilus ]]; then
-    alias lsg='nautilus "$(pwd)"' # Nautilus (Gnome)
+    alias lsg='browse_files nautilus' # GNOME
 elif [[ -x /usr/bin/nemo ]]; then
-    alias lsg='nemo "$(pwd)"&' # Nemo (Cinnamon)
+    alias lsg='browse_files nemo' # Cinnamon
 elif [[ -x /usr/bin/thunar ]]; then
-    alias lsg='thunar "$(pwd)"' # Thunar (XFCE)
+    alias lsg='browse_files thunar' # XFCE
 fi
 
 # Packages
