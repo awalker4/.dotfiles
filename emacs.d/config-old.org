@@ -4,82 +4,6 @@
 #+TITLE: Emacs configuration file
 #+AUTHOR: Austin Walker
 
-* About
-
-  This is an Emacs configuration file written in [[http://orgmode.org][Org mode]]. It began as a
-  clone of [[https://github.com/larstvei/dot-emacs][larstvei's setup]], and now I'm slowly tweaking it to my
-  needs. Every time this file is saved, all snippets of elisp code will get
-  pulled into init.el thanks to the magic of =org-babel=.
-
-* Initialization
-** Sane defaults
-
-   Call =auto-complete= default configuration, which enables =auto-complete=
-   globally.
-
-   #+BEGIN_SRC emacs-lisp
-     (eval-after-load 'auto-complete-config `(ac-config-default))
-   #+END_SRC
-
-** Windows
-
-   =Winner-mode= allows you to jump back to previously used window
-   configurations. The following massive function will ignore unwanted buffers
-   when returning to a particular layout. ([[https://github.com/thierryvolpiatto/emacs-tv-config/blob/master/.emacs.el#L1706][Source]])
-
-   #+BEGIN_SRC emacs-lisp
-     (setq winner-boring-buffers '("*Completions*"
-                                   "*Compile-Log*"
-                                   "*inferior-lisp*"
-                                   "*Fuzzy Completions*"
-                                   "*Apropos*"
-                                   "*Help*"
-                                   "*cvs*"
-                                   "*Buffer List*"
-                                   "*Ibuffer*"
-                                   ))
-     (defvar winner-boring-buffers-regexp "\\*[hH]elm.*")
-     (defun winner-set1 (conf)
-       (let* ((buffers nil)
-              (alive
-               ;; Possibly update `winner-point-alist'
-               (cl-loop for buf in (mapcar 'cdr (cdr conf))
-                        for pos = (winner-get-point buf nil)
-                        if (and pos (not (memq buf buffers)))
-                        do (push buf buffers)
-                        collect pos)))
-         (winner-set-conf (car conf))
-         (let (xwins) ; to be deleted
-           ;; Restore points
-           (dolist (win (winner-sorted-window-list))
-             (unless (and (pop alive)
-                          (setf (window-point win)
-                                (winner-get-point (window-buffer win) win))
-                          (not (or (member (buffer-name (window-buffer win))
-                                           winner-boring-buffers)
-                                   (string-match winner-boring-buffers-regexp
-                                                 (buffer-name (window-buffer win))))))
-               (push win xwins))) ; delete this window
-           ;; Restore marks
-           (letf (((current-buffer)))
-             (cl-loop for buf in buffers
-                      for entry = (cadr (assq buf winner-point-alist))
-                      for win-ac-reg = (winner-active-region)
-                      do (progn (set-buffer buf)
-                                (set-mark (car entry))
-                                (setf win-ac-reg (cdr entry)))))
-           ;; Delete windows, whose buffers are dead or boring.
-           ;; Return t if this is still a possible configuration.
-           (or (null xwins)
-               (progn
-                 (mapc 'delete-window (cdr xwins)) ; delete all but one
-                 (unless (one-window-p t)
-                   (delete-window (car xwins))
-                   t))))))
-     (defalias 'winner-set 'winner-set1)
-     (winner-mode 1)
-   #+END_SRC
-
 * Refile
   Stuff that I'm still playing around with.
 
@@ -311,65 +235,6 @@
 
     #+END_SRC
 
-*** Lisps
-
-    This advice makes =eval-last-sexp= (bound to =C-x C-e=) replace the sexp with
-    the value.
-
-    #+BEGIN_SRC emacs-lisp
-       (defadvice eval-last-sexp (around replace-sexp (arg) activate)
-         "Replace sexp when called with a prefix argument."
-         (if arg
-             (let ((pos (point)))
-               ad-do-it
-               (goto-char pos)
-               (backward-kill-sexp)
-               (forward-sexp))
-           ad-do-it))
-    #+END_SRC
-
-**** Clojure
-
-     #+BEGIN_SRC emacs-lisp
-       (use-package clojure-mode
-         :ensure t)
-
-       (use-package cider
-         :ensure t)
-     #+END_SRC
-
-    #+BEGIN_SRC emacs-lisp
-      (evil-leader/set-key-for-mode 'clojure-mode
-        "vv" 'cider-eval-last-sexp
-        "vV" 'cider-eval-last-sexp-to-repl)
-    #+END_SRC
-**** Emacs Lisp
-
-     #+BEGIN_SRC emacs-lisp
-       (add-hook 'emacs-lisp-mode-hook
-                 (lambda ()
-                   ;; Use spaces, not tabs.
-                   (setq indent-tabs-mode nil)
-                   (define-key emacs-lisp-mode-map
-                     "\r" 'reindent-then-newline-and-indent)))
-       (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-       (add-hook 'emacs-lisp-mode-hook 'flyspell-prog-mode) ;; Requires Ispell
-     #+END_SRC
-**** Racket
-
-Use racket in geiser-mode.
-
-#+BEGIN_SRC emacs-lisp
-    (use-package racket-mode
-      :mode "\\.rkt")
-#+END_SRC
-*** Markdown
-
-    #+BEGIN_SRC emacs-lisp
-      (use-package markdown-mode
-        :mode "\\.md\\'")
-
-    #+END_SRC
 *** Octave
 
     Make it so =.m= files are loaded in =octave-mode=.
@@ -397,46 +262,7 @@ Use racket in geiser-mode.
        ;;(add-hook 'python-mode-hook 'jedi:ac-setup)
      #+END_SRC
 
-*** Web Editing
 
-     TODO: start httpd in correct directory
-
-    =impatient-mode= is an amazing tool for live-editing web pages. When paired with
-    =simple-httdp=, you can point your browser to =http://localhost:8080/imp= to
-    see a live copy of any buffer that has impatient-mode enabled. If that buffer happens to contain HTML, CSS, or Javascript, it will be evaluated on the fly. No need to save or refresh
-    anything. It's almost like they knew that I'm very... impatient.
-
-    Let's start impatient mode for all HTML, CSS, and Javascript buffers, and
-    run =httpd-start= when needed.
-
-    #+BEGIN_SRC emacs-lisp
-      ;; TODO: set up impatient mode
-      (use-package impatient-mode)
-
-      (defun aw/imp-setup ()
-        (setq httpd-root "/home/austin/Dropbox/school/cis467/hw3/") ;; I'd like to set this based on the current buffer's working directory
-        (httpd-start)
-        (impatient-mode))
-
-      ;; (add-hook 'html-mode-hook 'aw/imp-setup)
-      ;; (add-hook 'css-mode-hook 'aw/imp-setup)
-      ;; (add-hook 'js-mode-hook 'aw/imp-setup)
-    #+END_SRC
-
-**** HTML
-**** CSS
-**** JavaScript
-     #+BEGIN_SRC emacs-lisp
-       (use-package js2-mode
-         :ensure t
-         ;; :mode "\\.js\\"
-
-         :init
-         (setq js2-highlight-level 1)
-
-         :config
-         (add-hook 'js2-mode-hook 'ac-js2-mode))
-     #+END_SRC
 ** CEDET
 *** Semantic
 
@@ -464,14 +290,6 @@ Use racket in geiser-mode.
     #+END_SRC
 
 * System Stuff
-** Dired
-
-   By default, dired shows file sizes in bytes. We can change the switches used by ls to make things human readable.
-
-   #+BEGIN_SRC emacs-lisp
-     (setq dired-listing-switches "-alh")
-   #+END_SRC
-
 ** Terminals
 
    Multi-term makes working with many terminals a bit nicer. I can easily create
@@ -531,41 +349,3 @@ Use racket in geiser-mode.
 
      (add-hook 'shell-mode-hook (lambda () (local-set-key (kbd "C-l") 'clear-shell)))
    #+END_SRC
-** Config files
-
-   Let's add some color to these files.
-
-   #+BEGIN_SRC emacs-lisp
-      (add-to-list 'auto-mode-alist '("\\.service\\'" . conf-unix-mode))
-      (add-to-list 'auto-mode-alist '("\\.timer\\'" . conf-unix-mode))
-      (add-to-list 'auto-mode-alist '("\\.target\\'" . conf-unix-mode))
-      (add-to-list 'auto-mode-alist '("\\.mount\\'" . conf-unix-mode))
-      (add-to-list 'auto-mode-alist '("\\.automount\\'" . conf-unix-mode))
-      (add-to-list 'auto-mode-alist '("\\.slice\\'" . conf-unix-mode))
-      (add-to-list 'auto-mode-alist '("\\.socket\\'" . conf-unix-mode))
-      (add-to-list 'auto-mode-alist '("\\.path\\'" . conf-unix-mode))
-   #+END_SRC
-
-** Proced
-
-   #+BEGIN_SRC emacs-lisp
-     (defun proced-settings ()
-       (proced-toggle-auto-update t))
-
-     (add-hook 'proced-mode-hook 'proced-settings)
-     (define-key custom-bindings-map (kbd "C-x p") 'proced)
-   #+END_SRC
-* Future plans
-
-  I'm never done tweaking my setup. Here's some stuff that will happen in my
-  next procrastination session. If you have a fix for any of these, let me know!
-
-  - ibuffer going full frame messes up my frame layout
-  - org stuff
-    - org-agenda should use evil keys, also probably magit and ibuffer
-    - I need to sort out my org-capture workflow
-  - start working on a better latex workflow
-  - Hard line wrapping gets annoying when programming
-  - restclient mode is cool
-  - log files should use auto-revert-tail-mode
-
