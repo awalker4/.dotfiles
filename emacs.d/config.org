@@ -977,10 +977,13 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
     #+END_SRC
 
     #+BEGIN_SRC emacs-lisp
-    (defun java-setup ()
-      (setq-local compile-command (concat "javac " (buffer-name))))
+      (defun java-setup ()
+        (setq-local compile-command (concat "javac " (buffer-name))))
 
-    (add-hook 'java-mode-hook 'java-setup)
+      (add-hook 'java-mode-hook 'java-setup)
+
+      (use-package scala-mode
+        :ensure t)
     #+END_SRC
 *** C++
 
