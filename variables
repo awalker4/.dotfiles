@@ -6,7 +6,12 @@ export JAVA_HOME=/usr/lib/jvm/java-8-openjdk/jre
 export LEDGER_CURRENT_FILE="$HOME/Dropbox/ledger/ledger-2017.dat"
 export LEDGER_FILE="$HOME/Dropbox/ledger/ledger.dat"
 export LEDGER_PRICE_DB="/home/austin/Dropbox/ledger/prices/prices.dat"
-export PATH=$PATH:$HOME/bin:/usr/local/bin:$HOME/.gem/ruby/2.2.0/bin:$HOME/go/bin
+export PATH=$PATH:$HOME/bin:/usr/local/bin:$HOME/.gem/ruby/2.2.0/bin:$HOME/go/bin:/home/austin/.local/bin
 export PAGER=less
 export SAVEHIST=50000
 export TERM=xterm-256color
+
+export HADOOP_HOME=/home/austin/hadoop
+export YARN_CONF_DIR=$HADOOP_HOME/etc/hadoop
+export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+export SPARK_DIST_CLASSPATH=$(hadoop classpath)
