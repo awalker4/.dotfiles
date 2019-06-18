@@ -19,6 +19,7 @@ alias cp='cp -iv'
 alias df='df -h'
 alias du='du -hsc'
 alias h='history'
+knownhosts() { sed -i -e "$1d" ~/.ssh/known_hosts; }
 alias la='ls -a --color'
 alias lal='ls -lah --color'
 alias lb='lsblk'
