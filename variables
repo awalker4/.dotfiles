@@ -2,16 +2,29 @@ export EDITOR=vim
 export HISTFILE=~/.dotfiles/local/shell_history
 export HISTFILESIZE=50000
 export HISTSIZE=50000
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk/jre
+export JAVA_HOME=/usr/lib/jvm/default-java
 export LEDGER_CURRENT_FILE="$HOME/Dropbox/ledger/ledger-2017.dat"
 export LEDGER_FILE="$HOME/Dropbox/ledger/ledger.dat"
 export LEDGER_PRICE_DB="/home/austin/Dropbox/ledger/prices/prices.dat"
-export PATH=$PATH:$HOME/bin:/usr/local/bin:$HOME/.gem/ruby/2.2.0/bin:$HOME/go/bin:/home/austin/.local/bin
+export PATH=$PATH:$HOME/bin:/usr/local/bin:$HOME/.gem/ruby/2.2.0/bin:$HOME/go/bin:/home/austin/.local/bin:$HOME/emsdk:$HOME/emsdk/upstream/emscripten:$HOME/emsdk/node/12.9.1_64bit/bin
 export PAGER=less
 export SAVEHIST=50000
 export TERM=xterm-256color
+export NODE_ENV=development
+
+# Android
+export ANDROID_SDK_ROOT=$HOME/Android/Sdk
+export ANDROID_SDK_PATH=$HOME/Android/Sdk
+export ANDROID_NDK_HOME=$HOME/Android/Sdk/ndk
+export ANDROID_NDK_PATH=$HOME/Android/Sdk/ndk
 
 #export HADOOP_HOME=/home/austin/hadoop
 #export YARN_CONF_DIR=$HADOOP_HOME/etc/hadoop
 #export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
 #export SPARK_DIST_CLASSPATH=$(hadoop classpath)
+
+# Emscripten
+export EMSDK=/home/austin/emsdk
+export EM_CONFIG=/home/austin/.emscripten
+export EMSDK_NODE=/home/austin/emsdk/node/12.9.1_64bit/bin/node
+
