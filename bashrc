@@ -21,6 +21,11 @@ if [[ -f /etc/bashrc ]]; then
     . /etc/bashrc
 fi
 
+# Completions
+if [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+fi
+
 # Find any local definitions
 if [[ -f ~/.dotfiles/local/bashrc ]]; then
     . ~/.dotfiles/local/bashrc
