@@ -36,6 +36,9 @@ alias pu='pushd'
 alias prettify-json='python -m json.tool'
 alias prettify-xml='xmllint --format -'
 alias psg='ps -aux | grep -i'
+alias python='python3'
+alias ipython='ipython3'
+alias pip='pip3'
 alias rd='rmdir'
 alias reboot='sudo reboot'
 alias remount='sudo mount -a'
@@ -131,6 +134,7 @@ if [[ -x /usr/bin/pacman ]]; then
     alias pacq='pacman -Q | grep'
 elif [[ -x /usr/bin/apt ]]; then
     alias apti='sudo apt-get install -y'
+    alias aptr='sudo apt-get remove'
 elif [[ -x /bin/rpm ]]; then
     alias yumi='sudo yum install -y'
     alias yumr='sudo yum remove'
