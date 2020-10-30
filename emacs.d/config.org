@@ -1067,6 +1067,17 @@ Use prettier for formatting.
         :mode "\\.m\\'")
 
     #+END_SRC
+
+*** Misc
+PlantUML is awesome for documentation. I want diagrams to generate automatically.
+
+#+BEGIN_SRC emacs-lisp
+(defun generate-puml ()
+  "If the current buffer is a plant-uml file, autogenerate a png on each save."
+  (if (string-match "\\.puml$" (buffer-file-name))
+      (shell-command (concat "puml generate " (buffer-file-name) " -o " (file-name-sans-extension (buffer-file-name)) ".png"))))
+(add-hook 'after-save-hook #'generate-puml)
+#+END_SRC
 * Org-mode
 
   #+BEGIN_SRC emacs-lisp
