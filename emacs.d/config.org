@@ -355,6 +355,12 @@ Do something useful with the title bar.
 
         (evil-mode 1))
 
+      (use-package evil-collection
+        :after evil
+        :ensure t
+        :config
+        (evil-collection-init))
+
       (use-package move-text :ensure t)            ; Move current line or region with M-up or M-down
       (use-package evil-nerd-commenter
         :ensure t)
@@ -873,14 +879,6 @@ Some useful modes:
 
        :config
        (fullframe magit-status magit-mode-quit-window))
-
-     ; Play nicely with evil
-     (use-package evil-magit
-       :ensure t
-       :init
-       (setq evil-magit-state 'motion))
-     (use-package magit-svn)
-     (use-package gist)
    #+END_SRC
 
 *** Diffs
