@@ -473,14 +473,15 @@ Do something useful with the title bar.
           "oa" 'org-agenda-list
           "oA" 'org-agenda
           "oc" 'org-capture
+          "od" 'org-roam-dailies-find-today
+          "of" 'org-roam-find-file
           "og" 'helm-org-rifle
+          "or" 'org-roam-insert
           "ol" 'org-store-link
-          "or" 'org-refile
           "os" 'org-search-view
           "ot" 'org-todo-list
           "oT" 'aw/interactive-org-todo
-          "ow" '(lambda () (interactive) (org-agenda "nil" "w"))
-          "ox" 'org-latex-export-to-pdf)
+          "ow" '(lambda () (interactive) (org-agenda "nil" "w")))
 
         ;; Projectile/Helm stuff
         (evil-leader/set-key
@@ -1091,7 +1092,7 @@ PlantUML is awesome for documentation. I want diagrams to generate automatically
       :mode "\\.txt\\'"
 
       :init
-      (setq org-agenda-files '("~/org/")
+      (setq org-agenda-files (list "~/org/" "~/org/roam/" "~/org/roam/daily/")
             org-agenda-default-appointment-duration 60     ; 1 hour appointments
             org-agenda-span 1                              ; Show only today by default
             org-agenda-start-on-weekday 0                  ; Show agenda from Sunday.
@@ -1248,6 +1249,50 @@ PlantUML is awesome for documentation. I want diagrams to generate automatically
               ("t" "Todo" entry (file+datetree+prompt (concat org-directory "calendar.org"))
                 "* TODO %?\n  SCHEDULED: %t\n")))
     #+END_SRC
+
+** Roam
+
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-roam
+    :ensure t
+
+    :init
+    (require 'org-roam-protocol) ; Allows us to open notes from org-roam-server
+
+    :config
+    (setq org-roam-directory "~/org/roam"
+          org-roam-dailies-directory "~/org/roam/daily")
+
+    (add-hook 'after-init-hook 'org-roam-mode)
+    (add-hook 'org-roam-mode-hook 'visual-line-mode)
+
+    (setq org-roam-dailies-capture-templates
+          '(("d" "default" entry
+             #'org-roam-capture--get-point
+             "* %?"
+             :file-name "dailies/%<%Y-%m-%d>"
+             :head "#+title: %<%Y-%m-%d>\n\n"))
+          )
+    )
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-roam-server
+  :ensure t
+  :config
+  (setq org-roam-server-host "127.0.0.1"
+        org-roam-server-port 8080
+        org-roam-server-authenticate nil
+        org-roam-server-export-inline-images t
+        org-roam-server-serve-files nil
+        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
+        org-roam-server-network-poll t
+        org-roam-server-network-arrows nil
+        org-roam-server-network-label-truncate t
+        org-roam-server-network-label-truncate-length 60
+        org-roam-server-network-label-wrap-length 20))
+#+END_SRC
 
 ** Keybindings
 
