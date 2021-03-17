@@ -327,10 +327,13 @@ Do something useful with the title bar.
     See [[http://stackoverflow.com/questions/22878668/emacs-org-mode-evil-mode-tab-key-not-working][this Stack Overflow post]] for an explanation on =evil-want-C-i-jump=.
     #+BEGIN_SRC emacs-lisp
       (use-package evil
-        :init
-        (setq evil-want-C-i-jump nil)
-
         :ensure t
+
+        :init
+        (setq evil-want-integration t ;; This is optional since it's already set to t by default.
+              evil-want-keybinding nil
+              evil-want-C-i-jump nil)
+
         :config
         (define-key evil-normal-state-map "H" 'windmove-left)
         (define-key evil-normal-state-map "J" 'windmove-down)
@@ -481,6 +484,8 @@ Do something useful with the title bar.
           "oc" 'org-capture
           "od" 'org-roam-dailies-find-today
           "of" 'org-roam-find-file
+          "oz" 'org-roam-dailies-find-previous-note
+          "ox" 'org-roam-dailies-find-next-note
           "og" 'helm-org-rifle
           "or" 'org-roam-insert
           "ol" 'org-store-link
@@ -498,10 +503,6 @@ Do something useful with the title bar.
           "pp" 'counsel-projectile-switch-project
           "pr" 'projectile-run-shell-command-in-root
           "ps" 'helm-semantic-or-imenu)
-
-        ;; Quickrun
-        (evil-local-set-key
-         "rr" 'quickrun)
 
         ;; Misc
         (evil-leader/set-key
@@ -1201,7 +1202,6 @@ YAML
           (C . t)
           (dot . t)
           (gnuplot . t)
-          (sh . t)
           (python . t)
           (octave . t))))
    #+END_SRC
@@ -1265,8 +1265,6 @@ YAML
     #+END_SRC
 
 ** Roam
-
-
 #+BEGIN_SRC emacs-lisp
   (use-package org-roam
     :ensure t
@@ -1281,11 +1279,18 @@ YAML
     (add-hook 'after-init-hook 'org-roam-mode)
     (add-hook 'org-roam-mode-hook 'visual-line-mode)
 
+    (setq org-roam-capture-templates
+          '(("d" "default" plain (function org-roam--capture-get-point)
+             "%?"
+             :file-name "%<%Y%m%d%H%M%S>-${slug}"
+             :head "#+title: ${title}\n"
+             :unnarrowed t)))
+
     (setq org-roam-dailies-capture-templates
           '(("d" "default" entry
              #'org-roam-capture--get-point
              "* %?"
-             :file-name "dailies/%<%Y-%m-%d>"
+             :file-name "daily/%<%Y-%m-%d>"
              :head "#+title: %<%Y-%m-%d>\n\n"))
           )
     )
@@ -1388,10 +1393,6 @@ YAML
       (add-hook 'before-save-hook 'aw/clean-ledger-on-save)
       (define-key ledger-mode-map (kbd "C-M-.") 'ledger-increment-date)
       (define-key ledger-mode-map (kbd "C-M-,") 'ledger-decrement-date))
-
-    (use-package flycheck-ledger
-      :config
-      (add-hook 'ledger-mode-hook 'flycheck-mode))
   #+END_SRC
 
 * System Stuff
