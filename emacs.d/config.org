@@ -726,6 +726,12 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
       (use-package quickrun
         :ensure t)
     #+END_SRC
+    
+Some useful modes:
+#+BEGIN_SRC emacs-lisp
+  (use-package dockerfile-mode
+    :ensure t)
+#+END_SRC
 *** Paredit
 
     #+BEGIN_SRC emacs-lisp
@@ -1082,6 +1088,12 @@ PlantUML is awesome for documentation. I want diagrams to generate automatically
   (if (string-match "\\.puml$" (buffer-file-name))
       (shell-command (concat "puml generate " (buffer-file-name) " -o " (file-name-sans-extension (buffer-file-name)) ".png"))))
 (add-hook 'after-save-hook #'generate-puml)
+#+END_SRC
+
+YAML
+#+BEGIN_SRC emacs-lisp
+  (use-package yaml-mode
+    :ensure t)
 #+END_SRC
 * Org-mode
 
