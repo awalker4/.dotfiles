@@ -1195,15 +1195,15 @@ YAML
    compiled languages. To create C source blocks we just need to enable
 
    #+BEGIN_SRC emacs-lisp
-     (with-eval-after-load 'org
-       (org-babel-do-load-languages
-        'org-babel-load-languages
-        '((emacs-lisp . t)
-          (C . t)
-          (dot . t)
-          (gnuplot . t)
-          (python . t)
-          (octave . t))))
+     ;;(with-eval-after-load 'org
+       ;;(org-babel-do-load-languages
+        ;;'org-babel-load-languages
+        ;;'((emacs-lisp . t)
+          ;;(C . t)
+          ;;(dot . t)
+          ;;(gnuplot . t)
+          ;;(python . t)
+          ;;(octave . t))))
    #+END_SRC
 
    #+BEGIN_SRC emacs-lisp
@@ -1276,7 +1276,6 @@ YAML
     (setq org-roam-directory "~/org/roam"
           org-roam-dailies-directory "~/org/roam/daily")
 
-    (add-hook 'after-init-hook 'org-roam-mode)
     (add-hook 'org-roam-mode-hook 'visual-line-mode)
 
     (setq org-roam-capture-templates
@@ -1297,20 +1296,20 @@ YAML
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package org-roam-server
-  :ensure t
-  :config
-  (setq org-roam-server-host "127.0.0.1"
-        org-roam-server-port 8080
-        org-roam-server-authenticate nil
-        org-roam-server-export-inline-images t
-        org-roam-server-serve-files nil
-        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
-        org-roam-server-network-poll t
-        org-roam-server-network-arrows nil
-        org-roam-server-network-label-truncate t
-        org-roam-server-network-label-truncate-length 60
-        org-roam-server-network-label-wrap-length 20))
+  ;; (use-package org-roam-server
+  ;;   :ensure t
+  ;;   :config
+  ;;   (setq org-roam-server-host "127.0.0.1"
+  ;;         org-roam-server-port 8080
+  ;;         org-roam-server-authenticate nil
+  ;;         org-roam-server-export-inline-images t
+  ;;         org-roam-server-serve-files nil
+  ;;         org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
+  ;;         org-roam-server-network-poll t
+  ;;         org-roam-server-network-arrows nil
+  ;;         org-roam-server-network-label-truncate t
+  ;;         org-roam-server-network-label-truncate-length 60
+  ;;         org-roam-server-network-label-wrap-length 20))
 #+END_SRC
 
 ** Keybindings
@@ -1337,6 +1336,12 @@ YAML
        (kbd "M-l") 'org-metaright)
    #+END_SRC
 
+** Final
+Make sure everything is loaded properly.
+
+#+BEGIN_SRC emacs-lisp
+(org-reload)
+#+END_SRC
 * Ledger
 
   I use John Wiegley's amazing [[http://ledger-cli.org][ledger-cli]] to keep track of my finances. Ledger reads from a simple
