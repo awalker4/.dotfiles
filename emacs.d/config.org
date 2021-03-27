@@ -1260,8 +1260,8 @@ YAML
                "    %?    %u" :empty-lines 1)
               ("s" "Scheduled Action" entry (file+datetree+prompt (concat org-directory "calendar.org"))
                   "* %?\n%t\n")
-              ("t" "Todo" entry (file+headline "~/org/work.org" "Tasks")
-                "** TODO %?\n  SCHEDULED: %t\n")))
+              ("t" "Todo" entry (file+headline "~/org/inbox.org" "Tasks")
+                "** TODO %?\n")))
     #+END_SRC
 
 ** Roam
