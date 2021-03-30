@@ -1121,7 +1121,7 @@ YAML
             org-refile-use-outline-path t                  ; Show full paths for refiling
             org-return-follows-link t                      ; Hit return to open links
             org-src-fontify-natively t                     ; Highlight src blocks natively
-            org-startup-indented t)                        ; Indent sections based on their header level
+            )
 
         ; Show dots instead of dashes
       (font-lock-add-keywords 'org-mode
