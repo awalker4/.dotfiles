@@ -1281,6 +1281,11 @@ YAML
              "%?"
              :file-name "%<%Y%m%d%H%M%S>-${slug}"
              :head "#+title: ${title}\n"
+             :unnarrowed t)
+            ("s" "source" plain (function org-roam--capture-get-point)
+             "%?"
+             :file-name "%<%Y%m%d%H%M%S>-${slug}"
+             :head "#+title: ${title}\n#+roam_tags: source ${source type}\n#+roam_key: ${link}\n"
              :unnarrowed t)))
 
     (setq org-roam-dailies-capture-templates
