@@ -1258,7 +1258,7 @@ YAML
 
       (setq org-capture-templates
             '(("t" "Todo" entry (file+headline "~/org/inbox.org" "Tasks") "** NEXT %?\n")
-              ("p" "Project" entry (file+headline "~/org/inbox.org" "Projects") "** TODO %^{Project Description} [/]\n*** Vision\n%^{Vision}\n*** NEXT %?")
+              ("p" "Project" entry (file+headline "~/org/inbox.org" "Projects") "** TODO %^{Project Description} [/]\n*** Purpose\n%^{Purpose}\n*** NEXT %?")
               ))
     #+END_SRC
 
