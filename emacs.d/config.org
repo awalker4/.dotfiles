@@ -1265,7 +1265,7 @@ YAML
 
     #+BEGIN_SRC emacs-lisp
       (setq org-todo-keywords
-            '((sequence "TODO" "NEXT" "WAITING" "|" "DONE")))
+            '((sequence "TODO" "NEXT" "WAITING" "BACKLOG" "|" "DONE")))
 
       (setq org-capture-templates
             '(("t" "Todo" entry (file+headline "~/org/inbox.org" "Tasks") "** NEXT %?\n")
