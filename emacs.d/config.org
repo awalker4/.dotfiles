@@ -202,6 +202,17 @@ And that's all it takes! I can make changes to this file and all the elisp snipp
        (fullframe list-packages quit-window))
    #+END_SRC
 
+   There's no function to quickly delete a file and remove its buffer.
+
+   #+BEGIN_SRC emacs-lisp
+     (defun aw/delete-this-file ()
+       (interactive)
+       (if (y-or-n-p (concat "Delete " (buffer-file-name) "?"))
+           (progn
+             (delete-file (buffer-file-name))
+             (kill-current-buffer))))
+   #+END_SRC
+
 ** Visual
 
    First, get rid of a few things.
