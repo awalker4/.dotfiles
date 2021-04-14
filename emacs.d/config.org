@@ -1119,7 +1119,7 @@ YAML
       :mode "\\.txt\\'"
 
       :init
-      (setq org-agenda-files (list "~/org/gtd.org")
+      (setq org-agenda-files (list "~/org/")
             org-agenda-default-appointment-duration 60     ; 1 hour appointments
             org-agenda-span 1                              ; Show only today by default
             org-agenda-start-on-weekday 0                  ; Show agenda from Sunday.
