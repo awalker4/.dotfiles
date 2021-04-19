@@ -1243,8 +1243,8 @@ YAML
    quickly refile them to any headline within my =org-agenda-files=.
 
    #+BEGIN_SRC emacs-lisp
-     (setq org-refile-targets '((nil :maxlevel . 9)
-                                (org-agenda-files :maxlevel . 9)))
+     (setq org-refile-targets '((nil :maxlevel . 3)
+                                (org-agenda-files :maxlevel . 3)))
 
      (defun aw/verify-refile-target ()
        "Exclude todo keywords with a done state from refile targets"
