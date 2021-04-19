@@ -1097,14 +1097,8 @@ YAML
     :ensure t)
 #+END_SRC
 * Org-mode
-
 ** Setup
   #+BEGIN_SRC emacs-lisp
-    (defun aw/org-setup ()
-      (interactive)
-      (turn-on-auto-fill)
-      (turn-on-flyspell))
-
     (use-package org-mode
       :pin manual
       :mode "\\.txt\\'"
@@ -1131,8 +1125,13 @@ YAML
                                  (0 (prog1 ()
                                       (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
+      (add-hook 'org-mode-hook
+                (lambda ()
+                  (turn-on-visual-line-mode)
+                  (turn-on-flyspell)
+                  ))
       :config
-      (add-hook 'org-mode-hook #'aw/org-setup)
+
       (fullframe org-agenda org-agenda-Quit))
 
     (use-package org-bullets
@@ -1276,8 +1275,6 @@ YAML
     :config
     (setq org-roam-directory "~/org/roam"
           org-roam-dailies-directory "~/org/roam/daily")
-
-    (add-hook 'org-roam-mode-hook 'visual-line-mode)
 
     (setq org-roam-capture-templates
           '(("d" "default" plain (function org-roam--capture-get-point)
