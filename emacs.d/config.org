@@ -416,22 +416,13 @@ Do something useful with the title bar.
           "f" 'find-file
           "t" 'multi-term-dedicated-toggle
           "ed" 'aw/browse-current-dir
+          "eg" (lambda () (interactive) (aw/edit-org-file "gtd.org"))
+          "eG" (lambda () (interactive) (aw/edit-org-file "inbox.org"))
           "ei" (lambda () (interactive) (aw/edit-init-file "config.org"))
           "eI" (lambda () (interactive) (aw/edit-init-file "init.el"))
-          "el" (lambda () (interactive) (aw/edit-ledger-file
-                                         (concat "ledger-"
-                                                 (format-time-string "%Y" (current-time))
-                                                 ".dat")))
-          "eL" (lambda () (interactive) (aw/edit-ledger-file "../notes.org"))
-          "ej" (lambda () (interactive) (aw/edit-org-file "journal.org"))
-          "en" (lambda () (interactive) (aw/edit-org-file "notes.org"))
-          "eN" (lambda () (interactive) (aw/edit-org-file "school.org"))
-          "eo" (lambda () (interactive) (aw/edit-org-file "calendar.org"))
-          "er" (lambda () (interactive) (aw/edit-org-file "refile.org"))
           "es" 'aw/switch-to-scratch
           "eS" 'aw/generate-scratch-buffer
           "ew" (lambda () (interactive) (aw/edit-org-file "work.org"))
-          "eW" (lambda () (interactive) (find-file "~/.dotfiles/local/bashrc"))
           "x" 'counsel-M-x)
 
         ;; Window stuff
