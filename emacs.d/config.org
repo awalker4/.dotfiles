@@ -1258,9 +1258,9 @@ YAML
             '((sequence "TODO" "NEXT" "WAITING" "|" "DONE")))
 
       (setq org-capture-templates
-            '(("t" "Todo" entry (file+headline "~/org/inbox.org" "Tasks") "** NEXT %?\n")
-              ("p" "Project" entry (file+headline "~/org/inbox.org" "Projects") "** TODO %^{Project Description} [/]\n*** Purpose\n%^{Purpose}\n*** NEXT %?")
-              ("m" "Meeting" entry (file+headline "~/org/inbox.org" "Meetings") "** %^{Meeting description}\n - %?\n\n %u\n")
+            '(("t" "Todo" entry (file "~/org/inbox.org") "** NEXT %?\n")
+              ("p" "Project" entry (file "~/org/inbox.org") "** TODO %^{Project Description} [/]\n*** Purpose\n%^{Purpose}\n*** NEXT %?")
+              ("m" "Meeting" entry (file "~/org/inbox.org") "** %^{Meeting description}\n - %?\n\n %u\n")
               ))
     #+END_SRC
 
