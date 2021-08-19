@@ -1283,6 +1283,18 @@ YAML
              :file-name "%<%Y%m%d%H%M%S>-${slug}"
              :head "#+title: ${title}\n"
              :unnarrowed t)
+            ("p" "project" plain (function org-roam--capture-get-point)
+             (file "~/org/templates/RoamProjectNote.org")
+             :file-name "%<%Y%m%d%H%M%S>-${slug}"
+             :unnarrowed t)
+            ("r" "research" plain (function org-roam--capture-get-point)
+             (file "~/org/templates/RoamResearchNote.org")
+             :file-name "%<%Y%m%d%H%M%S>-${slug}"
+             :unnarrowed t)
+            ("i" "index" plain (function org-roam--capture-get-point)
+             (file "~/org/templates/RoamIndexNote.org")
+             :file-name "%<%Y%m%d%H%M%S>-${slug}"
+             :unnarrowed t)
             ("s" "source" plain (function org-roam--capture-get-point)
              "%?"
              :file-name "%<%Y%m%d%H%M%S>-${slug}"
