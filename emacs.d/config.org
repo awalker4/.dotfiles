@@ -484,12 +484,9 @@ Do something useful with the title bar.
           "oa" 'org-agenda-list
           "oA" 'org-agenda
           "oc" 'org-capture
-          "od" 'org-roam-dailies-find-today
-          "of" 'org-roam-find-file
-          "oz" 'org-roam-dailies-find-previous-note
-          "ox" 'org-roam-dailies-find-next-note
+          "of" 'org-roam-node-find
           "og" 'helm-org-rifle
-          "or" 'org-roam-insert
+          "or" 'org-roam-node-insert
           "ol" 'org-store-link
           "os" 'org-search-view
           "ot" 'org-todo-list
@@ -735,7 +732,7 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
       (use-package quickrun
         :ensure t)
     #+END_SRC
-    
+
 Some useful modes:
 #+BEGIN_SRC emacs-lisp
   (use-package dockerfile-mode
@@ -841,7 +838,7 @@ Some useful modes:
 
    When I have time I'd like to add this capability right into Projectile, since I'm duplicating
    quite a bit of code here.
-   
+
    TODO - gf or <SPC>pf should
    - Check if in project
      - If yes, jump to project file
@@ -1103,7 +1100,7 @@ YAML
       :pin manual
       :mode "\\.txt\\'"
 
-      :init
+      :config
       (setq org-agenda-files (list "~/org/")
             org-agenda-default-appointment-duration 60     ; 1 hour appointments
             org-agenda-span 1                              ; Show only today by default
@@ -1129,9 +1126,7 @@ YAML
       (add-hook 'org-mode-hook
                 (lambda ()
                   (turn-on-visual-line-mode)
-                  (turn-on-flyspell)
                   ))
-      :config
 
       (fullframe org-agenda org-agenda-Quit))
 
@@ -1267,65 +1262,42 @@ YAML
 
 ** Roam
 #+BEGIN_SRC emacs-lisp
-  (use-package org-roam
-    :ensure t
+     (use-package org-roam
+       :ensure t
 
-    :init
-    (require 'org-roam-protocol) ; Allows us to open notes from org-roam-server
+       :init
+       (setq org-roam-directory "~/org/roam"
+             org-roam-dailies-directory "~/org/roam/daily"
+             org-roam-v2-ack t)
 
-    :config
-    (setq org-roam-directory "~/org/roam"
-          org-roam-dailies-directory "~/org/roam/daily")
+       :config
+       (org-roam-db-autosync-mode)
 
-    (setq org-roam-capture-templates
-          '(("d" "default" plain (function org-roam--capture-get-point)
-             "%?"
-             :file-name "%<%Y%m%d%H%M%S>-${slug}"
-             :head "#+title: ${title}\n"
-             :unnarrowed t)
-            ("p" "project" plain (function org-roam--capture-get-point)
-             (file "~/org/templates/RoamProjectNote.org")
-             :file-name "%<%Y%m%d%H%M%S>-${slug}"
-             :unnarrowed t)
-            ("r" "research" plain (function org-roam--capture-get-point)
-             (file "~/org/templates/RoamResearchNote.org")
-             :file-name "%<%Y%m%d%H%M%S>-${slug}"
-             :unnarrowed t)
-            ("i" "index" plain (function org-roam--capture-get-point)
-             (file "~/org/templates/RoamIndexNote.org")
-             :file-name "%<%Y%m%d%H%M%S>-${slug}"
-             :unnarrowed t)
-            ("s" "source" plain (function org-roam--capture-get-point)
-             "%?"
-             :file-name "%<%Y%m%d%H%M%S>-${slug}"
-             :head "#+title: ${title}\n#+roam_tags: source ${source type}\n#+roam_key: ${link}\n"
-             :unnarrowed t)))
+       (setq org-roam-capture-templates
+             '(("d" "default" plain
+                "%?"
+                :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                :unnarrowed t)
+               ("p" "project" plain
+                (file "~/org/templates/RoamProjectNote.org")
+                :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                :unnarrowed t)
+               ("r" "research" plain
+                (file "~/org/templates/RoamResearchNote.org")
+                :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                :unnarrowed t)
+               ("i" "index" plain
+                (file "~/org/templates/RoamIndexNote.org")
+                :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                :unnarrowed t)
+               ("s" "source" plain
+                "%?"
+                :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                :unnarrowed t)))
 
-    (setq org-roam-dailies-capture-templates
-          '(("d" "default" entry
-             #'org-roam-capture--get-point
-             "* %?"
-             :file-name "daily/%<%Y-%m-%d>"
-             :head "#+title: %<%Y-%m-%d>\n\n"))
-          )
-    )
-#+END_SRC
+  ;; (add-to-list 'load-path "~/.emacs.d/private/org-roam-ui")
+  ;; (load-library "org-roam-ui")
 
-#+BEGIN_SRC emacs-lisp
-  ;; (use-package org-roam-server
-  ;;   :ensure t
-  ;;   :config
-  ;;   (setq org-roam-server-host "127.0.0.1"
-  ;;         org-roam-server-port 8080
-  ;;         org-roam-server-authenticate nil
-  ;;         org-roam-server-export-inline-images t
-  ;;         org-roam-server-serve-files nil
-  ;;         org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
-  ;;         org-roam-server-network-poll t
-  ;;         org-roam-server-network-arrows nil
-  ;;         org-roam-server-network-label-truncate t
-  ;;         org-roam-server-network-label-truncate-length 60
-  ;;         org-roam-server-network-label-wrap-length 20))
 #+END_SRC
 
 ** Keybindings
