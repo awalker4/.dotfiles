@@ -418,6 +418,7 @@ Do something useful with the title bar.
           "ed" 'aw/browse-current-dir
           "eg" (lambda () (interactive) (aw/edit-org-file "gtd.org"))
           "eG" (lambda () (interactive) (aw/edit-org-file "inbox.org"))
+          "el" (lambda () (interactive) (aw/edit-org-file "lists.org"))
           "ei" (lambda () (interactive) (aw/edit-init-file "config.org"))
           "eI" (lambda () (interactive) (aw/edit-init-file "init.el"))
           "es" 'aw/switch-to-scratch
@@ -1157,21 +1158,44 @@ YAML
    I'm just starting to play around with custom agenda commands.
 
    #+BEGIN_SRC emacs-lisp
-          (setq org-agenda-custom-commands
-                '(("w" "Work"
-                   ((tags-todo "+WORK-backlog"
-                               ((org-agenda-overriding-header "Tasks")
-                                (org-agenda-remove-tags t)
-                                (org-agenda-sorting-strategy
-                                 '(todo-state-down priority-down))
-                                (org-agenda-skip-function
-                                 '(org-agenda-skip-entry-if 'todo '("IDEA" "STALLED" "STARTED" "BLOCKED")))))
-                    (todo "BLOCKED"
-                          ((org-agenda-overriding-header "Blocked")))
-                    (todo "FIXED"
-                          ((org-agenda-overriding-header "Awaiting verification")))
-                    (todo "STALLED|STARTED|QA"
-                          ((org-agenda-overriding-header "Stories")))))))
+     (defun my-skip-unless-next ()
+       "Skip trees that are not next"
+       (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+         (if (re-search-forward "NEXT" subtree-end t)
+             nil          ; tag found, do not skip
+           subtree-end))) ; tag not found, continue after end of subtree
+
+     (setq org-agenda-custom-commands
+           '(("g" . "GTD contexts")
+             ("gc" "Computer" tags-todo "@computer"
+              ((org-agenda-files '("~/org/gtd.org"))
+               (org-agenda-skip-function 'my-skip-unless-next)))
+             ("gj" "Jira" tags-todo "@jira"
+              ((org-agenda-files '("~/org/gtd.org"))
+               (org-agenda-skip-function 'my-skip-unless-next)))
+             ("go" "Coding" tags-todo "@coding"
+              ((org-agenda-files '("~/org/gtd.org"))
+               (org-agenda-skip-function 'my-skip-unless-next)))
+             ("gp" "Phone" tags-todo "@phone"
+              ((org-agenda-files '("~/org/gtd.org"))
+               (org-agenda-skip-function 'my-skip-unless-next)))
+             ("gh" "Home" tags-todo "@home"
+              ((org-agenda-files '("~/org/gtd.org"))
+               (org-agenda-skip-function 'my-skip-unless-next)))
+             ("gd" "Outdoor" tags-todo "@outdoor"
+              ((org-agenda-files '("~/org/gtd.org"))
+               (org-agenda-skip-function 'my-skip-unless-next))
+              )
+             ("G" "GTD Block Agenda"
+              ((tags-todo "@coding")
+               (tags-todo "@computer")
+               (tags-todo "@jira")
+               (tags-todo "@outdoor")
+               (tags-todo "@phone")
+               (tags-todo "@home"))
+              ((org-agenda-files '("~/org/gtd.org"))
+               (org-agenda-skip-function 'my-skip-unless-next))
+              )))
    #+END_SRC
 
    Mark tasks as complete when all subtasks are done.
@@ -1302,9 +1326,6 @@ YAML
              org-roam-dailies-directory "~/org/roam/daily"
              org-roam-v2-ack t)
 
-       :config
-       (org-roam-db-autosync-mode)
-
        (setq org-roam-capture-templates
              '(("d" "default" plain
                 "%?"
@@ -1326,10 +1347,14 @@ YAML
                 "%?"
                 :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
                 :unnarrowed t)))
+       )
 
+       :config
+       (org-roam-db-autosync-mode)
+  
   ;; (add-to-list 'load-path "~/.emacs.d/private/org-roam-ui")
   ;; (load-library "org-roam-ui")
-
+  
 #+END_SRC
 
 ** Keybindings
