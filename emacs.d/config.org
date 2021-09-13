@@ -519,7 +519,7 @@ Do something useful with the title bar.
 
       (defun aw/edit-org-file (file)
         (interactive)
-        (find-file (concat org-directory file)))
+        (find-file (concat org-directory "/" file)))
 
       (defun aw/edit-ledger-file (file)
         (interactive)
