@@ -1096,12 +1096,23 @@ YAML
 #+END_SRC
 * Org-mode
 ** Setup
+   #+BEGIN_SRC emacs-lisp
+     (defun my-skip-unless-next ()
+       "Skip trees that are not next"
+       (let ((subtree-end (save-excursion (org-end-of-subtree t))))
+         (if (re-search-forward "NEXT" subtree-end t)
+             nil          ; tag found, do not skip
+           subtree-end))) ; tag not found, continue after end of subtree
+
+   #+END_SRC
+
+
   #+BEGIN_SRC emacs-lisp
     (use-package org-mode
       :pin manual
       :mode "\\.txt\\'"
 
-      :config
+      :init
       (setq org-agenda-files (list "~/org/")
             org-agenda-default-appointment-duration 60     ; 1 hour appointments
             org-agenda-span 1                              ; Show only today by default
@@ -1118,6 +1129,39 @@ YAML
             org-startup-folded t                           ; Fold everything at startup
             )
 
+     (setq org-agenda-custom-commands
+           '(("g" . "GTD contexts")
+             ("gc" "Computer" tags-todo "@computer"
+              ((org-agenda-files '("~/org/gtd.org"))
+               (org-agenda-skip-function 'my-skip-unless-next)))
+             ("gj" "Jira" tags-todo "@jira"
+              ((org-agenda-files '("~/org/gtd.org"))
+               (org-agenda-skip-function 'my-skip-unless-next)))
+             ("go" "Coding" tags-todo "@coding"
+              ((org-agenda-files '("~/org/gtd.org"))
+               (org-agenda-skip-function 'my-skip-unless-next)))
+             ("gp" "Phone" tags-todo "@phone"
+              ((org-agenda-files '("~/org/gtd.org"))
+               (org-agenda-skip-function 'my-skip-unless-next)))
+             ("gh" "Home" tags-todo "@home"
+              ((org-agenda-files '("~/org/gtd.org"))
+               (org-agenda-skip-function 'my-skip-unless-next)))
+             ("gd" "Outdoor" tags-todo "@outdoor"
+              ((org-agenda-files '("~/org/gtd.org"))
+               (org-agenda-skip-function 'my-skip-unless-next))
+              )
+             ("G" "GTD Block Agenda"
+              ((tags-todo "@coding")
+               (tags-todo "@computer")
+               (tags-todo "@jira")
+               (tags-todo "@outdoor")
+               (tags-todo "@phone")
+               (tags-todo "@home"))
+              ((org-agenda-files '("~/org/gtd.org"))
+               (org-agenda-skip-function 'my-skip-unless-next))
+              )))
+
+        :config
         ; Show dots instead of dashes
       (font-lock-add-keywords 'org-mode
                               '(("^ +\\([-*]\\) "
@@ -1154,49 +1198,6 @@ YAML
   #+END_SRC
 
 ** Agenda
-
-   I'm just starting to play around with custom agenda commands.
-
-   #+BEGIN_SRC emacs-lisp
-     (defun my-skip-unless-next ()
-       "Skip trees that are not next"
-       (let ((subtree-end (save-excursion (org-end-of-subtree t))))
-         (if (re-search-forward "NEXT" subtree-end t)
-             nil          ; tag found, do not skip
-           subtree-end))) ; tag not found, continue after end of subtree
-
-     (setq org-agenda-custom-commands
-           '(("g" . "GTD contexts")
-             ("gc" "Computer" tags-todo "@computer"
-              ((org-agenda-files '("~/org/gtd.org"))
-               (org-agenda-skip-function 'my-skip-unless-next)))
-             ("gj" "Jira" tags-todo "@jira"
-              ((org-agenda-files '("~/org/gtd.org"))
-               (org-agenda-skip-function 'my-skip-unless-next)))
-             ("go" "Coding" tags-todo "@coding"
-              ((org-agenda-files '("~/org/gtd.org"))
-               (org-agenda-skip-function 'my-skip-unless-next)))
-             ("gp" "Phone" tags-todo "@phone"
-              ((org-agenda-files '("~/org/gtd.org"))
-               (org-agenda-skip-function 'my-skip-unless-next)))
-             ("gh" "Home" tags-todo "@home"
-              ((org-agenda-files '("~/org/gtd.org"))
-               (org-agenda-skip-function 'my-skip-unless-next)))
-             ("gd" "Outdoor" tags-todo "@outdoor"
-              ((org-agenda-files '("~/org/gtd.org"))
-               (org-agenda-skip-function 'my-skip-unless-next))
-              )
-             ("G" "GTD Block Agenda"
-              ((tags-todo "@coding")
-               (tags-todo "@computer")
-               (tags-todo "@jira")
-               (tags-todo "@outdoor")
-               (tags-todo "@phone")
-               (tags-todo "@home"))
-              ((org-agenda-files '("~/org/gtd.org"))
-               (org-agenda-skip-function 'my-skip-unless-next))
-              )))
-   #+END_SRC
 
    Mark tasks as complete when all subtasks are done.
 
