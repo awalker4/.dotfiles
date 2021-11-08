@@ -41,21 +41,6 @@ And that's all it takes! I can make changes to this file and all the elisp snipp
    #+END_SRC
 ** Meta
 
-   I'm adding code blocks to this file all the time. Org-mode provides a few
-   [[http://orgmode.org/manual/Easy-Templates.html][structure templates]] for quickly adding new blocks, but I can make it even
-   better. Everything in here is Emacs lisp, so let's alter the source code
-   template a bit when I'm in this file.
-
-   #+BEGIN_SRC emacs-lisp
-     (defun aw/init-org-elisp-template ()
-        (when (equal (buffer-file-name)
-                     "/home/austin/.dotfiles/emacs.d/config.org")
-           (setq-local org-structure-template-alist
-                       '(("s" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC" "<src lang="emacs lisp">\n?\n</src>")))))
-
-     (add-hook 'org-mode-hook 'aw/init-org-elisp-template)
-   #+END_SRC
-
    If I haven't modified a buffer and it changes on disk, revert it. Really useful for when I pull down changes to my org files.
 
    #+BEGIN_SRC emacs-lisp
