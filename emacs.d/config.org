@@ -1035,7 +1035,8 @@ Some useful modes:
 *** Markdown
     #+BEGIN_SRC emacs-lisp
       (use-package markdown-mode
-        :mode "\\.md\\'")
+        :mode "\\.md\\'"
+        :ensure t)
     #+END_SRC
 *** Javascript
 
