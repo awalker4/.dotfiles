@@ -404,6 +404,7 @@ Do something useful with the title bar.
           "eg" (lambda () (interactive) (aw/edit-org-file "gtd.org"))
           "eG" (lambda () (interactive) (aw/edit-org-file "inbox.org"))
           "el" (lambda () (interactive) (aw/edit-org-file "lists.org"))
+          "eL" (lambda () (interactive) (aw/edit-org-file "someday.org"))
           "ei" (lambda () (interactive) (aw/edit-init-file "config.org"))
           "eI" (lambda () (interactive) (aw/edit-init-file "init.el"))
           "es" 'aw/switch-to-scratch
@@ -472,9 +473,11 @@ Do something useful with the title bar.
           "oc" 'org-capture
           "of" 'org-roam-node-find
           "og" 'helm-org-rifle
+          "oG" 'aw/pop-org-agenda
           "or" 'org-roam-node-insert
           "ol" 'org-store-link
           "os" 'org-search-view
+          "op" 'org-pomodoro
           "ot" 'org-todo-list
           "oT" 'aw/interactive-org-todo
           "ow" '(lambda () (interactive) (org-agenda "nil" "w")))
@@ -1197,22 +1200,23 @@ YAML
 
   (setq org-hierarchical-todo-statistics 'nil)
 #+END_SRC
+
+Make a function to pop open my most used org agenda custom command.
+
+#+BEGIN_SRC emacs-lisp
+(defun aw/pop-org-agenda (&optional split)
+  "Visit the org agenda, in the current window or a SPLIT."
+  (interactive "P")
+  (org-agenda nil "G")
+  (when (not split)
+    (delete-other-windows)
+    (text-scale-increase 2)))
+#+END_SRC
+
 ** Babel
 
    Org-babel is awesome for literate programming, and it even works with
    compiled languages. To create C source blocks we just need to enable
-
-   #+BEGIN_SRC emacs-lisp
-     ;;(with-eval-after-load 'org
-       ;;(org-babel-do-load-languages
-        ;;'org-babel-load-languages
-        ;;'((emacs-lisp . t)
-          ;;(C . t)
-          ;;(dot . t)
-          ;;(gnuplot . t)
-          ;;(python . t)
-          ;;(octave . t))))
-   #+END_SRC
 
    #+BEGIN_SRC emacs-lisp
      (advice-add 'org-babel-C-ensure-main-wrap :override #'aw/org-c-src-main)
@@ -1233,6 +1237,24 @@ YAML
      (setq org-babel-default-header-args:python
            '((:shebang . "#!/bin/python")))
    #+END_SRC
+
+** Pomodoros
+   org-pomodoro provides an easy way to keep tabs of how long I'm working on different tasks
+
+   #+begin_src emacs-lisp
+     (use-package org-pomodoro
+       :ensure t
+       :commands (org-pomodoro)
+       :config
+       (setq
+        alert-user-configuration (quote ((((:category . "org-pomodoro")) libnotify nil)))
+        org-pomodoro-manual-break nil
+        org-pomodoro-play-sounds t
+        org-pomodoro-short-break-sound "/home/austin/.emacs.d/alarm.wav"
+        org-pomodoro-long-break-sound "/home/austin/.emacs.d/alarm.wav"
+        org-pomodoro-finished-sound "/home/austin/.emacs.d/alarm.wav"
+        ))
+   #+end_src
 
 ** Capturing
 
@@ -1265,7 +1287,8 @@ YAML
             '((sequence "TODO" "NEXT" "WAITING" "|" "DONE")))
 
       (setq org-capture-templates
-            '(("t" "Todo" entry (file "~/org/inbox.org") "** NEXT %?\n")
+            '(
+              ("t" "Todo" entry (file "~/org/inbox.org") "** NEXT %?\n")
               ("p" "Project" entry (file "~/org/inbox.org") "** TODO %^{Project Description} [/]\n*** NEXT %?")
               ("m" "Meeting" entry (file "~/org/inbox.org") "** %^{Meeting description}\n - %?\n\n %u\n")
               ))
