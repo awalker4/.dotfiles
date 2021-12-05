@@ -1074,7 +1074,7 @@ PlantUML is awesome for documentation. I want diagrams to generate automatically
 (defun generate-puml ()
   "If the current buffer is a plant-uml file, autogenerate a png on each save."
   (if (string-match "\\.puml$" (buffer-file-name))
-      (shell-command (concat "plantuml "   (buffer-file-name)))))
+      (shell-command (concat "java -jar /home/austin/Downloads/plantuml.jar "   (buffer-file-name)))))
 (add-hook 'after-save-hook #'generate-puml)
 #+END_SRC
 
