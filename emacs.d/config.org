@@ -1377,10 +1377,10 @@ Make a function to pop open my most used org agenda custom command.
                 "%?"
                 :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
                 :unnarrowed t)))
-       )
-
+  
        :config
        (org-roam-db-autosync-mode)
+       )
   
   ;; (add-to-list 'load-path "~/.emacs.d/private/org-roam-ui")
   ;; (load-library "org-roam-ui")
