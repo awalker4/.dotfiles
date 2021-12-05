@@ -1097,6 +1097,11 @@ YAML
 
 
   #+BEGIN_SRC emacs-lisp
+    
+     (use-package org-ql
+       :ensure t
+       )
+    
     (use-package org-mode
       :pin manual
       :mode "\\.txt\\'"
@@ -1139,36 +1144,46 @@ YAML
               ((org-agenda-files '("~/org/gtd.org"))
                (org-agenda-skip-function 'my-skip-unless-next))
               )
+             ("s" "Stuck Projects"
+              ((org-ql-block '(and (todo "TODO")
+                                   (descendants)
+                                   (not (done))
+                                   (not (descendants (todo "NEXT"))))
+                             ((org-ql-block-header "Stuck Projects"))))
+              ((org-agenda-files '("~/org/gtd.org"))))
              ("G" "GTD Block Agenda"
               ((tags-todo "@coding")
-               (tags-todo "@computer")
                (tags-todo "@jira")
-               (tags-todo "@outdoor")
+               (tags-todo "@computer")
                (tags-todo "@phone")
                (tags-todo "@home"))
               ((org-agenda-files '("~/org/gtd.org"))
                (org-agenda-skip-function 'my-skip-unless-next))
               )))
-
+    
         :config
         ; Show dots instead of dashes
       (font-lock-add-keywords 'org-mode
                               '(("^ +\\([-*]\\) "
                                  (0 (prog1 ()
                                       (compose-region (match-beginning 1) (match-end 1) "•"))))))
-
+    
       (add-hook 'org-mode-hook
                 (lambda ()
                   (turn-on-visual-line-mode)
                   ))
-
-      (fullframe org-agenda org-agenda-Quit))
-
+    
+     (fullframe org-agenda org-agenda-Quit)
+    
+     )
+    
     (use-package org-bullets
       :ensure t
       :config
-      (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+      (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
+      )
+    
   #+END_SRC
 
   Of course, I use git to keep my org files under control. We should periodically make sure everything is in sync.
