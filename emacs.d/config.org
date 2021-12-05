@@ -1415,7 +1415,13 @@ Make a function to pop open my most used org agenda custom command.
 Make sure everything is loaded properly.
 
 #+BEGIN_SRC emacs-lisp
-(org-reload)
+  (org-reload)
+
+  ; Somehow the structure template list keeps getting reset...
+  (setq org-structure-template-alist (eval (car (get 'org-structure-template-alist 'standard-value))))
+
+  (define-key org-agenda-mode-map "j" 'org-agenda-next-item)
+  (define-key org-agenda-mode-map "k" 'org-agenda-previous-item)
 #+END_SRC
 * Ledger
 
