@@ -1124,26 +1124,7 @@ YAML
             )
 
      (setq org-agenda-custom-commands
-           '(("g" . "GTD contexts")
-             ("gc" "Computer" tags-todo "@computer"
-              ((org-agenda-files '("~/org/gtd.org"))
-               (org-agenda-skip-function 'my-skip-unless-next)))
-             ("gj" "Jira" tags-todo "@jira"
-              ((org-agenda-files '("~/org/gtd.org"))
-               (org-agenda-skip-function 'my-skip-unless-next)))
-             ("go" "Coding" tags-todo "@coding"
-              ((org-agenda-files '("~/org/gtd.org"))
-               (org-agenda-skip-function 'my-skip-unless-next)))
-             ("gp" "Phone" tags-todo "@phone"
-              ((org-agenda-files '("~/org/gtd.org"))
-               (org-agenda-skip-function 'my-skip-unless-next)))
-             ("gh" "Home" tags-todo "@home"
-              ((org-agenda-files '("~/org/gtd.org"))
-               (org-agenda-skip-function 'my-skip-unless-next)))
-             ("gd" "Outdoor" tags-todo "@outdoor"
-              ((org-agenda-files '("~/org/gtd.org"))
-               (org-agenda-skip-function 'my-skip-unless-next))
-              )
+           '(
              ("s" "Stuck Projects"
               ((org-ql-block '(and (todo "TODO")
                                    (descendants)
@@ -1151,12 +1132,10 @@ YAML
                                    (not (descendants (todo "NEXT"))))
                              ((org-ql-block-header "Stuck Projects"))))
               ((org-agenda-files '("~/org/gtd.org"))))
-             ("G" "GTD Block Agenda"
-              ((tags-todo "@coding")
-               (tags-todo "@jira")
-               (tags-todo "@computer")
-               (tags-todo "@phone")
-               (tags-todo "@home"))
+             ("g" "GTD Block Agenda"
+              (
+               (todo "NEXT")
+               )
               ((org-agenda-files '("~/org/gtd.org"))
                (org-agenda-skip-function 'my-skip-unless-next))
               )))
@@ -1219,13 +1198,16 @@ YAML
 Make a function to pop open my most used org agenda custom command.
 
 #+BEGIN_SRC emacs-lisp
-(defun aw/pop-org-agenda (&optional split)
-  "Visit the org agenda, in the current window or a SPLIT."
-  (interactive "P")
-  (org-agenda nil "G")
-  (when (not split)
-    (delete-other-windows)
-    (text-scale-increase 2)))
+  (defun aw/pop-org-agenda ()
+    (interactive)
+    (org-super-agenda-mode)
+    (let ((org-super-agenda-groups
+           '((:name "Sorted"
+                    :auto-map (lambda (item)
+                                (second (org-super-agenda--get-tags item)))))))
+      (org-agenda nil "g")
+      (delete-other-windows)
+      (text-scale-increase 2)))
 #+END_SRC
 
 ** Babel
