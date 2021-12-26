@@ -269,6 +269,15 @@ Do something useful with the title bar.
       '((buffer-file-name "%f" (dired-directory dired-directory "%b"))))
 #+END_SRC
 
+*** Line wrapping
+
+    Enable visual-lines-mode where it makes sense.
+
+ #+BEGIN_SRC emacs-lisp
+ (use-package visual-line-mode
+   :hook org-mode)
+ #+END_SRC
+
 ** Windows
 
    The following function will toggle horizontal/vertical window splits. ([[http://www.emacswiki.org/emacs/ToggleWindowSplit][Source]])
@@ -1147,11 +1156,6 @@ YAML
                               '(("^ +\\([-*]\\) "
                                  (0 (prog1 ()
                                       (compose-region (match-beginning 1) (match-end 1) "•"))))))
-    
-      (add-hook 'org-mode-hook
-                (lambda ()
-                  (turn-on-visual-line-mode)
-                  ))
     
      (fullframe org-agenda org-agenda-Quit)
     
