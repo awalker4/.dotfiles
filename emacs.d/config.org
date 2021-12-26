@@ -649,6 +649,7 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
         :init
         ;; Flycheck gets to be a bit much when warning about checkdoc issues.
         (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
+        (setq flycheck-temp-prefix "~flycheck")
 
         :config
         (add-hook 'prog-mode-hook 'flycheck-mode))
