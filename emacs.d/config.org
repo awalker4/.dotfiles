@@ -1340,9 +1340,9 @@ Make a function to pop open my most used org agenda custom command.
 
        (setq org-roam-capture-templates
              '(
-               ("a" "Album" entry
+               ("a" "Album" plain
                 (file "~/org/templates/RoamAlbumNote.org")
-                :if-new (file+head "weekly-albums.org" "#+title: ${title}\n")
+                :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
                 :unnarrowed nil)
                ("d" "default" plain
                 "%?"
