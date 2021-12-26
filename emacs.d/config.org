@@ -1479,6 +1479,17 @@ Make sure everything is loaded properly.
       (define-key ledger-mode-map (kbd "C-M-,") 'ledger-decrement-date))
   #+END_SRC
 
+  beancount mode
+  #+begin_src emacs-lisp
+(use-package beancount-mode
+  :mode "\\.beancount\\'"
+  :load-path "elpa/beancount-mode/"
+  :hook (beancount-mode . outline-minor-mode)
+  :init
+  (require 'beancount)
+  )
+  #+end_src
+
 * System Stuff
 ** Dired
 
