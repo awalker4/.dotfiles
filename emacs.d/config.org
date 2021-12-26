@@ -1374,6 +1374,17 @@ Make a function to pop open my most used org agenda custom command.
   
 #+END_SRC
 
+This package will add modify timestamps when I update my org-roam nodes.
+
+#+begin_src emacs-lisp
+  (use-package org-roam-timestamps
+    :ensure t
+    :after org-roam
+    :config
+    (org-roam-timestamps-mode)
+    )
+#+end_src
+
 ** Keybindings
 
    Org-mode uses Shift + arrow keys to change things like timestamps, TODO
