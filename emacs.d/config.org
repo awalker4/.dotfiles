@@ -1253,6 +1253,15 @@ Make a function to pop open my most used org agenda custom command.
         ))
    #+end_src
 
+** Org Download
+   #+begin_src emacs-lisp
+     (use-package org-download
+       :ensure t
+       :hook (org-mode . org-download-enable)
+       :init
+       (require 'org-download))
+   #+end_src
+
 ** Capturing
 
    Notes that I capture are generally sent to =refile.org= for further review. We can use Helm to
