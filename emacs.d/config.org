@@ -333,22 +333,23 @@ Do something useful with the title bar.
     #+BEGIN_SRC emacs-lisp
       (use-package evil
         :ensure t
-
+      
         :init
         (setq evil-want-integration t ;; This is optional since it's already set to t by default.
+              evil-want-fine-undo t    ; Give me granular undo points while in insert mode
               evil-want-keybinding nil
               evil-want-C-i-jump nil)
-
+      
         :config
         (define-key evil-normal-state-map "H" 'windmove-left)
         (define-key evil-normal-state-map "J" 'windmove-down)
         (define-key evil-normal-state-map "K" 'windmove-up)
         (define-key evil-normal-state-map "L" 'windmove-right)
         (define-key evil-normal-state-map "\M-." 'nil) ; Reserve for helm-gtags
-
+      
         (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
         (key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
-
+      
         ;; From tpope's vim-unimpaired
         (key-chord-define evil-normal-state-map "[e" 'move-text-up)
         (key-chord-define evil-normal-state-map "]e" 'move-text-down)
@@ -356,39 +357,39 @@ Do something useful with the title bar.
         (key-chord-define evil-normal-state-map "] " 'aw/open-line-below)
         (key-chord-define evil-normal-state-map "[b" 'previous-buffer)
         (key-chord-define evil-normal-state-map "]b" 'next-buffer)
-
+      
         ;; (key-chord-define evil-normal-state-map "gd" 'helm-semantic-or-imenu)
         (key-chord-define evil-normal-state-map "gf" 'helm-projectile-find-file-dwim)
         (key-chord-define evil-normal-state-map "gF" 'projectile-find-file-in-known-projects)
-
+      
         (evil-mode 1))
-
+      
       (use-package evil-collection
         :after evil
         :ensure t
         :config
         (evil-collection-init))
-
+      
       (use-package move-text :ensure t)            ; Move current line or region with M-up or M-down
       (use-package evil-nerd-commenter
         :ensure t)
-
+      
       (use-package evil-surround
         :ensure t
         :config
         (global-evil-surround-mode 1))
-
+      
       (use-package evil-visualstar
         :ensure t
         :config
         (global-evil-visualstar-mode t))
-
+      
       (use-package evil-args
         :ensure t
         :config
         (define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
         (define-key evil-outer-text-objects-map "a" 'evil-outer-arg))
-
+      
       (use-package evil-exchange
         :ensure t
         :config
