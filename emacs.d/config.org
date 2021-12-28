@@ -1383,11 +1383,10 @@ This package will add modify timestamps when I update my org-roam nodes.
 
 #+begin_src emacs-lisp
   (use-package org-roam-timestamps
+    :hook (org-mode . org-roam-timestamps-mode)
+    :diminish
     :ensure t
-    :after org-roam
-    :config
-    (org-roam-timestamps-mode)
-    )
+    :after org-roam)
 #+end_src
 
 ** Keybindings
