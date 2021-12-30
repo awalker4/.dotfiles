@@ -269,14 +269,6 @@ Do something useful with the title bar.
       '((buffer-file-name "%f" (dired-directory dired-directory "%b"))))
 #+END_SRC
 
-*** Line wrapping
-
-    Enable visual-lines-mode where it makes sense.
-
- #+BEGIN_SRC emacs-lisp
- (use-package visual-line-mode
-   :hook org-mode)
- #+END_SRC
 
 ** Windows
 
@@ -1110,6 +1102,7 @@ YAML
        )
     
     (use-package org-mode
+      :hook (org-mode . visual-line-mode)
       :pin manual
       :mode "\\.txt\\'"
 
