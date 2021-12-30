@@ -366,6 +366,7 @@ Do something useful with the title bar.
       
       (use-package evil-collection
         :after evil
+        :diminish evil-collection-unimpaired-mode
         :ensure t
         :config
         (evil-collection-init))
