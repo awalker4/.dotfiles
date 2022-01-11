@@ -402,7 +402,6 @@ Do something useful with the title bar.
         (evil-leader/set-leader "SPC")
         (evil-leader/set-key
           "f" 'find-file
-          "t" 'multi-term-dedicated-toggle
           "ed" 'aw/browse-current-dir
           "eg" (lambda () (interactive) (aw/edit-org-file "gtd.org"))
           "eG" (lambda () (interactive) (aw/edit-org-file "inbox.org"))
@@ -483,6 +482,8 @@ Do something useful with the title bar.
           "op" 'org-pomodoro
           "ot" 'org-todo-list
           "oT" 'aw/interactive-org-todo
+          "t"  `org-todo
+          "T"  `org-set-tags-command
           "ow" '(lambda () (interactive) (org-agenda "nil" "w")))
 
         ;; Projectile/Helm stuff
