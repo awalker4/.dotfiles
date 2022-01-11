@@ -1369,9 +1369,9 @@ Make a function to pop open my most used org agenda custom command.
        :config
        (org-roam-db-autosync-mode)
        )
-  
-  ;; (add-to-list 'load-path "~/.emacs.d/private/org-roam-ui")
-  ;; (load-library "org-roam-ui")
+
+  (add-to-list 'load-path "~/.emacs.d/private/org-roam-ui")
+  (load-library "org-roam-ui")
   
 #+END_SRC
 
