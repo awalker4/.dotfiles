@@ -1113,6 +1113,7 @@ YAML
             org-agenda-start-on-weekday 0                  ; Show agenda from Sunday.
             org-catch-invisible-edits 'show                ; Expand a fold when trying to edit it
             org-confirm-babel-evaluate nil                 ; Don't ask to evaluate src blocks
+            org-complete-tags-always-offer-all-agenda-tags  t ; Use all current agenda tags for completion
             org-directory "~/org/"
             org-hide-emphasis-markers t                    ; Don't show markup characters
             org-link-search-must-match-exact-headline nil  ; Create internal links with only a partial match
