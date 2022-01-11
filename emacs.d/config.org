@@ -1287,7 +1287,7 @@ Make a function to pop open my most used org agenda custom command.
 
     #+BEGIN_SRC emacs-lisp
       (setq org-todo-keywords
-            '((sequence "TODO" "NEXT" "WAITING" "|" "DONE")))
+            '((sequence "TODO(t)" "NEXT(n!)" "WAITING(w@/!)" "|" "DONE(d!)")))
 
       (setq org-capture-templates
             '(
