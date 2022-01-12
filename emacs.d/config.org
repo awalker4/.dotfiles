@@ -484,6 +484,7 @@ Do something useful with the title bar.
           "oT" 'aw/interactive-org-todo
           "t"  `org-todo
           "T"  `org-set-tags-command
+          "w"  'org-refile
           "ow" '(lambda () (interactive) (org-agenda "nil" "w")))
 
         ;; Projectile/Helm stuff
