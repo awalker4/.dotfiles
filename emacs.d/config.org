@@ -414,7 +414,7 @@ Do something useful with the title bar.
           "eS" 'aw/generate-scratch-buffer
           "ew" (lambda () (interactive) (aw/edit-org-file "work.org"))
           "x" 'counsel-M-x)
-
+      
         ;; Window stuff
         (evil-leader/set-key
           "0" 'delete-window
@@ -427,7 +427,7 @@ Do something useful with the title bar.
           "+" 'aw/toggle-window-split
           "<up>" 'text-scale-increase
           "<down>" 'text-scale-decrease)
-
+      
         ;; Buffer and file stuff
         (evil-leader/set-key
           "bg" 'aw/helm-do-grep-all-buffers
@@ -439,12 +439,12 @@ Do something useful with the title bar.
           "bb" 'counsel-projectile-switch-to-buffer
           "bs" 'ivy-switch-buffer
           "bw" 'write-file)
-
+      
         ;; Nerd commenter
         (evil-leader/set-key
           "cc" 'evilnc-copy-and-comment-lines
           "ci" 'evilnc-comment-or-uncomment-lines)
-
+      
         ;; Help stuff
         (evil-leader/set-key
           "hc" 'describe-key-briefly
@@ -452,7 +452,7 @@ Do something useful with the title bar.
           "hg" 'aw/search-ddg
           "hv" 'describe-variable
           "hm" 'man)
-
+      
         ;; Git/VC stuff
         (evil-leader/set-key
           "gb" 'magit-blame
@@ -461,14 +461,14 @@ Do something useful with the title bar.
           "gi" 'aw/edit-gitignore
           "gl" 'magit-log-buffer-file
           "gs" 'magit-status)
-
+      
         ;; Compiling
         (evil-leader/set-key
           "mm" 'projectile-compile-project
           "mn" 'next-error
           "mp" 'previous-error
           "mt" 'projectile-test-project)
-
+      
         ;; Org stuff
         (evil-leader/set-key
           "oa" 'org-agenda-list
@@ -1100,9 +1100,9 @@ YAML
 
   #+BEGIN_SRC emacs-lisp
     
-     (use-package org-ql
-       :ensure t
-       )
+    (use-package org-ql
+      :ensure t
+      )
     
     (use-package org-mode
       :hook (org-mode . visual-line-mode)
@@ -1128,22 +1128,22 @@ YAML
             org-startup-folded t                           ; Fold everything at startup
             )
     
-     (setq org-agenda-custom-commands
-           '(
-             ("s" "Stuck Projects"
-              ((org-ql-block '(and (todo "TODO")
-                                   (descendants)
-                                   (not (done))
-                                   (not (descendants (todo "NEXT"))))
-                             ((org-ql-block-header "Stuck Projects"))))
-              ((org-agenda-files '("~/org/gtd.org"))))
-             ("g" "GTD Block Agenda"
-              (
-               (todo "NEXT")
-               )
-              ((org-agenda-files '("~/org/gtd.org"))
-               (org-agenda-skip-function 'my-skip-unless-next))
-              )))
+      (setq org-agenda-custom-commands
+            '(
+              ("s" "Stuck Projects"
+               ((org-ql-block '(and (todo "TODO")
+                                    (descendants)
+                                    (not (done))
+                                    (not (descendants (todo "NEXT"))))
+                              ((org-ql-block-header "Stuck Projects"))))
+               ((org-agenda-files '("~/org/gtd.org"))))
+              ("g" "GTD Block Agenda"
+               (
+                (todo "NEXT")
+                )
+               ((org-agenda-files '("~/org/gtd.org"))
+                (org-agenda-skip-function 'my-skip-unless-next))
+               )))
     
         :config
         ; Show dots instead of dashes
