@@ -1267,8 +1267,8 @@ Make a function to pop open my most used org agenda custom command.
    quickly refile them to any headline within my =org-agenda-files=.
 
    #+BEGIN_SRC emacs-lisp
-     (setq org-refile-targets '((nil :maxlevel . 3)
-                                (org-agenda-files :maxlevel . 3)))
+     (setq org-refile-targets '((nil :maxlevel . 4)
+                                (org-agenda-files :maxlevel . 4)))
 
      (defun aw/verify-refile-target ()
        "Exclude todo keywords with a done state from refile targets"
