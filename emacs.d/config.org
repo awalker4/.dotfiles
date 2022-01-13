@@ -21,19 +21,20 @@ And that's all it takes! I can make changes to this file and all the elisp snipp
    #+BEGIN_SRC emacs-lisp
      (require 'cl)
      (require 'package)
-
+     
      (setq package-archives
-      '(("gnu" . "https://elpa.gnu.org/packages/")
-          ("MELPA" . "https://melpa.org/packages/"))
-      package-enable-at-startup nil)
-
-     (package-initialize)
-
+           '(("gnu" . "https://elpa.gnu.org/packages/")
+             ("MELPA" . "https://melpa.org/packages/"))
+           package-enable-at-startup nil)
+     
+     (when (< emacs-major-version 27)
+       (package-initialize))
+     
      (unless (package-installed-p 'use-package)
        (package-refresh-contents)
        (package-install 'use-package)
        (package-install 'diminish))
-
+     
      (eval-when-compile
        (require 'use-package))
      (require 'diminish)
