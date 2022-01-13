@@ -1120,6 +1120,7 @@ YAML
             org-directory "~/org/"
             org-hide-emphasis-markers t                    ; Don't show markup characters
             org-link-search-must-match-exact-headline nil  ; Create internal links with only a partial match
+            org-log-into-drawer t                          ; Track state changes in the LOGBOOK drawer
             org-outline-path-complete-in-steps nil         ; Refile in a single go
             org-refile-use-outline-path t                  ; Show full paths for refiling
             org-return-follows-link t                      ; Hit return to open links
