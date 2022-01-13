@@ -487,7 +487,7 @@ Do something useful with the title bar.
           "T"  `org-set-tags-command
           "w"  'org-refile
           "ow" '(lambda () (interactive) (org-agenda "nil" "w")))
-
+      
         ;; Projectile/Helm stuff
         (evil-leader/set-key
           "pd" 'projectile-dired
@@ -497,7 +497,7 @@ Do something useful with the title bar.
           "pp" 'counsel-projectile-switch-project
           "pr" 'projectile-run-shell-command-in-root
           "ps" 'helm-semantic-or-imenu)
-
+      
         ;; Misc
         (evil-leader/set-key
           "vb" 'eval-buffer
@@ -1108,7 +1108,7 @@ YAML
       :hook (org-mode . visual-line-mode)
       :pin manual
       :mode "\\.txt\\'"
-
+    
       :init
       (setq org-agenda-files (list "~/org/")
             org-agenda-default-appointment-duration 60     ; 1 hour appointments
@@ -1126,7 +1126,7 @@ YAML
             org-src-fontify-natively t                     ; Highlight src blocks natively
             org-startup-folded t                           ; Fold everything at startup
             )
-
+    
      (setq org-agenda-custom-commands
            '(
              ("s" "Stuck Projects"
@@ -1159,7 +1159,7 @@ YAML
       :ensure t
       :config
       (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-
+    
       )
     
   #+END_SRC
