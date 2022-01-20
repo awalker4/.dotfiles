@@ -478,10 +478,11 @@ Do something useful with the title bar.
           "og" 'helm-org-rifle
           "oG" 'aw/pop-org-agenda
           "or" 'org-roam-node-insert
+          "ob" 'org-roam-buffer-toggle
           "ol" 'org-store-link
           "os" 'org-search-view
           "op" 'org-pomodoro
-          "ot" 'org-todo-list
+          "oi" 'org-toggle-inline-images
           "oT" 'aw/interactive-org-todo
           "t"  `org-todo
           "T"  `org-set-tags-command
