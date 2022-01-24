@@ -1253,7 +1253,8 @@ Make a function to pop open my most used org agenda custom command.
        :ensure t
        :hook (org-mode . org-download-enable)
        :init
-       (require 'org-download))
+       (require 'org-download)
+       (setq-default org-download-image-dir "/home/austin/org/roam/images"))
    #+end_src
 
 ** Capturing
