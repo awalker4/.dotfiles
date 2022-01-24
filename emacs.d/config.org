@@ -412,7 +412,6 @@ Do something useful with the title bar.
           "eI" (lambda () (interactive) (aw/edit-init-file "init.el"))
           "es" 'aw/switch-to-scratch
           "eS" 'aw/generate-scratch-buffer
-          "ew" (lambda () (interactive) (aw/edit-org-file "work.org"))
           "x" 'counsel-M-x)
       
         ;; Window stuff
@@ -432,13 +431,12 @@ Do something useful with the title bar.
         (evil-leader/set-key
           "bg" 'aw/helm-do-grep-all-buffers
           "bk" 'kill-this-buffer
+          "bK" 'aw/delete-this-file
           "bl" 'ibuffer
-          "bm" 'bookmark-jump
           "bo" 'swiper
           "br" 'rename-buffer
           "bb" 'counsel-projectile-switch-to-buffer
-          "bs" 'ivy-switch-buffer
-          "bw" 'write-file)
+          "bs" 'ivy-switch-buffer)
       
         ;; Nerd commenter
         (evil-leader/set-key
@@ -497,12 +495,7 @@ Do something useful with the title bar.
           "ph" 'projectile-find-other-file
           "pp" 'counsel-projectile-switch-project
           "pr" 'projectile-run-shell-command-in-root
-          "ps" 'helm-semantic-or-imenu)
-      
-        ;; Misc
-        (evil-leader/set-key
-          "vb" 'eval-buffer
-          "vv" 'eval-last-sexp))
+          "ps" 'helm-semantic-or-imenu))
     #+END_SRC
 
 *** Evil Functions
