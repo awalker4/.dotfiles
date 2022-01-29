@@ -1103,6 +1103,7 @@ YAML
     
     (use-package org-mode
       :hook (org-mode . visual-line-mode)
+      :hook (org-mode . org-super-agenda-mode)
       :pin manual
       :mode "\\.txt\\'"
     
@@ -1142,16 +1143,23 @@ YAML
                 (org-agenda-skip-function 'my-skip-unless-next))
                )))
     
-        :config
-        ; Show dots instead of dashes
+    
+    
+      ; Use org-super-agenda to always group everything by tag
+      (setq org-super-agenda-groups
+            '((:name "Sorted"
+                     :auto-map (lambda (item)
+                                 (second (org-super-agenda--get-tags item))))))
+    
+    
+      :config
+      (fullframe org-agenda org-agenda-Quit)
+    
+      ; Show dots instead of dashes
       (font-lock-add-keywords 'org-mode
                               '(("^ +\\([-*]\\) "
                                  (0 (prog1 ()
-                                      (compose-region (match-beginning 1) (match-end 1) "•"))))))
-    
-     (fullframe org-agenda org-agenda-Quit)
-    
-     )
+                                      (compose-region (match-beginning 1) (match-end 1) "•")))))))
     
     (use-package org-bullets
       :ensure t
@@ -1197,14 +1205,9 @@ Make a function to pop open my most used org agenda custom command.
 #+BEGIN_SRC emacs-lisp
   (defun aw/pop-org-agenda ()
     (interactive)
-    (org-super-agenda-mode)
-    (let ((org-super-agenda-groups
-           '((:name "Sorted"
-                    :auto-map (lambda (item)
-                                (second (org-super-agenda--get-tags item)))))))
-      (org-agenda nil "g")
-      (delete-other-windows)
-      (text-scale-increase 2)))
+    (org-agenda nil "g")
+    (delete-other-windows)
+    (text-scale-increase 2))
 #+END_SRC
 
 ** Babel
