@@ -7,16 +7,16 @@
 * Initialization
 ** About
 
-This is a literate Emacs config written in org-mode. Every time I set up a new machine, I make sure the following is in my init.el:
+   This is a literate Emacs config written in org-mode. Every time I set up a new machine, I make sure the following is in my init.el:
 
-echo '(org-babel-load-file "~/.emacs.d/config.org")' > ~/.dotfiles/emacs.d/init.el
+   echo '(org-babel-load-file "~/.emacs.d/config.org")' > ~/.dotfiles/emacs.d/init.el
 
-And that's all it takes! I can make changes to this file and all the elisp snippets will get evaluated on startup.
+   And that's all it takes! I can make changes to this file and all the elisp snippets will get evaluated on startup.
 
 ** Package Setup
 
-    I use the great and powerful =use-package= to keep package configuration simple.
-    We just need to bootstrap =use-package= by ensuring it's installed first.
+   I use the great and powerful =use-package= to keep package configuration simple.
+   We just need to bootstrap =use-package= by ensuring it's installed first.
 
    #+BEGIN_SRC emacs-lisp
      (require 'cl)
@@ -96,11 +96,11 @@ And that's all it takes! I can make changes to this file and all the elisp snipp
                 recentf-mode               ; Recently opened files.
                 show-paren-mode))          ; Highlight matching parentheses.
        (funcall mode 1))
-
+     
      (when (version< emacs-version "24.4")
        (eval-after-load 'auto-compile
          '((auto-compile-on-save-mode 1))))  ; compile .el files on save.
-
+     
    #+END_SRC
 
    FIXME: new category for completion
@@ -112,7 +112,7 @@ And that's all it takes! I can make changes to this file and all the elisp snipp
        :diminish company-mode
        :init
        (setq company-idle-delay 0)
-
+     
        :config
        (add-hook 'after-init-hook 'global-company-mode))
    #+END_SRC
@@ -121,24 +121,24 @@ And that's all it takes! I can make changes to this file and all the elisp snipp
    single /y/ or /n/ will suffice.
 
    #+BEGIN_SRC emacs-lisp
-   (fset 'yes-or-no-p 'y-or-n-p)
+     (fset 'yes-or-no-p 'y-or-n-p)
    #+END_SRC
 
    To avoid file system clutter we put all auto saved files in a single
    directory.
 
    #+BEGIN_SRC emacs-lisp
-   (defvar emacs-autosave-directory
-     (concat user-emacs-directory "autosaves/")
-     "This variable dictates where to put auto saves. It is set to a
-     directory called autosaves located wherever your .emacs.d/ is
-     located.")
-
-   ;; Sets all files to be backed up and auto saved in a single directory.
-   (setq backup-directory-alist
-         `((".*" . ,emacs-autosave-directory))
-         auto-save-file-name-transforms
-         `((".*" ,emacs-autosave-directory t)))
+     (defvar emacs-autosave-directory
+       (concat user-emacs-directory "autosaves/")
+       "This variable dictates where to put auto saves. It is set to a
+       directory called autosaves located wherever your .emacs.d/ is
+       located.")
+     
+     ;; Sets all files to be backed up and auto saved in a single directory.
+     (setq backup-directory-alist
+           `((".*" . ,emacs-autosave-directory))
+           auto-save-file-name-transforms
+           `((".*" ,emacs-autosave-directory t)))
    #+END_SRC
 
    The scratch buffer is a useful place to test out bits of elisp or store some
@@ -147,24 +147,24 @@ And that's all it takes! I can make changes to this file and all the elisp snipp
    startup. ([[http://dorophone.blogspot.com/2011/11/how-to-make-emacs-scratch-buffer.html][Source]])
 
    #+BEGIN_SRC emacs-lisp
-      (defun save-persistent-scratch ()
-        "Save the contents of *scratch*"
-             (with-current-buffer (get-buffer-create "*scratch*")
-               (write-region (point-min) (point-max)
-                             (concat user-emacs-directory "scratch"))))
-
-      (defun load-persistent-scratch ()
-        "Reload the scratch buffer"
-        (let ((scratch-file (concat user-emacs-directory "scratch")))
-          (if (file-exists-p scratch-file)
-              (with-current-buffer (get-buffer "*scratch*")
-                (delete-region (point-min) (point-max))
-                (insert-file-contents scratch-file)))))
-
-      (add-hook 'emacs-startup-hook 'load-persistent-scratch)
-      (add-hook 'kill-emacs-hook 'save-persistent-scratch)
-
-      (run-with-idle-timer 300 t 'save-persistent-scratch)
+     (defun save-persistent-scratch ()
+       "Save the contents of *scratch*"
+       (with-current-buffer (get-buffer-create "*scratch*")
+         (write-region (point-min) (point-max)
+                       (concat user-emacs-directory "scratch"))))
+     
+     (defun load-persistent-scratch ()
+       "Reload the scratch buffer"
+       (let ((scratch-file (concat user-emacs-directory "scratch")))
+         (if (file-exists-p scratch-file)
+             (with-current-buffer (get-buffer "*scratch*")
+               (delete-region (point-min) (point-max))
+               (insert-file-contents scratch-file)))))
+     
+     (add-hook 'emacs-startup-hook 'load-persistent-scratch)
+     (add-hook 'kill-emacs-hook 'save-persistent-scratch)
+     
+     (run-with-idle-timer 300 t 'save-persistent-scratch)
    #+END_SRC
 
    Set =utf-8= as preferred coding system.
@@ -224,18 +224,18 @@ And that's all it takes! I can make changes to this file and all the elisp snipp
        :ensure t)
      (use-package solarized-theme
        :ensure t)
-
+     
      (defun aw/load-theme ()
        (load-theme 'zenburn t)
        (when (member "Inconsolata" (font-family-list))
          (set-face-attribute 'default nil :font "Inconsolata-13")
          (add-to-list 'default-frame-alist
                       '(font . "Inconsolata-13"))))
-
+     
      (defun aw/load-theme-in-frame (frame)
        (select-frame frame)
        (aw/load-theme))
-
+     
      (if (daemonp)
          (add-hook 'after-make-frame-functions #'aw/load-theme-in-frame)
        (aw/load-theme))
@@ -248,7 +248,7 @@ And that's all it takes! I can make changes to this file and all the elisp snipp
 
    #+BEGIN_SRC emacs-lisp
      (defadvice load-theme
-       (before disable-before-load (theme &optional no-confirm no-enable) activate)
+         (before disable-before-load (theme &optional no-confirm no-enable) activate)
        (mapc 'disable-theme custom-enabled-themes))
    #+END_SRC
 
@@ -263,12 +263,12 @@ And that's all it takes! I can make changes to this file and all the elisp snipp
      (set-fringe-bitmap-face 'tilde 'font-lock-function-name-face)
    #+END_SRC
 
-Do something useful with the title bar.
+   Do something useful with the title bar.
 
-#+BEGIN_SRC emacs-lisp
-(setq frame-title-format
-      '((buffer-file-name "%f" (dired-directory dired-directory "%b"))))
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (setq frame-title-format
+           '((buffer-file-name "%f" (dired-directory dired-directory "%b"))))
+   #+END_SRC
 
 
 ** Windows
@@ -313,11 +313,11 @@ Do something useful with the title bar.
 
     #+BEGIN_SRC emacs-lisp
       (use-package key-chord
-	:ensure t
-	:init
-	(setq key-chord-two-keys-delay 2)
-	:config
-	(key-chord-mode 1))
+        :ensure t
+        :init
+        (setq key-chord-two-keys-delay 2)
+        :config
+        (key-chord-mode 1))
     #+END_SRC
 
 *** Evil setup
@@ -504,55 +504,55 @@ Do something useful with the title bar.
       (defun aw/edit-init-file (file)
         (interactive)
         (find-file (concat user-emacs-directory file)))
-
+      
       (defun aw/edit-org-file (file)
         (interactive)
         (find-file (concat org-directory "/" file)))
-
+      
       (defun aw/edit-ledger-file (file)
         (interactive)
         (find-file (concat aw/ledger-dir "/" file)))
-
+      
       (defun aw/switch-to-scratch ()
         (interactive)
         (switch-to-buffer "*scratch*"))
-
+      
       (defun aw/split-window-right-and-switch ()
         (interactive)
         (split-window-right)
         (other-window 1))
-
+      
       (defun aw/split-window-below-and-switch ()
         (interactive)
         (split-window-below)
         (other-window 1))
-
+      
       (defun aw/open-line-above ()
         (interactive)
         (save-excursion
           (beginning-of-line)
           (open-line 1)))
-
+      
       (defun aw/open-line-below ()
         (interactive)
         (save-excursion
           (end-of-line)
           (open-line 1)))
-
+      
       (defun aw/interactive-org-todo ()
         (interactive)
         (org-todo-list '(4)))
-
+      
       (defun aw/search-ddg (text)
         (interactive "sSearch DDG: ")
         (browse-url
          (concat "https://duckduckgo.com/?q="
                  (replace-regexp-in-string " " "+" text))))
-
+      
       (defun aw/edit-gitignore ()
         (interactive)
         (find-file (expand-file-name ".gitignore" (magit-toplevel))))
-
+      
       (defun aw/projectile-svn-diff ()
         (interactive)
         (let ((default-directory (projectile-project-root)))
@@ -560,7 +560,7 @@ Do something useful with the title bar.
           (with-current-buffer "*svn-diff*"
             (diff-mode)))
         (display-buffer "*svn-diff*"))
-
+      
       (defun aw/projectile-svn-diff-rev (rev)
         (interactive "sEnter revision number: ")
         (let ((default-directory (projectile-project-root))
@@ -569,13 +569,13 @@ Do something useful with the title bar.
           (with-current-buffer buf
             (diff-mode))
           (display-buffer buf)))
-
+      
       (defun aw/generate-scratch-buffer ()
         "Create and switch to a temporary scratch buffer with a random
            name."
         (interactive)
         (switch-to-buffer (make-temp-name "scratch")))
-
+      
       (defun aw/browse-current-dir ()
         (interactive)
         (shell-command
@@ -595,38 +595,38 @@ Do something useful with the title bar.
 
 * Ivy
 
-I'm just starting to play around with Ivy, and it may end up replacing a lot of Helm functionality for me.
+  I'm just starting to play around with Ivy, and it may end up replacing a lot of Helm functionality for me.
 
-#+BEGIN_SRC emacs-lisp
-  (use-package ivy
-    :ensure t
-    :diminish ivy-mode
-  
-    :config
-    (ivy-mode 1)
-    (setq ivy-use-selectable-prompt t  ; Let me use what I've entered as an option
-          ivy-use-virtual-buffers t    ; add ‘recentf-mode’ and bookmarks to ‘ivy-switch-buffer’.
-          ivy-height 10                ; number of result lines to display
-          ivy-count-format ""          ; does not count candidates
-          ivy-initial-inputs-alist nil ; no regexp by default
-          ivy-re-builders-alist        ; configure regexp engine for fuzzy matching
-          '((t . ivy--regex-fuzzy))))
-  
-  (use-package flx
-    :ensure t)
-  
-  (use-package counsel
-    :ensure t)
-  
-  (use-package counsel-projectile
-    :ensure t
-  
-    :config
-    (setq counsel-projectile-switch-project-action 'magit-status))
-  
-  (use-package helm-projectile
-    :ensure t)
-#+END_SRC
+  #+BEGIN_SRC emacs-lisp
+    (use-package ivy
+      :ensure t
+      :diminish ivy-mode
+    
+      :config
+      (ivy-mode 1)
+      (setq ivy-use-selectable-prompt t  ; Let me use what I've entered as an option
+            ivy-use-virtual-buffers t    ; add ‘recentf-mode’ and bookmarks to ‘ivy-switch-buffer’.
+            ivy-height 10                ; number of result lines to display
+            ivy-count-format ""          ; does not count candidates
+            ivy-initial-inputs-alist nil ; no regexp by default
+            ivy-re-builders-alist        ; configure regexp engine for fuzzy matching
+            '((t . ivy--regex-fuzzy))))
+    
+    (use-package flx
+      :ensure t)
+    
+    (use-package counsel
+      :ensure t)
+    
+    (use-package counsel-projectile
+      :ensure t
+    
+      :config
+      (setq counsel-projectile-switch-project-action 'magit-status))
+    
+    (use-package helm-projectile
+      :ensure t)
+  #+END_SRC
 
 * Programming
 ** Base Environment
@@ -634,95 +634,95 @@ I'm just starting to play around with Ivy, and it may end up replacing a lot of 
    Only use line numbering when programming. For opening large files, this may add some
    overhead, so we can delay rendering a bit.
 
-    #+BEGIN_SRC emacs-lisp
-      (setq linum-delay t linum-eager nil)
-      (add-hook 'prog-mode-hook 'linum-mode)
-      (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
+   #+BEGIN_SRC emacs-lisp
+     (setq linum-delay t linum-eager nil)
+     (add-hook 'prog-mode-hook 'linum-mode)
+     (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
+     
+     (use-package flycheck
+       :ensure t
+       :init
+       ;; Flycheck gets to be a bit much when warning about checkdoc issues.
+       (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
+       (setq flycheck-temp-prefix "~flycheck")
+     
+       :config
+       (add-hook 'prog-mode-hook 'flycheck-mode))
+   #+END_SRC
 
-      (use-package flycheck
-        :ensure t
-        :init
-        ;; Flycheck gets to be a bit much when warning about checkdoc issues.
-        (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
-        (setq flycheck-temp-prefix "~flycheck")
+   I want to be able to easily pick out TOODs and FIXMEs in code. Let's do some font locking. ([[http://writequit.org/org/][Source]])
 
-        :config
-        (add-hook 'prog-mode-hook 'flycheck-mode))
-    #+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (defun aw/highlight-todos ()
+       "Highlight FIXME and TODO"
+       (font-lock-add-keywords
+        nil '(("\\<\\(FIXME:?\\|TODO:?\\)\\>"
+               1 '((:foreground "#d7a3ad") (:weight bold)) t))))
+     
+     (add-hook 'prog-mode-hook #'aw/highlight-todos)
+   #+END_SRC
 
-    I want to be able to easily pick out TOODs and FIXMEs in code. Let's do some font locking. ([[http://writequit.org/org/][Source]])
+   Show me what line I'm on.
 
-    #+BEGIN_SRC emacs-lisp
-      (defun aw/highlight-todos ()
-        "Highlight FIXME and TODO"
-        (font-lock-add-keywords
-         nil '(("\\<\\(FIXME:?\\|TODO:?\\)\\>"
-                1 '((:foreground "#d7a3ad") (:weight bold)) t))))
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'prog-mode-hook #'hl-line-mode)
+   #+END_SRC
 
-      (add-hook 'prog-mode-hook #'aw/highlight-todos)
-    #+END_SRC
+   TODO - bug-reference-mode
 
-    Show me what line I'm on.
+   White space stuff ([[http://www.reddit.com/r/emacs/comments/2keh6u/show_tabs_and_trailing_whitespaces_only/][Source]])
 
-    #+BEGIN_SRC emacs-lisp
-      (add-hook 'prog-mode-hook #'hl-line-mode)
-    #+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (use-package whitespace
+       :diminish whitespace-mode
+       :init
+       (setq whitespace-display-mappings
+             ;; all numbers are Unicode codepoint in decimal. try (insert-char 182 ) to see it
+             '((space-mark 32 [183] [46])              ; 32 SPACE, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
+               (newline-mark 10 [182 10])              ; 10 LINE FEED
+               (tab-mark 9 [187 9] [9655 9] [92 9])))  ; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
+     
+       (setq whitespace-style '(face tabs trailing tab-mark))
+     
+       :config
+       (set-face-attribute 'whitespace-tab nil
+                           :background "#f0f0f0"
+                           :foreground "#00a8a8"
+                           :weight 'bold)
+       (set-face-attribute 'whitespace-trailing nil
+                           :background "#e4eeff"
+                           :foreground "#183bc8"
+                           :weight 'normal))
+     (add-hook 'prog-mode-hook 'whitespace-mode)
+   #+END_SRC
 
-    TODO - bug-reference-mode
+   =which-function= is a minor mode that will show use the mode line to me what function I'm
+   in. This is really helpful for super long functions.
 
-    White space stuff ([[http://www.reddit.com/r/emacs/comments/2keh6u/show_tabs_and_trailing_whitespaces_only/][Source]])
+   #+BEGIN_SRC emacs-lisp
+     (use-package which-func
+       :config
+       (which-function-mode 1))
+   #+END_SRC
 
-    #+BEGIN_SRC emacs-lisp
-      (use-package whitespace
-        :diminish whitespace-mode
-        :init
-        (setq whitespace-display-mappings
-              ;; all numbers are Unicode codepoint in decimal. try (insert-char 182 ) to see it
-              '((space-mark 32 [183] [46])              ; 32 SPACE, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
-                (newline-mark 10 [182 10])              ; 10 LINE FEED
-                (tab-mark 9 [187 9] [9655 9] [92 9])))  ; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
+   Make scripts executable.
 
-        (setq whitespace-style '(face tabs trailing tab-mark))
+   #+BEGIN_SRC emacs-lisp
+     (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
+   #+END_SRC
 
-        :config
-        (set-face-attribute 'whitespace-tab nil
-                            :background "#f0f0f0"
-                            :foreground "#00a8a8"
-                            :weight 'bold)
-        (set-face-attribute 'whitespace-trailing nil
-                            :background "#e4eeff"
-                            :foreground "#183bc8"
-                                :weight 'normal))
-        (add-hook 'prog-mode-hook 'whitespace-mode)
-    #+END_SRC
+   Use quickrun to easily run scripts from the current buffer.
 
-    =which-function= is a minor mode that will show use the mode line to me what function I'm
-    in. This is really helpful for super long functions.
+   #+BEGIN_SRC emacs-lisp
+     (use-package quickrun
+       :ensure t)
+   #+END_SRC
 
-    #+BEGIN_SRC emacs-lisp
-      (use-package which-func
-        :config
-        (which-function-mode 1))
-    #+END_SRC
-
-    Make scripts executable.
-
-    #+BEGIN_SRC emacs-lisp
-      (add-hook 'after-save-hook #'executable-make-buffer-file-executable-if-script-p)
-    #+END_SRC
-
-    Use quickrun to easily run scripts from the current buffer.
-
-    #+BEGIN_SRC emacs-lisp
-      (use-package quickrun
-        :ensure t)
-    #+END_SRC
-
-Some useful modes:
-#+BEGIN_SRC emacs-lisp
-  (use-package dockerfile-mode
-    :ensure t)
-#+END_SRC
+   Some useful modes:
+   #+BEGIN_SRC emacs-lisp
+     (use-package dockerfile-mode
+       :ensure t)
+   #+END_SRC
 *** Paredit
 
     #+BEGIN_SRC emacs-lisp
@@ -733,7 +733,7 @@ Some useful modes:
         (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
         (add-hook 'racket-mode-hook 'paredit-mode)
         (add-hook 'clojure-mode-hook 'paredit-mode))
-
+      
     #+END_SRC
 *** sr-speedbar
 
@@ -800,17 +800,17 @@ Some useful modes:
        :init
        (setq projectile-completion-system 'ivy)
        (setq projectile-enable-caching t)
-
+     
        (setq projectile-switch-project-action 'projectile-find-file)
-
-       ; Used for helm-projectile-grep
+     
+                                             ; Used for helm-projectile-grep
        (setq grep-find-ignored-directories nil)
        (setq grep-find-ignored-files nil)
-
-       ; Save all project buffers whenever I compile
+     
+                                             ; Save all project buffers whenever I compile
        (defun aw/projectile-setup ()
          (setq compilation-save-buffers-predicate 'projectile-project-buffer-p))
-
+     
        :config
        (add-hook 'projectile-mode-hook 'aw/projectile-setup)
        (projectile-global-mode))
@@ -847,7 +847,7 @@ Some useful modes:
                (when file-match
                  (find-file (expand-file-name file-match (projectile-project-root)))
                  (goto-line line-num))))))
-
+     
      (advice-add 'counsel-projectile-find-file :before-until #'aw/projectile-find-file-with-line-number-maybe)
    #+END_SRC
 
@@ -902,7 +902,7 @@ Some useful modes:
         (if buf
             (if (eq (buffer-local-value 'major-mode (get-buffer buf)) 'org-mode)
                 (save-excursion (set-buffer buf) (apply command cmdargs)))))
-
+      
       (defun aw/ediff-org-unfold-tree-element ()
         "Unfold tree at diff location"
         (aw/ediff-org-showhide ediff-buffer-A 'org-reveal)
@@ -914,7 +914,7 @@ Some useful modes:
         (aw/ediff-org-showhide ediff-buffer-A 'hide-sublevels 1)
         (aw/ediff-org-showhide ediff-buffer-B 'hide-sublevels 1)
         (aw/ediff-org-showhide ediff-buffer-C 'hide-sublevels 1))
-
+      
       (add-hook 'ediff-select-hook 'aw/ediff-org-unfold-tree-element)
       (add-hook 'ediff-unselect-hook 'aw/ediff-org-fold-tree)
     #+END_SRC
@@ -925,7 +925,7 @@ Some useful modes:
     #+BEGIN_SRC emacs-lisp
       (defun ediff-toggle-whitespace-sensitivity ()
         "Toggle whitespace sensitivity for the current EDiff run.
-
+      
       This does not affect the global EDiff settings.  The function
       automatically updates the diff to reflect the change."
         (interactive)
@@ -944,10 +944,10 @@ Some useful modes:
                  "Whitespace sensitivity off")))
           (ediff-update-diffs)
           (message post-update-message)))
-
+      
       (add-hook 'ediff-keymap-setup-hook
                 #'(lambda () (define-key ediff-mode-map [?W] 'ediff-toggle-whitespace-sensitivity)))
-
+      
     #+END_SRC
 
 *** REST Client Mode
@@ -969,16 +969,16 @@ Some useful modes:
       (defun c-setup ()
         (setq c-default-style "linux"
               c-basic-offset 4))
-
+      
       (add-hook 'c-mode-common-hook 'c-setup)
     #+END_SRC
 
     #+BEGIN_SRC emacs-lisp
       (defun java-setup ()
         (setq-local compile-command (concat "javac " (buffer-name))))
-
+      
       (add-hook 'java-mode-hook 'java-setup)
-
+      
       (use-package scala-mode
         :ensure t)
     #+END_SRC
@@ -988,14 +988,14 @@ Some useful modes:
     projects, though.
 
     #+BEGIN_SRC emacs-lisp
-            (use-package c++-mode
-              :mode "\\.h\\'")
+      (use-package c++-mode
+        :mode "\\.h\\'")
     #+END_SRC
 *** Go
     #+BEGIN_SRC emacs-lisp
       (use-package go-mode
         :mode "\\.go\\'"
-
+      
         :config
         (add-hook 'go-mode-hook (lambda () (whitespace-mode -1)))
         (add-hook 'before-save-hook 'gofmt-before-save))
@@ -1006,16 +1006,16 @@ Some useful modes:
      #+BEGIN_SRC emacs-lisp
        (use-package clojure-mode
          :ensure t)
-
+       
        (use-package cider
          :ensure t)
      #+END_SRC
 
-    #+BEGIN_SRC emacs-lisp
-      (evil-leader/set-key-for-mode 'clojure-mode
-        "vv" 'cider-eval-last-sexp
-        "vV" 'cider-eval-last-sexp-to-repl)
-    #+END_SRC
+     #+BEGIN_SRC emacs-lisp
+       (evil-leader/set-key-for-mode 'clojure-mode
+         "vv" 'cider-eval-last-sexp
+         "vV" 'cider-eval-last-sexp-to-repl)
+     #+END_SRC
 **** Emacs Lisp
 
      #+BEGIN_SRC emacs-lisp
@@ -1030,10 +1030,10 @@ Some useful modes:
      #+END_SRC
 **** Racket
 
-#+BEGIN_SRC emacs-lisp
-    (use-package racket-mode
-      :mode "\\.rkt")
-#+END_SRC
+     #+BEGIN_SRC emacs-lisp
+       (use-package racket-mode
+         :mode "\\.rkt")
+     #+END_SRC
 *** Markdown
     #+BEGIN_SRC emacs-lisp
       (use-package markdown-mode
@@ -1042,46 +1042,46 @@ Some useful modes:
     #+END_SRC
 *** Javascript
 
-Use prettier for formatting.
+    Use prettier for formatting.
 
-#+BEGIN_SRC emacs-lisp
-  (use-package prettier-js
-    :ensure t)
+    #+BEGIN_SRC emacs-lisp
+      (use-package prettier-js
+        :ensure t)
+      
+                                              ;(add-hook 'js-mode-hook 'prettier-js-mode)
+                                              ;(add-hook 'js2-mode-hook 'prettier-js-mode)
+    #+END_SRC
 
-  ;(add-hook 'js-mode-hook 'prettier-js-mode)
-  ;(add-hook 'js2-mode-hook 'prettier-js-mode)
-#+END_SRC
+    Typescript
 
-Typescript
-
-#+BEGIN_SRC emacs-lisp
-  (use-package typescript-mode
-    :ensure t)
-#+END_SRC
+    #+BEGIN_SRC emacs-lisp
+      (use-package typescript-mode
+        :ensure t)
+    #+END_SRC
 
 *** Octave
     #+BEGIN_SRC emacs-lisp
       (use-package octave-mode
         :mode "\\.m\\'")
-
+      
     #+END_SRC
 
 *** Misc
-PlantUML is awesome for documentation. I want diagrams to generate automatically.
+    PlantUML is awesome for documentation. I want diagrams to generate automatically.
 
-#+BEGIN_SRC emacs-lisp
-(defun generate-puml ()
-  "If the current buffer is a plant-uml file, autogenerate a png on each save."
-  (if (string-match "\\.puml$" (buffer-file-name))
-      (shell-command (concat "java -jar /home/austin/Downloads/plantuml.jar "   (buffer-file-name)))))
-(add-hook 'after-save-hook #'generate-puml)
-#+END_SRC
+    #+BEGIN_SRC emacs-lisp
+      (defun generate-puml ()
+        "If the current buffer is a plant-uml file, autogenerate a png on each save."
+        (if (string-match "\\.puml$" (buffer-file-name))
+            (shell-command (concat "java -jar /home/austin/Downloads/plantuml.jar "   (buffer-file-name)))))
+      (add-hook 'after-save-hook #'generate-puml)
+    #+END_SRC
 
-YAML
-#+BEGIN_SRC emacs-lisp
-  (use-package yaml-mode
-    :ensure t)
-#+END_SRC
+    YAML
+    #+BEGIN_SRC emacs-lisp
+      (use-package yaml-mode
+        :ensure t)
+    #+END_SRC
 * Org-mode
 ** Setup
    #+BEGIN_SRC emacs-lisp
@@ -1091,124 +1091,124 @@ YAML
          (if (re-search-forward "NEXT" subtree-end t)
              nil          ; tag found, do not skip
            subtree-end))) ; tag not found, continue after end of subtree
-
+     
    #+END_SRC
 
 
-  #+BEGIN_SRC emacs-lisp
-    
-    (use-package org-ql
-      :ensure t
-      )
-    
-    (use-package org-mode
-      :hook (org-mode . visual-line-mode)
-      :hook (org-mode . org-super-agenda-mode)
-      :pin manual
-      :mode "\\.txt\\'"
-    
-      :init
-      (setq org-agenda-files (list "~/org/")
-            org-agenda-default-appointment-duration 60     ; 1 hour appointments
-            org-agenda-span 1                              ; Show only today by default
-            org-agenda-start-on-weekday 0                  ; Show agenda from Sunday.
-            org-catch-invisible-edits 'show                ; Expand a fold when trying to edit it
-            org-confirm-babel-evaluate nil                 ; Don't ask to evaluate src blocks
-            org-complete-tags-always-offer-all-agenda-tags  t ; Use all current agenda tags for completion
-            org-directory "~/org/"
-            org-hide-emphasis-markers t                    ; Don't show markup characters
-            org-link-search-must-match-exact-headline nil  ; Create internal links with only a partial match
-            org-log-into-drawer t                          ; Track state changes in the LOGBOOK drawer
-            org-outline-path-complete-in-steps nil         ; Refile in a single go
-            org-refile-use-outline-path t                  ; Show full paths for refiling
-            org-return-follows-link t                      ; Hit return to open links
-            org-src-fontify-natively t                     ; Highlight src blocks natively
-            org-startup-folded t                           ; Fold everything at startup
-            )
-    
-      (setq org-agenda-custom-commands
-            '(
-              ("s" "Stuck Projects"
-               ((org-ql-block '(and (todo "TODO")
-                                    (descendants)
-                                    (not (done))
-                                    (not (descendants (todo "NEXT"))))
-                              ((org-ql-block-header "Stuck Projects"))))
-               ((org-agenda-files '("~/org/gtd.org"))))
-              ("g" "GTD Block Agenda"
-               (
-                (todo "NEXT")
-                )
-               ((org-agenda-files '("~/org/gtd.org"))
-                (org-agenda-skip-function 'my-skip-unless-next))
-               )))
-    
-    
-    
-      ; Use org-super-agenda to always group everything by tag
-      (setq org-super-agenda-groups
-            '((:name "Sorted"
-                     :auto-map (lambda (item)
-                                 (second (org-super-agenda--get-tags item))))))
-    
-    
-      :config
-      (fullframe org-agenda org-agenda-Quit)
-    
-      ; Show dots instead of dashes
-      (font-lock-add-keywords 'org-mode
-                              '(("^ +\\([-*]\\) "
-                                 (0 (prog1 ()
-                                      (compose-region (match-beginning 1) (match-end 1) "•")))))))
-    
-    (use-package org-bullets
-      :ensure t
-      :config
-      (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-    
-      )
-    
-  #+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     
+     (use-package org-ql
+       :ensure t
+       )
+     
+     (use-package org-mode
+       :hook (org-mode . visual-line-mode)
+       :hook (org-mode . org-super-agenda-mode)
+       :pin manual
+       :mode "\\.txt\\'"
+     
+       :init
+       (setq org-agenda-files (list "~/org/")
+             org-agenda-default-appointment-duration 60     ; 1 hour appointments
+             org-agenda-span 1                              ; Show only today by default
+             org-agenda-start-on-weekday 0                  ; Show agenda from Sunday.
+             org-catch-invisible-edits 'show                ; Expand a fold when trying to edit it
+             org-confirm-babel-evaluate nil                 ; Don't ask to evaluate src blocks
+             org-complete-tags-always-offer-all-agenda-tags  t ; Use all current agenda tags for completion
+             org-directory "~/org/"
+             org-hide-emphasis-markers t                    ; Don't show markup characters
+             org-link-search-must-match-exact-headline nil  ; Create internal links with only a partial match
+             org-log-into-drawer t                          ; Track state changes in the LOGBOOK drawer
+             org-outline-path-complete-in-steps nil         ; Refile in a single go
+             org-refile-use-outline-path t                  ; Show full paths for refiling
+             org-return-follows-link t                      ; Hit return to open links
+             org-src-fontify-natively t                     ; Highlight src blocks natively
+             org-startup-folded t                           ; Fold everything at startup
+             )
+     
+       (setq org-agenda-custom-commands
+             '(
+               ("s" "Stuck Projects"
+                ((org-ql-block '(and (todo "TODO")
+                                     (descendants)
+                                     (not (done))
+                                     (not (descendants (todo "NEXT"))))
+                               ((org-ql-block-header "Stuck Projects"))))
+                ((org-agenda-files '("~/org/gtd.org"))))
+               ("g" "GTD Block Agenda"
+                (
+                 (todo "NEXT")
+                 )
+                ((org-agenda-files '("~/org/gtd.org"))
+                 (org-agenda-skip-function 'my-skip-unless-next))
+                )))
+     
+     
+     
+                                             ; Use org-super-agenda to always group everything by tag
+       (setq org-super-agenda-groups
+             '((:name "Sorted"
+                      :auto-map (lambda (item)
+                                  (second (org-super-agenda--get-tags item))))))
+     
+     
+       :config
+       (fullframe org-agenda org-agenda-Quit)
+     
+                                             ; Show dots instead of dashes
+       (font-lock-add-keywords 'org-mode
+                               '(("^ +\\([-*]\\) "
+                                  (0 (prog1 ()
+                                       (compose-region (match-beginning 1) (match-end 1) "•")))))))
+     
+     (use-package org-bullets
+       :ensure t
+       :config
+       (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+     
+       )
+     
+   #+END_SRC
 
-  Of course, I use git to keep my org files under control. We should periodically make sure everything is in sync.
+   Of course, I use git to keep my org files under control. We should periodically make sure everything is in sync.
 
-  #+BEGIN_SRC emacs-lisp
-    (defun aw/sync-org-directory ()
-      "Save all org buffers and then run my script to sync everything with my git remote.
-    If there are new changes, my org buffers should auto revert"
-      (interactive)
-      (let ((default-directory org-directory))
-        (org-save-all-org-buffers)
-        (save-window-excursion
-          (shell-command "./maintainOrgFiles" "*maintainOrgFiles"))))
-
-    (run-with-idle-timer 300 t 'aw/sync-org-directory)
-  #+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (defun aw/sync-org-directory ()
+       "Save all org buffers and then run my script to sync everything with my git remote.
+     If there are new changes, my org buffers should auto revert"
+       (interactive)
+       (let ((default-directory org-directory))
+         (org-save-all-org-buffers)
+         (save-window-excursion
+           (shell-command "./maintainOrgFiles" "*maintainOrgFiles"))))
+     
+     (run-with-idle-timer 300 t 'aw/sync-org-directory)
+   #+END_SRC
 
 ** Agenda
 
    Automatically set projects as TODO
 
-#+BEGIN_SRC emacs-lisp
-  (defun org-summary-todo (n-done n-not-done)
-    "Switch entry to TODO otherwise if any subentries are not done."
-    (let (org-log-done org-log-states)   ; turn off logging
-      (if (> n-not-done 0) (org-todo "TODO"))))
-  
-  (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
-  
-  (setq org-hierarchical-todo-statistics 'nil)
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (defun org-summary-todo (n-done n-not-done)
+       "Switch entry to TODO otherwise if any subentries are not done."
+       (let (org-log-done org-log-states)   ; turn off logging
+         (if (> n-not-done 0) (org-todo "TODO"))))
+     
+     (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+     
+     (setq org-hierarchical-todo-statistics 'nil)
+   #+END_SRC
 
-Make a function to pop open my most used org agenda custom command.
+   Make a function to pop open my most used org agenda custom command.
 
-#+BEGIN_SRC emacs-lisp
-  (defun aw/pop-org-agenda ()
-    (interactive)
-    (org-agenda nil "g")
-    (delete-other-windows)
-    (text-scale-increase 2))
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (defun aw/pop-org-agenda ()
+       (interactive)
+       (org-agenda nil "g")
+       (delete-other-windows)
+       (text-scale-increase 2))
+   #+END_SRC
 
 ** Babel
 
@@ -1217,7 +1217,7 @@ Make a function to pop open my most used org agenda custom command.
 
    #+BEGIN_SRC emacs-lisp
      (advice-add 'org-babel-C-ensure-main-wrap :override #'aw/org-c-src-main)
-
+     
      (defun aw/org-c-src-main (body)
        "Wrap BODY in a \"main\" function call if none exists."
        (if (string-match "^[ \t]*[intvod]+[ \t\n\r]*main[ \t]*(.*)" body)
@@ -1230,7 +1230,7 @@ Make a function to pop open my most used org agenda custom command.
    #+BEGIN_SRC emacs-lisp
      (setq org-babel-default-header-args:sh
            '((:shebang . "#!/bin/bash")))
-
+     
      (setq org-babel-default-header-args:python
            '((:shebang . "#!/bin/python")))
    #+END_SRC
@@ -1271,11 +1271,11 @@ Make a function to pop open my most used org agenda custom command.
    #+BEGIN_SRC emacs-lisp
      (setq org-refile-targets '((nil :maxlevel . 4)
                                 (org-agenda-files :maxlevel . 4)))
-
+     
      (defun aw/verify-refile-target ()
        "Exclude todo keywords with a done state from refile targets"
        (not (member (nth 2 (org-heading-components)) org-done-keywords)))
-
+     
      (setq org-refile-target-verify-function 'aw/verify-refile-target)
    #+END_SRC
 
@@ -1287,121 +1287,121 @@ Make a function to pop open my most used org agenda custom command.
      (add-hook 'org-capture-mode-hook 'evil-insert-state)
    #+END_SRC
 
- Capture templates
+   Capture templates
 
-    #+BEGIN_SRC emacs-lisp
-      (setq org-todo-keywords
-            '((sequence "TODO(t)" "NEXT(n!)" "WAITING(w@/!)" "|" "DONE(d!)" "CANCELLED(c!)")))
-
-      (setq org-capture-templates
-            '(
-              ("t" "Todo" entry (file "~/org/inbox.org") "** NEXT %?\n")
-              ("p" "Project" entry (file "~/org/inbox.org") "** TODO %^{Project Description} [/]\n*** NEXT %?")
-              ("m" "Meeting" entry (file "~/org/inbox.org") "** %^{Meeting description}\n - %?\n\n %u\n")
-              ))
-    #+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (setq org-todo-keywords
+           '((sequence "TODO(t)" "NEXT(n!)" "WAITING(w@/!)" "|" "DONE(d!)" "CANCELLED(c!)")))
+     
+     (setq org-capture-templates
+           '(
+             ("t" "Todo" entry (file "~/org/inbox.org") "** NEXT %?\n")
+             ("p" "Project" entry (file "~/org/inbox.org") "** TODO %^{Project Description} [/]\n*** NEXT %?")
+             ("m" "Meeting" entry (file "~/org/inbox.org") "** %^{Meeting description}\n - %?\n\n %u\n")
+             ))
+   #+END_SRC
 
 *** On the fly capturing
 
 
     #+BEGIN_SRC emacs-lisp
-  ; https://cestlaz.github.io/posts/using-emacs-24-capture-2/
-  ; Bind Key to: emacsclient -ne "(make-capture-frame)"
-
-  (defadvice org-capture-finalize
-      (after delete-capture-frame activate)
-    "Advise capture-finalize to close the frame"
-    (if (equal "capture" (frame-parameter nil 'name))
-        (delete-frame)))
-
-  (defadvice org-capture-destroy
-      (after delete-capture-frame activate)
-    "Advise capture-destroy to close the frame"
-    (if (equal "capture" (frame-parameter nil 'name))
-        (delete-frame)))
-
-  (use-package noflet
-    :ensure t )
-
- (defun make-capture-frame ()
-   "Create a new frame and run org-capture."
-   (interactive)
-   (make-frame '((name . "capture")))
-   (select-frame-by-name "capture")
-   (delete-other-windows)
-   (noflet ((switch-to-buffer-other-window (buf) (switch-to-buffer buf)))
-     (org-capture nil "t")))
-
-     #+END_SRC
+                                              ; https://cestlaz.github.io/posts/using-emacs-24-capture-2/
+                                              ; Bind Key to: emacsclient -ne "(make-capture-frame)"
+      
+      (defadvice org-capture-finalize
+          (after delete-capture-frame activate)
+        "Advise capture-finalize to close the frame"
+        (if (equal "capture" (frame-parameter nil 'name))
+            (delete-frame)))
+      
+      (defadvice org-capture-destroy
+          (after delete-capture-frame activate)
+        "Advise capture-destroy to close the frame"
+        (if (equal "capture" (frame-parameter nil 'name))
+            (delete-frame)))
+      
+      (use-package noflet
+        :ensure t )
+      
+      (defun make-capture-frame ()
+        "Create a new frame and run org-capture."
+        (interactive)
+        (make-frame '((name . "capture")))
+        (select-frame-by-name "capture")
+        (delete-other-windows)
+        (noflet ((switch-to-buffer-other-window (buf) (switch-to-buffer buf)))
+          (org-capture nil "t")))
+      
+    #+END_SRC
 ** Roam
-#+BEGIN_SRC emacs-lisp
-       (use-package org-roam
-         :ensure t
-  
-         :init
-         (setq org-roam-directory "~/org/roam"
-               org-roam-dailies-directory "~/org/roam/daily"
-               org-roam-v2-ack t)
-  
-         (setq org-roam-capture-templates
-               '(
-                 ("a" "Album" plain
-                  (file "~/org/templates/RoamAlbumNote.org")
-                  :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-                  :unnarrowed nil)
-                 ("d" "default" plain
-                  "%?"
-                  :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-                  :unnarrowed t)
-                 ("p" "project" plain
-                  (file "~/org/templates/RoamProjectNote.org")
-                  :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-                  :unnarrowed t)
-                 ("r" "research" plain
-                  (file "~/org/templates/RoamResearchNote.org")
-                  :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-                  :unnarrowed t)
-                 ("i" "index" plain
-                  (file "~/org/templates/RoamIndexNote.org")
-                  :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-                  :unnarrowed t)
-                 ("s" "source" plain
-                  (file "~/org/templates/RoamSourceNote.org")
-                  :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-                  :unnarrowed t)))
-  
-         ; If this is too slow, get rid of the unlinked refs
-         (setq org-roam-mode-section-functions
-               (list #'org-roam-backlinks-section
-                     #'org-roam-reflinks-section
-                     #'org-roam-unlinked-references-section
-                     ))
-  
-         ; Open the org-roam buffer to the right
-         (add-to-list 'display-buffer-alist
-                      '("\\*org-roam\\*"
-                        (display-buffer-in-direction)
-                        (direction . right)
-                        (window-width . 0.33)
-                        (window-height . fit-window-to-buffer)))
-  
-         :config
-         (org-roam-db-autosync-mode)
-         )
-  
-  (add-to-list 'load-path "~/.emacs.d/private/org-roam-ui")
-  (with-eval-after-load 'org-roam (load-library "org-roam-ui"))   
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (use-package org-roam
+       :ensure t
+     
+       :init
+       (setq org-roam-directory "~/org/roam"
+             org-roam-dailies-directory "~/org/roam/daily"
+             org-roam-v2-ack t)
+     
+       (setq org-roam-capture-templates
+             '(
+               ("a" "Album" plain
+                (file "~/org/templates/RoamAlbumNote.org")
+                :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                :unnarrowed nil)
+               ("d" "default" plain
+                "%?"
+                :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                :unnarrowed t)
+               ("p" "project" plain
+                (file "~/org/templates/RoamProjectNote.org")
+                :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                :unnarrowed t)
+               ("r" "research" plain
+                (file "~/org/templates/RoamResearchNote.org")
+                :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                :unnarrowed t)
+               ("i" "index" plain
+                (file "~/org/templates/RoamIndexNote.org")
+                :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                :unnarrowed t)
+               ("s" "source" plain
+                (file "~/org/templates/RoamSourceNote.org")
+                :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                :unnarrowed t)))
+     
+                                             ; If this is too slow, get rid of the unlinked refs
+       (setq org-roam-mode-section-functions
+             (list #'org-roam-backlinks-section
+                   #'org-roam-reflinks-section
+                   #'org-roam-unlinked-references-section
+                   ))
+     
+                                             ; Open the org-roam buffer to the right
+       (add-to-list 'display-buffer-alist
+                    '("\\*org-roam\\*"
+                      (display-buffer-in-direction)
+                      (direction . right)
+                      (window-width . 0.33)
+                      (window-height . fit-window-to-buffer)))
+     
+       :config
+       (org-roam-db-autosync-mode)
+       )
+     
+     (add-to-list 'load-path "~/.emacs.d/private/org-roam-ui")
+     (with-eval-after-load 'org-roam (load-library "org-roam-ui"))   
+   #+END_SRC
 
-This package will add modify timestamps when I update my org-roam nodes.
+   This package will add modify timestamps when I update my org-roam nodes.
 
-#+begin_src emacs-lisp
-  (use-package org-roam-timestamps
-    :hook (org-mode . org-roam-timestamps-mode)
-    :diminish
-    :ensure t
-    :after org-roam)
-#+end_src
+   #+begin_src emacs-lisp
+     (use-package org-roam-timestamps
+       :hook (org-mode . org-roam-timestamps-mode)
+       :diminish
+       :ensure t
+       :after org-roam)
+   #+end_src
 
 ** Keybindings
 
@@ -1428,30 +1428,30 @@ This package will add modify timestamps when I update my org-roam nodes.
    #+END_SRC
 
 ** Final
-Make sure everything is loaded properly.
+   Make sure everything is loaded properly.
 
-#+BEGIN_SRC emacs-lisp
-  (org-reload)
-
-  ; Somehow the structure template list keeps getting reset...
-  (setq org-structure-template-alist (eval (car (get 'org-structure-template-alist 'standard-value))))
-
-  (define-key org-agenda-mode-map "j" 'org-agenda-next-item)
-  (define-key org-agenda-mode-map "k" 'org-agenda-previous-item)
-#+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (org-reload)
+     
+                                             ; Somehow the structure template list keeps getting reset...
+     (setq org-structure-template-alist (eval (car (get 'org-structure-template-alist 'standard-value))))
+     
+     (define-key org-agenda-mode-map "j" 'org-agenda-next-item)
+     (define-key org-agenda-mode-map "k" 'org-agenda-previous-item)
+   #+END_SRC
 * Ledger
 
   I use John Wiegley's amazing [[http://ledger-cli.org][ledger-cli]] to keep track of my finances. Ledger reads from a simple
   plaintext file to generate any financial report you could ever want.
 
   #+BEGIN_SRC emacs-lisp
-
+    
     (use-package ledger-mode
       :mode "\\.dat\\'"
       :init
       (setq aw/ledger-dir "~/Dropbox/ledger/data/")
       (setq ledger-clear-whole-transactions 1)
-
+    
       :config
       (defun aw/clean-ledger-on-save ()
         (interactive)
@@ -1459,15 +1459,15 @@ Make sure everything is loaded properly.
             (let ((curr-line (line-number-at-pos)))
               (ledger-mode-clean-buffer)
               (line-move (- curr-line 1)))))
-
+    
       (defun ledger-increment-date ()
         (interactive)
         (aw/ledger-change-date 1))
-
+    
       (defun ledger-decrement-date ()
         (interactive)
         (aw/ledger-change-date -1))
-
+    
       (defun aw/ledger-change-date (num)
         "Replace date of current transaction with date + num days.
        Currently only works with the format %Y/%m/%d"
@@ -1482,7 +1482,7 @@ Make sure everything is loaded properly.
               "%Y/%m/%d"
               (time-add (aw/encoded-date xact-date)
                         (days-to-time num)))))))
-
+    
       (defun aw/encoded-date (date)
         "Given a date in the form %Y/%m/%d, return encoded time string"
         (string-match "\\([0-9][0-9][0-9][0-9]\\)/\\([0-9][0-9]\\)/\\([0-9][0-9]\\)" date)
@@ -1490,7 +1490,7 @@ Make sure everything is loaded properly.
                 (concat (match-string 1 date) "-" (match-string 2 date) "-" (match-string 3 date)))
                (d (parse-time-string fixed-date)))
           (encode-time 0 0 0 (nth 3 d) (nth 4 d) (nth 5 d))))
-
+    
       (add-to-list 'evil-emacs-state-modes 'ledger-report-mode)
       (add-hook 'before-save-hook 'aw/clean-ledger-on-save)
       (define-key ledger-mode-map (kbd "C-M-.") 'ledger-increment-date)
@@ -1499,13 +1499,13 @@ Make sure everything is loaded properly.
 
   beancount mode
   #+begin_src emacs-lisp
-(use-package beancount-mode
-  :mode "\\.beancount\\'"
-  :load-path "elpa/beancount-mode/"
-  :hook (beancount-mode . outline-minor-mode)
-  :init
-  (require 'beancount)
-  )
+    (use-package beancount-mode
+      :mode "\\.beancount\\'"
+      :load-path "elpa/beancount-mode/"
+      :hook (beancount-mode . outline-minor-mode)
+      :init
+      (require 'beancount)
+      )
   #+end_src
 
 * System Stuff
@@ -1519,10 +1519,10 @@ Make sure everything is loaded properly.
 
 * Refile
 
-Fix for everything suddenly starting in motion-state
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'evil-normal-state-modes 'magit-file-mode)
-#+END_SRC
+  Fix for everything suddenly starting in motion-state
+  #+BEGIN_SRC emacs-lisp
+    (add-to-list 'evil-normal-state-modes 'magit-file-mode)
+  #+END_SRC
 * License
 
   My Emacs configurations written in Org mode.
