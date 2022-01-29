@@ -1335,48 +1335,62 @@ Make a function to pop open my most used org agenda custom command.
      #+END_SRC
 ** Roam
 #+BEGIN_SRC emacs-lisp
-     (use-package org-roam
-       :ensure t
-
-       :init
-       (setq org-roam-directory "~/org/roam"
-             org-roam-dailies-directory "~/org/roam/daily"
-             org-roam-v2-ack t)
-
-       (setq org-roam-capture-templates
-             '(
-               ("a" "Album" plain
-                (file "~/org/templates/RoamAlbumNote.org")
-                :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-                :unnarrowed nil)
-               ("d" "default" plain
-                "%?"
-                :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-                :unnarrowed t)
-               ("p" "project" plain
-                (file "~/org/templates/RoamProjectNote.org")
-                :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-                :unnarrowed t)
-               ("r" "research" plain
-                (file "~/org/templates/RoamResearchNote.org")
-                :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-                :unnarrowed t)
-               ("i" "index" plain
-                (file "~/org/templates/RoamIndexNote.org")
-                :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-                :unnarrowed t)
-               ("s" "source" plain
-                "%?"
-                :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-                :unnarrowed t)))
+       (use-package org-roam
+         :ensure t
   
-       :config
-       (org-roam-db-autosync-mode)
-       )
-
+         :init
+         (setq org-roam-directory "~/org/roam"
+               org-roam-dailies-directory "~/org/roam/daily"
+               org-roam-v2-ack t)
+  
+         (setq org-roam-capture-templates
+               '(
+                 ("a" "Album" plain
+                  (file "~/org/templates/RoamAlbumNote.org")
+                  :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                  :unnarrowed nil)
+                 ("d" "default" plain
+                  "%?"
+                  :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                  :unnarrowed t)
+                 ("p" "project" plain
+                  (file "~/org/templates/RoamProjectNote.org")
+                  :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                  :unnarrowed t)
+                 ("r" "research" plain
+                  (file "~/org/templates/RoamResearchNote.org")
+                  :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                  :unnarrowed t)
+                 ("i" "index" plain
+                  (file "~/org/templates/RoamIndexNote.org")
+                  :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                  :unnarrowed t)
+                 ("s" "source" plain
+                  (file "~/org/templates/RoamSourceNote.org")
+                  :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+                  :unnarrowed t)))
+  
+         ; If this is too slow, get rid of the unlinked refs
+         (setq org-roam-mode-section-functions
+               (list #'org-roam-backlinks-section
+                     #'org-roam-reflinks-section
+                     #'org-roam-unlinked-references-section
+                     ))
+  
+         ; Open the org-roam buffer to the right
+         (add-to-list 'display-buffer-alist
+                      '("\\*org-roam\\*"
+                        (display-buffer-in-direction)
+                        (direction . right)
+                        (window-width . 0.33)
+                        (window-height . fit-window-to-buffer)))
+  
+         :config
+         (org-roam-db-autosync-mode)
+         )
+  
   (add-to-list 'load-path "~/.emacs.d/private/org-roam-ui")
-  (load-library "org-roam-ui")
-  
+  (with-eval-after-load 'org-roam (load-library "org-roam-ui"))   
 #+END_SRC
 
 This package will add modify timestamps when I update my org-roam nodes.
