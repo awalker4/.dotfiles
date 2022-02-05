@@ -1187,17 +1187,22 @@
 
 ** Agenda
 
-   Automatically set projects as TODO
+   When a project has subtasks that are not done, keep the project at TODO. Ignore headings that say Projects or Tasks - these are at the top level and shouldn't have a state.
 
    #+BEGIN_SRC emacs-lisp
      (defun org-summary-todo (n-done n-not-done)
        "Switch entry to TODO otherwise if any subentries are not done."
-       (let (org-log-done org-log-states)   ; turn off logging
-         (if (> n-not-done 0) (org-todo "TODO"))))
+       (let (org-log-done
+             org-log-states ; turn off logging
+             (heading
+              (cdr (assoc "ITEM" (org-entry-properties)))))
+         (unless (or (string-match-p "Projects" heading)
+                     (string-match-p "Tasks" heading))
+           (if (> n-not-done 0) (org-todo "TODO")))))
      
      (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
      
-     (setq org-hierarchical-todo-statistics 'nil)
+     (setq org-hierarchical-todo-statistics t)
    #+END_SRC
 
    Make a function to pop open my most used org agenda custom command.
