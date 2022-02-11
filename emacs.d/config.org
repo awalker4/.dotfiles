@@ -40,6 +40,17 @@
      (require 'diminish)
      (require 'bind-key)
    #+END_SRC
+
+   I usually run emacs as a daemon, so this will ensure my env comes in properly
+   #+begin_src emacs-lisp
+     (use-package exec-path-from-shell
+       :ensure t
+       :config
+     
+       (when (daemonp)
+         (exec-path-from-shell-initialize))
+       )
+   #+end_src
 ** Meta
 
    If I haven't modified a buffer and it changes on disk, revert it. Really useful for when I pull down changes to my org files.
