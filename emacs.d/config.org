@@ -862,11 +862,11 @@
        (setq magit-completing-read-function 'ivy-completing-read
              magit-push-always-verify nil)
      
-       ;; My node repos need this set to run hooks...
-       (add-to-list 'magit-git-environment "CODEARTIFACT_AUTH_TOKEN=foo")
-     
        :config
        (fullframe magit-status magit-mode-quit-window))
+
+       ;; My node repos need this set to run hooks...
+       (add-to-list 'magit-git-environment "CODEARTIFACT_AUTH_TOKEN=foo")
    #+END_SRC
 
 *** Diffs
