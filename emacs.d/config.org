@@ -1096,7 +1096,6 @@
 
 
    #+BEGIN_SRC emacs-lisp
-     
      (use-package org-ql
        :ensure t
        )
@@ -1125,7 +1124,7 @@
              org-src-fontify-natively t                     ; Highlight src blocks natively
              org-startup-folded t                           ; Fold everything at startup
              )
-     
+       
        (setq org-agenda-custom-commands
              '(
                ("s" "Stuck Projects"
@@ -1142,19 +1141,19 @@
                 ((org-agenda-files '("~/org/gtd.org"))
                  (org-agenda-skip-function 'my-skip-unless-next))
                 )))
-     
-     
-     
+       
+       
+       
                                              ; Use org-super-agenda to always group everything by tag
        (setq org-super-agenda-groups
              '((:name "Sorted"
                       :auto-map (lambda (item)
                                   (second (org-super-agenda--get-tags item))))))
-     
-     
+       
+       
        :config
        (fullframe org-agenda org-agenda-Quit)
-     
+       
                                              ; Show dots instead of dashes
        (font-lock-add-keywords 'org-mode
                                '(("^ +\\([-*]\\) "
@@ -1165,7 +1164,7 @@
        :ensure t
        :config
        (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-     
+       
        )
      
    #+END_SRC
