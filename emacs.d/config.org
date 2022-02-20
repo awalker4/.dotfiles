@@ -494,7 +494,7 @@
           "oi" 'org-toggle-inline-images
           "oT" 'aw/interactive-org-todo
           "t"  `org-todo
-          "T"  `org-set-tags-command
+          "T"  `aw/set-tags-command
           "w"  'org-refile
           "ow" '(lambda () (interactive) (org-agenda "nil" "w")))
       
@@ -1231,6 +1231,29 @@
        (delete-other-windows)
        (text-scale-increase 2))
    #+END_SRC
+
+** Tags
+   Some custom functions to make working with tags nicer.
+   
+   #+begin_src emacs-lisp
+     (defun aw/clear-current-tags ()
+       "Find the position of the tags on the current headline and remove them."
+       (let ((old-tags (org-make-tag-string (org-get-tags nil t))))
+         (save-excursion
+           (message old-tags)
+           (beginning-of-line)
+           (re-search-forward
+            (concat "[ \t]*" (regexp-quote old-tags) "[ \t]*$")
+            (line-end-position) t)
+           (replace-match ""))))
+     
+     (defun aw/set-tags-command ()
+       "Remove the tags on the current headline before setting new ones.
+     This means I can use the completions again."
+       (interactive)
+       (aw/clear-current-tags)
+       (org-set-tags-command))
+   #+end_src
 
 ** Babel
 
