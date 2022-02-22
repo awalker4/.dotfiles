@@ -1350,8 +1350,8 @@
 
 
     #+BEGIN_SRC emacs-lisp
-                                              ; https://cestlaz.github.io/posts/using-emacs-24-capture-2/
-                                              ; Bind Key to: emacsclient -ne "(make-capture-frame)"
+      ; https://cestlaz.github.io/posts/using-emacs-24-capture-2/
+      ; Bind Key to: emacsclient -ne "(make-capture-frame)"
       
       (defadvice org-capture-finalize
           (after delete-capture-frame activate)
@@ -1377,6 +1377,16 @@
         (noflet ((switch-to-buffer-other-window (buf) (switch-to-buffer buf)))
           (org-capture nil "t")))
       
+      ;; Use this function in the template to insert a url from the clipboard if I have one
+      (defun aw/insert-link-from-clipboard-maybe ()
+        "If there's a URL on the clipboard, insert it as an org-mode
+      link in the form of [[url]]."
+        (interactive)
+        (let ((link (substring-no-properties (gui-get-selection 'CLIPBOARD)))
+              (url  "\\(http[s]?://\\|www\\.\\)"))
+          (save-match-data
+            (if (string-match url link)
+                (concat "[[" link "]]")))))
     #+END_SRC
 ** Roam
    #+BEGIN_SRC emacs-lisp
