@@ -1567,6 +1567,63 @@
   #+BEGIN_SRC emacs-lisp
     (add-to-list 'evil-normal-state-modes 'magit-file-mode)
   #+END_SRC
+
+  lsp mode
+  #+begin_src emacs-lisp
+    (use-package lsp-mode
+      :hook ((c-mode          ; clangd
+              c++-mode        ; clangd
+              c-or-c++-mode   ; clangd
+              java-mode       ; eclipse-jdtls
+              js-mode         ; ts-ls (tsserver wrapper)
+              js-jsx-mode     ; ts-ls (tsserver wrapper)
+              typescript-mode ; ts-ls (tsserver wrapper)
+              python-mode     ; pyright
+              web-mode        ; ts-ls/HTML/CSS
+              haskell-mode    ; haskell-language-server
+              ) . lsp-deferred)
+      :commands lsp
+      :config
+      (setq lsp-enable-symbol-highlighting t)
+      (setq lsp-headerline-breadcrumb-enable t)
+      (setq lsp-auto-guess-root t)
+      (setq lsp-log-io nil)
+      (setq lsp-restart 'auto-restart)
+    
+      (setq lsp-enable-on-type-formatting nil)
+      (setq lsp-signature-auto-activate nil)
+      (setq lsp-signature-render-documentation nil)
+      (setq lsp-eldoc-hook nil)
+      (setq lsp-modeline-code-actions-enable nil)
+      (setq lsp-modeline-diagnostics-enable nil)
+      (setq lsp-semantic-tokens-enable nil)
+      (setq lsp-enable-folding nil)
+      (setq lsp-enable-imenu nil)
+      (setq lsp-enable-snippet nil)
+      (setq read-process-output-max (* 1024 1024)) ;; 1MB
+      (setq lsp-idle-delay 0.2))
+    
+    (setq company-minimum-prefix-length 1
+          company-idle-delay 0.0) ;; default is 0.2
+    
+    (use-package dap-mode
+      ;; Uncomment the config below if you want all UI panes to be hidden by default!
+      ;; :custom
+      ;; (lsp-enable-dap-auto-configure nil)
+      ;; :config
+      ;; (dap-ui-mode 1)
+    
+      :config
+      ;; Set up Node debugging
+      (require 'dap-node)
+      (dap-node-setup) ;; Automatically installs Node debug adapter if needed
+    
+      ;; Bind `C-c l d` to `dap-hydra` for easy access
+      (general-define-key
+        :keymaps 'lsp-mode-map
+        :prefix lsp-keymap-prefix
+        "d" '(dap-hydra t :wk "debugger")))
+  #+end_src
 * License
 
   My Emacs configurations written in Org mode.
