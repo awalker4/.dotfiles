@@ -1106,6 +1106,8 @@
 
 
    #+BEGIN_SRC emacs-lisp
+     (setq org-directory "~/org/")
+     
      (use-package org-ql
        :ensure t
        )
@@ -1122,16 +1124,15 @@
        :hook (org-mode . org-super-agenda-mode)
        :pin manual
        :mode "\\.txt\\'"
-       
+     
        :init
-       (setq org-agenda-files (list "~/org/")
+       (setq org-agenda-files (list org-directory)
              org-agenda-default-appointment-duration 60     ; 1 hour appointments
              org-agenda-span 1                              ; Show only today by default
              org-agenda-start-on-weekday 0                  ; Show agenda from Sunday.
              org-catch-invisible-edits 'show                ; Expand a fold when trying to edit it
              org-confirm-babel-evaluate nil                 ; Don't ask to evaluate src blocks
              org-complete-tags-always-offer-all-agenda-tags  t ; Use all current agenda tags for completion
-             org-directory "~/org/"
              org-hide-emphasis-markers t                    ; Don't show markup characters
              org-link-search-must-match-exact-headline nil  ; Create internal links with only a partial match
              org-log-into-drawer t                          ; Track state changes in the LOGBOOK drawer
@@ -1150,12 +1151,12 @@
                                      (not (done))
                                      (not (descendants (todo "NEXT"))))
                                ((org-ql-block-header "Stuck Projects"))))
-                ((org-agenda-files '("~/org/gtd.org"))))
+                ((org-agenda-files (list (concat org-directory "gtd.org")))))
                ("g" "GTD Block Agenda"
                 (
                  (todo "NEXT")
                  )
-                ((org-agenda-files '("~/org/gtd.org"))
+                ((org-agenda-files (list (concat org-directory "gtd.org")))
                  (org-agenda-skip-function 'my-skip-unless-next))
                 )))
      
@@ -1339,8 +1340,8 @@
      
      (setq org-capture-templates
            '(
-             ("t" "Todo" entry (file "~/org/inbox.org") "** NEXT %?\n")
-             ("p" "Project" entry (file "~/org/inbox.org") "** TODO %^{Project Description} [/]\n*** NEXT %?")
+             ("t" "Todo" entry (file "~/org/inbox.org") (file "~/org/templates/gtdInbox.org"))
+             ("p" "Project" entry (file "~/org/inbox.org") (file "~/org/templates/gtdProject.org"))
              ("m" "Meeting" entry (file "~/org/inbox.org") "** %^{Meeting description}\n - %?\n\n %u\n")
              ))
    #+END_SRC
@@ -1383,14 +1384,14 @@
        :ensure t
      
        :init
-       (setq org-roam-directory "~/org/roam"
-             org-roam-dailies-directory "~/org/roam/daily"
+       (setq org-roam-directory "~/Sync/roam"
+             org-roam-dailies-directory "~/Sync/roam/daily"
              org-roam-v2-ack t)
      
        (setq org-roam-capture-templates
              '(
                ("a" "Album" plain
-                (file "~/org/templates/RoamAlbumNote.org")
+                (file "~/Sync/roam/templates/RoamAlbumNote.org")
                 :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
                 :unnarrowed nil)
                ("d" "default" plain
@@ -1398,19 +1399,19 @@
                 :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
                 :unnarrowed t)
                ("p" "project" plain
-                (file "~/org/templates/RoamProjectNote.org")
+                (file "~/Sync/roam/templates/RoamProjectNote.org")
                 :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
                 :unnarrowed t)
                ("r" "research" plain
-                (file "~/org/templates/RoamResearchNote.org")
+                (file "~/Sync/roam/templates/RoamResearchNote.org")
                 :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
                 :unnarrowed t)
                ("i" "index" plain
-                (file "~/org/templates/RoamIndexNote.org")
+                (file "~/Sync/roam/templates/RoamIndexNote.org")
                 :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
                 :unnarrowed t)
                ("s" "source" plain
-                (file "~/org/templates/RoamSourceNote.org")
+                (file "~/Sync/roam/templates/RoamSourceNote.org")
                 :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
                 :unnarrowed t)))
      
