@@ -274,11 +274,13 @@
      (set-fringe-bitmap-face 'tilde 'font-lock-function-name-face)
    #+END_SRC
 
-   Do something useful with the title bar.
+   Do something useful with the title bar. Right now I display the buffer filename plus a timer if I'm in a pomodoro.
 
    #+BEGIN_SRC emacs-lisp
      (setq frame-title-format
-           '((buffer-file-name "%f" (dired-directory dired-directory "%b"))))
+           '((:eval (aw/org-pomodoro-time))
+             " "
+             (buffer-file-name "%f" (dired-directory dired-directory "%b"))))
    #+END_SRC
 
 ** Windows
@@ -1296,6 +1298,24 @@
         org-pomodoro-long-break-sound "/home/austin/.emacs.d/alarm.wav"
         org-pomodoro-finished-sound "/home/austin/.emacs.d/alarm.wav"
         ))
+   #+end_src
+
+   This function will query the remaining time in whatever org-pomodoro state I'm in. I can use it to see the pomodoro status outside of just the modeline.
+
+   #+begin_src emacs-lisp
+     (defun aw/org-pomodoro-time ()
+       "Return the remaining pomodoro time"
+       (let ((minutes-left (/ (org-pomodoro-remaining-seconds) 60)))
+         (if (org-pomodoro-active-p)
+             (cl-case org-pomodoro-state
+               (:pomodoro
+                (format "(%s - %d minutes)" org-clock-heading minutes-left))
+               (:short-break
+                (format "(Break - %d minutes)" minutes-left))
+               (:long-break
+                (format "(Break - %d minutes)" minutes-left))
+               (:overtime
+                (format "(Overtime - %d minutes)" minutes-left))))))
    #+end_src
 
 ** Org Download
