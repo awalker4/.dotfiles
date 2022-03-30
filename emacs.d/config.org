@@ -58,6 +58,9 @@
    #+BEGIN_SRC emacs-lisp
      (global-auto-revert-mode t)
      (diminish 'auto-revert-mode)
+     
+     ;; Also auto revert dired buffers, etc
+     (setq global-auto-revert-non-file-buffers t)
    #+END_SRC
 
 * Base Environment
@@ -459,7 +462,6 @@
         (evil-leader/set-key
           "hc" 'describe-key-briefly
           "hf" 'describe-function
-          "hg" 'aw/search-ddg
           "hv" 'describe-variable
           "hm" 'man)
       
@@ -554,12 +556,6 @@
       (defun aw/interactive-org-todo ()
         (interactive)
         (org-todo-list '(4)))
-      
-      (defun aw/search-ddg (text)
-        (interactive "sSearch DDG: ")
-        (browse-url
-         (concat "https://duckduckgo.com/?q="
-                 (replace-regexp-in-string " " "+" text))))
       
       (defun aw/edit-gitignore ()
         (interactive)
@@ -1654,6 +1650,11 @@
         :keymaps 'lsp-mode-map
         :prefix lsp-keymap-prefix
         "d" '(dap-hydra t :wk "debugger")))
+    
+    
+  (defun aw/update-all-cookies ()
+      (interactive)
+    (org-update-statistics-cookies t))
   #+end_src
 * License
 
