@@ -1393,17 +1393,23 @@
         (noflet ((switch-to-buffer-other-window (buf) (switch-to-buffer buf)))
           (org-capture nil "t")))
       
+      (defun aw/get-clipboard ()
+        (substring-no-properties
+         (or (ignore-errors (gui-get-selection 'CLIPBOARD))
+             "")))
+      
       ;; Use this function in the template to insert a url from the clipboard if I have one
       (defun aw/insert-link-from-clipboard-maybe ()
         "If there's a URL on the clipboard, insert it as an org-mode
       link in the form of [[url]]."
         (interactive)
-        (let ((link (substring-no-properties (gui-get-selection 'CLIPBOARD)))
-              (url  "\\(http[s]?://\\|www\\.\\)"))
+        (let ((link (aw/get-clipboard))
+              (url  "\\(^http[s]?://\\|www\\.\\)"))
           (save-match-data
             (if (string-match url link)
                 (concat "[[" link "]]")))))
     #+END_SRC
+
 ** Roam
    #+BEGIN_SRC emacs-lisp
      (use-package org-roam
