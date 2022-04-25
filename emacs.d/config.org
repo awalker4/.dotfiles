@@ -1110,13 +1110,6 @@
        :ensure t
        )
      
-     (use-package org-edna
-       :ensure t
-       :after org-mode
-     
-       :config
-       (org-edna-mode))
-     
      (use-package org-mode
        :hook (org-mode . visual-line-mode)
        :hook (org-mode . org-super-agenda-mode)
@@ -1183,6 +1176,11 @@
      
        )
      
+     (use-package org-edna
+       :ensure t
+     
+       :config
+       (org-edna-mode))
    #+END_SRC
 
    Of course, I use git to keep my org files under control. We should periodically make sure everything is in sync.
