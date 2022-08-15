@@ -1349,8 +1349,8 @@
      
      (setq org-capture-templates
            '(
-             ("t" "Todo" entry (file "~/org/inbox.org") (file "~/org/templates/gtdInbox.org"))
-             ("p" "Project" entry (file "~/org/inbox.org") (file "~/org/templates/gtdProject.org"))
+             ("t" "Todo" entry (file+headline "~/org/inbox.org" "Inbox") (file "~/org/templates/gtdInbox.org"))
+             ("p" "Project" entry (file+headline "~/org/inbox.org" "Inbox") (file "~/org/templates/gtdProject.org"))
              ("m" "Meeting" entry (file "~/org/inbox.org") "** %^{Meeting description}\n - %?\n\n %u\n")
              ))
    #+END_SRC
