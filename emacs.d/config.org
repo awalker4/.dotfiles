@@ -1193,21 +1193,6 @@
        (org-edna-mode))
    #+END_SRC
 
-   Of course, I use git to keep my org files under control. We should periodically make sure everything is in sync.
-
-   #+BEGIN_SRC emacs-lisp
-     (defun aw/sync-org-directory ()
-       "Save all org buffers and then run my script to sync everything with my git remote.
-     If there are new changes, my org buffers should auto revert"
-       (interactive)
-       (let ((default-directory org-directory))
-         (org-save-all-org-buffers)
-         (save-window-excursion
-           (shell-command "./maintainOrgFiles" "*maintainOrgFiles"))))
-     
-     (run-with-idle-timer 300 t 'aw/sync-org-directory)
-   #+END_SRC
-
 ** Agenda
 
    When a project has subtasks that are not done, keep the project at TODO. Ignore headings that say Projects or Tasks - these are at the top level and shouldn't have a state.
