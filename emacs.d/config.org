@@ -213,6 +213,16 @@
              (kill-current-buffer))))
    #+END_SRC
 
+   This package allows me to use persistent history for M-x
+
+   
+   #+BEGIN_SRC emacs-lisp
+     (use-package amx
+       :ensure t
+       :config
+       (amx-mode)) 
+   #+END_SRC
+
 ** Visual
 
    First, get rid of a few things.
