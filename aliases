@@ -27,7 +27,7 @@ alias less='less -Rni'
 alias le='less'
 alias ll='ls -oh --color'
 alias ls='ls -h --color'
-mcd() { mkdir -pv $1 && cd $1; }
+mcd() { mkdir -pv "$1" && cd "$1"; }
 alias md='mkdir -pv'
 alias mv='mv -v'
 alias off='sudo shutdown 0'
