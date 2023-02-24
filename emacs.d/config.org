@@ -1205,6 +1205,8 @@
              (heading
               (cdr (assoc "ITEM" (org-entry-properties)))))
          (unless (or (string-match-p "Projects" heading)
+                     (string-match-p "Inbox" heading)
+                     (string-match-p "Long term projects" heading)
                      (string-match-p "Tasks" heading))
            (if (> n-not-done 0) (org-todo "TODO")))))
      
