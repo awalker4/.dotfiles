@@ -1476,6 +1476,21 @@
        :after org-roam)
    #+end_src
 
+** Notion
+   Functions to integrate with Notion.
+   #+begin_src elisp
+     (defun aw/notion-new-note ()
+       (interactive)
+       (let ((entry-title (org-entry-get nil "ITEM"))
+             (org-data (org-get-entry)))
+         (with-current-buffer (get-buffer-create "*send-to-notion*")
+           (erase-buffer)
+           (insert org-data)
+           (shell-command-on-region 1 (point-max) (concat "austin-notion new-note -t \"" entry-title "\""))))
+       (org-cut-subtree)
+       (save-buffer))
+   #+end_src
+
 ** Keybindings
 
    Org-mode uses Shift + arrow keys to change things like timestamps, TODO
