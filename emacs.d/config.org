@@ -1353,6 +1353,7 @@
            '(
              ("t" "Todo" entry (file+headline "~/org/inbox.org" "Inbox") (file "~/org/templates/gtdInbox.org"))
              ("p" "Project" entry (file+headline "~/org/inbox.org" "Inbox") (file "~/org/templates/gtdProject.org"))
+             ("j" "Journal" entry (file+datetree "~/Sync/Documents/journal.org") (file "~/org/templates/journal.org"))
              ("m" "Meeting" entry (file "~/org/inbox.org") "** %^{Meeting description}\n - %?\n\n %u\n")
              ))
    #+END_SRC
