@@ -30,7 +30,6 @@ alias ls='ls -h --color'
 mcd() { mkdir -pv "$1" && cd "$1"; }
 alias md='mkdir -pv'
 alias mv='mv -v'
-alias off='sudo shutdown 0'
 alias po='popd'
 alias pu='pushd'
 alias prettify-json='python -m json.tool'
@@ -44,6 +43,15 @@ alias reboot='sudo reboot'
 alias remount='sudo mount -a'
 alias rm='rm -v'
 alias sl='ls'
+
+function off() {
+    if [[ $1 ]]; then
+        echo $1
+        sudo shutdown $1
+    else
+        sudo shutdown 0
+    fi
+}
 
 
 ########################################
