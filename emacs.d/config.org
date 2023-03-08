@@ -496,6 +496,7 @@
           "oa" 'org-agenda-list
           "oA" 'org-agenda
           "oc" 'org-capture
+          "od" '(lambda () (interactive) (progn (org-cut-subtree) (save-buffer)))
           "of" 'org-roam-node-find
           "og" 'helm-org-rifle
           "oG" 'aw/pop-org-agenda
