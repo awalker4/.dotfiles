@@ -52,7 +52,6 @@ bind 'set completion-ignore-case on'
 # Append to history on every command
 export PROMPT_COMMAND='history -a'
 
-
 ########################################
 # => Prompt
 ########################################
