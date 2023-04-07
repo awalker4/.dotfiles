@@ -1120,7 +1120,7 @@
 
    #+BEGIN_SRC emacs-lisp
      (setq org-directory "~/org/")
-     
+
      (use-package org-ql
        :ensure t
        )
@@ -1134,7 +1134,7 @@
        :hook (org-mode . org-super-agenda-mode)
        :pin manual
        :mode "\\.txt\\'"
-     
+
        :init
        (setq org-agenda-files (list org-directory)
              org-agenda-default-appointment-duration 60     ; 1 hour appointments
@@ -1153,7 +1153,7 @@
              org-src-fontify-natively t                     ; Highlight src blocks natively
              org-startup-folded t                           ; Fold everything at startup
              )
-     
+
        (setq org-agenda-custom-commands
              '(
                ("s" "Stuck Projects"
@@ -1170,35 +1170,35 @@
                 ((org-agenda-files (list (concat org-directory "gtd.org")))
                  (org-agenda-skip-function 'my-skip-unless-next))
                 )))
-     
-     
-     
+
+
+
                                              ; Use org-super-agenda to always group everything by tag
        (setq org-super-agenda-groups
              '((:name "Sorted"
                       :auto-map (lambda (item)
                                   (second (org-super-agenda--get-tags item))))))
-     
-     
+
+
        :config
        (fullframe org-agenda org-agenda-Quit)
-     
+
                                              ; Show dots instead of dashes
        (font-lock-add-keywords 'org-mode
                                '(("^ +\\([-*]\\) "
                                   (0 (prog1 ()
                                        (compose-region (match-beginning 1) (match-end 1) "•")))))))
-     
+
      (use-package org-bullets
        :ensure t
        :config
        (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-     
+
        )
-     
+
      (use-package org-edna
        :ensure t
-     
+
        :config
        (org-edna-mode))
    #+END_SRC
