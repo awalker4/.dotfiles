@@ -1124,7 +1124,11 @@
      (use-package org-ql
        :ensure t
        )
-     
+
+     (use-package helm-org-rifle
+       :ensure t
+       )
+
      (use-package org-mode
        :hook (org-mode . visual-line-mode)
        :hook (org-mode . org-super-agenda-mode)
