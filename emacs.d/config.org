@@ -1165,20 +1165,37 @@
                 ((org-agenda-files (list (concat org-directory "gtd.org")))))
                ("g" "GTD Block Agenda"
                 (
-                 (todo "NEXT")
+                 (todo "NEXT|TODO|WAITING")
                  )
-                ((org-agenda-files (list (concat org-directory "gtd.org")))
-                 (org-agenda-skip-function 'my-skip-unless-next))
+                ((org-agenda-files (list (concat org-directory "gtd.org"))))
                 )))
 
-
-
-                                             ; Use org-super-agenda to always group everything by tag
+        ; Use org-super-agenda to always group everything by tag
        (setq org-super-agenda-groups
-             '((:name "Sorted"
+             '((:name "Important Projects"
+                      :and (:children t :priority "A")
+                      :order 3)
+               (:name "Projects"
+                      :children t
+                      :order 4)
+               (:discard (:todo "TODO"))
+               (:name "Waiting"
+                      :todo "WAITING"
+                      :order 10)
+               (:name "Needs Priority"
+                      :not (:priority ("A" "B" "C"))
+                      :order 0)
+               (:name "Focus for the Day"
+                      :and (:priority "A" :tag "@deep")
+                      :order 1)
+               (:name "Quick and Important"
+                      :and (:priority "A" :tag "@shallow")
+                      :order 2)
+               (:name "Sorted"
                       :auto-map (lambda (item)
-                                  (second (org-super-agenda--get-tags item))))))
-
+                                  (second (org-super-agenda--get-tags item)))
+                      :order 5)
+               ))
 
        :config
        (fullframe org-agenda org-agenda-Quit)
