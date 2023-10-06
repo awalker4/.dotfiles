@@ -61,6 +61,8 @@
      
      ;; Also auto revert dired buffers, etc
      (setq global-auto-revert-non-file-buffers t)
+
+     (setq home-dir "/Users/austin/")
    #+END_SRC
 
 * Base Environment
@@ -1312,9 +1314,9 @@
         alert-user-configuration (quote ((((:category . "org-pomodoro")) libnotify nil)))
         org-pomodoro-manual-break nil
         org-pomodoro-play-sounds t
-        org-pomodoro-short-break-sound "/home/austin/.emacs.d/alarm.wav"
-        org-pomodoro-long-break-sound "/home/austin/.emacs.d/alarm.wav"
-        org-pomodoro-finished-sound "/home/austin/.emacs.d/alarm.wav"
+        org-pomodoro-short-break-sound (concat home-dir ".emacs.d/alarm.wav")
+        org-pomodoro-long-break-sound (concat home-dir ".emacs.d/alarm.wav")
+        org-pomodoro-finished-sound (concat home-dir ".emacs.d/alarm.wav")
         ))
    #+end_src
 
