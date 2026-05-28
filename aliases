@@ -15,6 +15,7 @@
 ########################################
 # General shell
 ########################################
+alias cl='claude'
 alias cp='cp -iv'
 alias df='df -h'
 alias du='du -hsc'
@@ -64,6 +65,7 @@ function off() {
 alias em='emacsclient -c --no-wait'
 alias realias='vim ~/.dotfiles/aliases; source ~/.dotfiles/aliases'
 alias revariable='vim ~/.dotfiles/variables; source ~/.dotfiles/variables'
+alias sconfig='vim ~/.ssh/config'
 alias suvi='sudoedit'
 alias vi='vim'
 
@@ -91,32 +93,6 @@ alias svnstat='svn status . 2> /dev/null | grep -v \?'
 
 # good when merging, checking out, or you want to paste a url into the browser to browse to an alternate branch version of a file
 alias svnurl='svn info . 2> /dev/null | grep ^URL: | awk "{ print \$2; }"'
-
-
-
-########################################
-# Ledger
-########################################
-alias ledger='ledger --explicit'
-
-alias bal='ledger bal -R'
-alias balbit='ledger -R --current --flat bal assets:crypto'
-alias balcash='ledger -R -X $ --current --flat bal assets:bank liabilities:credit'
-alias balfid='ledger -R -X $ --current bal assets:fidelity'
-alias balnet='ledger -R -X $ --current --depth 2 bal assets liabilities'
-alias leg='ledger print --tail 5'
-alias reg='ledger reg -R --tail 15'
-
-cashflow() {
-    if [ -z "$1" ]; then
-        period="this month"
-    else
-        period="$@"
-    fi
-
-    ledger --current --invert --real --wide -s -X $ -S "amount" -p "$period" reg income expenses
-}
-
 
 ########################################
 # Distro Specific
@@ -150,13 +126,6 @@ elif [[ -x /bin/rpm ]]; then
     alias yumup='sudo yum update'
     alias rpmq='rpm -qa | grep'
 fi
-
-if [[ -x /usr/bin/vendor_perl/mimeopen ]]; then
-    alias open='mimeopen'
-else
-    alias open='xdg-open'
-fi
-
 
 ########################################
 # Misc Programs
