@@ -550,6 +550,17 @@ not in =config.el=.
       ;; basedpyright server via exec-path itself. Flip per-project via
       ;; .dir-locals if a project needs a tool only available globally.
       (setq pet-search-globally nil)
+
+      ;; pet keys its venv/config cache on `pet-project-root', which defaults to
+      ;; the projectile (git) root. In a monorepo that makes every sub-package
+      ;; share one cache entry, so the first plugin's venv leaks into the rest.
+      ;; Root pet at the nearest pyproject.toml instead (same basis as eglot), so
+      ;; each package caches and resolves its own venv.
+      (define-advice pet-project-root (:around (orig) aw-pyproject-root)
+        (if-let* ((proj (project-try-vc default-directory)))
+            (expand-file-name (project-root proj))
+          (funcall orig)))
+
       (add-hook 'python-base-mode-hook 'pet-mode -10))
   #+END_SRC
 
