@@ -314,7 +314,14 @@ not in =config.el=.
     (use-package orderless
       :custom
       (completion-styles '(orderless basic))
-      (completion-category-overrides '((file (styles partial-completion)))))
+      ;; Match each token as a fuzzy subsequence: type a continuous sparse
+      ;; string like "prjfindfl" and skip spaces entirely. Spaces still work as
+      ;; optional extra filters when you want them.
+      (orderless-matching-styles '(orderless-flex))
+      ;; Files prefer fuzzy too, falling back to partial-completion for real
+      ;; path expansion (~/, /u/s/b -> /usr/share/bin).
+      (completion-category-overrides
+       '((file (styles orderless partial-completion)))))
 
     (use-package marginalia
       :init (marginalia-mode))
@@ -439,4 +446,112 @@ not in =config.el=.
         "pp" #'projectile-switch-project
         "pr" #'projectile-run-shell-command-in-root
         "ps" #'consult-imenu))
+  #+END_SRC
+
+* Code intelligence — eglot
+
+  =eglot= is the built-in LSP client. It drives the built-in =xref= (=M-.= /
+  =M-,=), =eldoc= (hover), =flymake= (diagnostics), and =completion-at-point=,
+  so there's little to configure beyond pointing it at a server. =M-.= was
+  unbound in evil normal state earlier so it falls through to
+  =xref-find-definitions=.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package eglot
+      :ensure nil                      ; built in
+      :init
+      ;; Don't block the buffer waiting for the server's handshake — connect in
+      ;; the background so editing is available immediately and LSP features
+      ;; light up a moment later once basedpyright is ready.
+      (setq eglot-sync-connect nil
+            eglot-events-buffer-size 0  ; skip logging every JSON-RPC event
+            eglot-autoshutdown t)       ; stop the server when its last buffer closes
+      ;; Treat any directory with a pyproject.toml as a project root. Consumed
+      ;; by project-try-vc, which the eglot advice below calls.
+      (setq project-vc-extra-root-markers '("pyproject.toml"))
+      :config
+      ;; basedpyright for Python. Swap the binary for "pyright-langserver" to
+      ;; use stock pyright instead.
+      (add-to-list 'eglot-server-programs
+                   '((python-mode python-ts-mode)
+                     . ("basedpyright-langserver" "--stdio")))
+
+      ;; In a monorepo, projectile registers `project-projectile' ahead of
+      ;; `project-try-vc' in `project-find-functions', so `project-current'
+      ;; returns the git root — and one LSP server is shared across every
+      ;; sub-package, pinned to whichever venv connected first. Reroot ONLY eglot
+      ;; to the nearest pyproject.toml (via the marker above) so each package
+      ;; gets its own server on its own venv. projectile and other project.el
+      ;; consumers (consult, etc.) still use the git root.
+      (define-advice eglot--current-project
+          (:around (orig) aw-prefer-pyproject-root)
+        (or (project-try-vc default-directory) (funcall orig))))
+  #+END_SRC
+
+  Leader bindings for the LSP actions, under =SPC l=.
+
+  #+BEGIN_SRC emacs-lisp
+    (aw/leader
+      "l"  '(:ignore t :which-key "lsp")
+      "lr" #'eglot-rename
+      "la" #'eglot-code-actions
+      "lf" #'apheleia-format-buffer
+      "ld" #'xref-find-definitions
+      "lR" #'xref-find-references
+      "le" #'consult-flymake)
+  #+END_SRC
+
+* Python
+
+  Tree-sitter grammar: declare the source pinned to a release matching Emacs
+  29's tree-sitter ABI (14 — =master= targets a newer ABI and won't load),
+  compile it on first run if it's missing (needs =cc= + =git=), and remap
+  =python-mode= to the tree-sitter mode once the grammar is available.
+
+  #+BEGIN_SRC emacs-lisp
+    (setq treesit-language-source-alist
+          '((python "https://github.com/tree-sitter/tree-sitter-python" "v0.21.0")))
+
+    (unless (treesit-language-available-p 'python)
+      (ignore-errors (treesit-install-language-grammar 'python)))
+
+    (when (treesit-language-available-p 'python)
+      (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode)))
+  #+END_SRC
+
+  Start the LSP server in every Python buffer.
+
+  #+BEGIN_SRC emacs-lisp
+    (add-hook 'python-ts-mode-hook #'eglot-ensure)
+  #+END_SRC
+
+  =pet= (Python Executable Tracker) detects the project's virtualenv and points
+  the interpreter, language server, and linters at it. The =-10= depth runs it
+  early so the hooks below see the resolved paths.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package pet
+      :config
+      (add-hook 'python-base-mode-hook 'pet-mode -10))
+  #+END_SRC
+
+  Ruff for formatting and import sorting, applied asynchronously on save via
+  =apheleia=. apheleia ships the =ruff= and =ruff-isort= formatters, so this
+  only points Python buffers at them (the default is =black=). Scoped to Python
+  rather than enabled globally.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package apheleia
+      :hook (python-ts-mode . apheleia-mode)
+      :config
+      (setf (alist-get 'python-ts-mode apheleia-mode-alist) '(ruff-isort ruff)))
+  #+END_SRC
+
+  Ruff for linting, added as a =flymake= backend alongside eglot's diagnostics.
+  Hooking =eglot-managed-mode= ensures ruff is registered after eglot sets up
+  its own flymake backend (otherwise eglot clobbers it).
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package flymake-ruff
+      :hook (eglot-managed-mode . flymake-ruff-load))
   #+END_SRC
