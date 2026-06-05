@@ -94,6 +94,34 @@ not in =config.el=.
     (savehist-mode 1)                        ; persist minibuffer history
     (save-place-mode 1)                      ; reopen files at last cursor position
     (recentf-mode 1)                         ; track recently opened files
+
+    ;; Running as a daemon I almost never quit, so save bookmarks on every change
+    ;; rather than only on exit.
+    (setq bookmark-save-flag 1)
+
+    ;; Human-readable sizes in dired.
+    (setq dired-listing-switches "-alh")
+  #+END_SRC
+
+  Keep the =*scratch*= buffer across restarts: persist it to =var/= every five
+  minutes (and on exit), reload it on startup.
+
+  #+BEGIN_SRC emacs-lisp
+    (defun aw/save-persistent-scratch ()
+      (with-current-buffer (get-buffer-create "*scratch*")
+        (write-region (point-min) (point-max)
+                      (no-littering-expand-var-file-name "scratch"))))
+
+    (defun aw/load-persistent-scratch ()
+      (let ((f (no-littering-expand-var-file-name "scratch")))
+        (when (file-exists-p f)
+          (with-current-buffer (get-buffer-create "*scratch*")
+            (delete-region (point-min) (point-max))
+            (insert-file-contents f)))))
+
+    (add-hook 'emacs-startup-hook #'aw/load-persistent-scratch)
+    (add-hook 'kill-emacs-hook    #'aw/save-persistent-scratch)
+    (run-with-idle-timer 300 t    #'aw/save-persistent-scratch)
   #+END_SRC
 
   Programming buffers get line numbers and current-line highlight.
@@ -338,6 +366,41 @@ not in =config.el=.
       :after (embark consult))
   #+END_SRC
 
+* In-buffer completion — corfu & cape
+
+  Where vertico handles the minibuffer, *corfu* handles completion at point: the
+  little popup that appears as you type, fed by =completion-at-point-functions=
+  (eglot's symbols, plus the =cape= sources below). This is the modern
+  replacement for =company=.
+
+  =corfu-preselect 'prompt= leaves the prompt selected rather than the first
+  candidate, so =RET= still inserts a newline unless you've explicitly cycled
+  into the list with =TAB=.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package corfu
+      :init
+      (global-corfu-mode)
+      :custom
+      (corfu-auto t)                  ; pop up automatically as you type
+      (corfu-auto-delay 0.1)
+      (corfu-auto-prefix 2)           ; after 2 chars
+      (corfu-cycle t)                 ; wrap around the candidate list
+      (corfu-preselect 'prompt)       ; don't steal RET for the first candidate
+      (corfu-quit-no-match 'separator))
+  #+END_SRC
+
+  *cape* supplies extra capf backends. =cape-dabbrev= completes words already in
+  the open buffers and =cape-file= completes filesystem paths — both stack
+  underneath eglot's LSP completions.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package cape
+      :init
+      (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+      (add-to-list 'completion-at-point-functions #'cape-file))
+  #+END_SRC
+
 * Projects — projectile
 
   #+BEGIN_SRC emacs-lisp
@@ -446,6 +509,56 @@ not in =config.el=.
         "pp" #'projectile-switch-project
         "pr" #'projectile-run-shell-command-in-root
         "ps" #'consult-imenu))
+  #+END_SRC
+
+* Programming niceties
+
+  Cross-language editing affordances for =prog-mode=.
+
+  - *hl-todo* highlights =TODO= / =FIXME= / =NOTE= keywords in comments.
+  - *whitespace-mode* surfaces trailing whitespace and tabs so they don't sneak
+    into diffs (faces inherit from the theme).
+  - *which-function-mode* shows the enclosing function in the modeline — handy in
+    long defns.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package hl-todo
+      :hook (prog-mode . hl-todo-mode))
+
+    (use-package whitespace
+      :ensure nil                       ; built in
+      :diminish whitespace-mode
+      :hook (prog-mode . whitespace-mode)
+      :init
+      (setq whitespace-style '(face trailing tabs tab-mark)))
+
+    (use-package which-func
+      :ensure nil                       ; built in
+      :config (which-function-mode 1))
+  #+END_SRC
+
+  Make a buffer executable on save if it starts with a shebang.
+
+  #+BEGIN_SRC emacs-lisp
+    (add-hook 'after-save-hook
+              #'executable-make-buffer-file-executable-if-script-p)
+  #+END_SRC
+
+  Compilation: jump to the first error, restart without prompting, don't ask
+  about saving, and auto-dismiss the =*compilation*= window a second after a
+  clean run.
+
+  #+BEGIN_SRC emacs-lisp
+    (setq-default compilation-auto-jump-to-first-error t
+                  compilation-always-kill t
+                  compilation-ask-about-save nil
+                  compilation-scroll-output 'first-error)
+
+    (add-hook 'compilation-finish-functions
+              (lambda (buf str)
+                (when (and (string-prefix-p "*compilation*" (buffer-name buf))
+                           (not (string-match-p "abnormally\\|interrupt" str)))
+                  (run-at-time 1 nil #'delete-windows-on buf))))
   #+END_SRC
 
 * Code intelligence — eglot
@@ -583,4 +696,30 @@ not in =config.el=.
   #+BEGIN_SRC emacs-lisp
     (use-package flymake-ruff
       :hook (eglot-managed-mode . flymake-ruff-load))
+  #+END_SRC
+
+* File modes
+
+  The non-Python formats that come up constantly in platform work — config,
+  infra, and docs. These are the classic MELPA modes (no tree-sitter grammar to
+  compile); =:mode= entries keep them lazy-loaded until a matching file opens.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package yaml-mode
+      :mode ("\\.ya?ml\\'" "\\.ya?ml\\.j2\\'"))
+
+    (use-package dockerfile-mode
+      :mode ("/Dockerfile\\'" "\\.dockerfile\\'"))
+
+    (use-package markdown-mode
+      :mode ("\\.md\\'" "\\.markdown\\'"))
+
+    (use-package json-mode
+      :mode "\\.json\\'")
+
+    (use-package toml-mode
+      :mode ("\\.toml\\'" "/poetry\\.lock\\'"))
+
+    (use-package terraform-mode
+      :mode "\\.tf\\'")
   #+END_SRC
