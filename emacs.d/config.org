@@ -440,7 +440,7 @@
           "es" 'aw/switch-to-scratch
           "eS" 'aw/generate-scratch-buffer
           "x" 'counsel-M-x)
-      
+
         ;; Window stuff
         (evil-leader/set-key
           "0" 'delete-window
@@ -453,7 +453,7 @@
           "+" 'aw/toggle-window-split
           "<up>" 'text-scale-increase
           "<down>" 'text-scale-decrease)
-      
+
         ;; Buffer and file stuff
         (evil-leader/set-key
           "bg" 'aw/helm-do-grep-all-buffers
@@ -464,19 +464,19 @@
           "br" 'rename-buffer
           "bb" 'counsel-projectile-switch-to-buffer
           "bs" 'ivy-switch-buffer)
-      
+
         ;; Nerd commenter
         (evil-leader/set-key
           "cc" 'evilnc-copy-and-comment-lines
           "ci" 'evilnc-comment-or-uncomment-lines)
-      
+
         ;; Help stuff
         (evil-leader/set-key
           "hc" 'describe-key-briefly
           "hf" 'describe-function
           "hv" 'describe-variable
           "hm" 'man)
-      
+
         ;; Git/VC stuff
         (evil-leader/set-key
           "gb" 'magit-blame
@@ -485,14 +485,14 @@
           "gi" 'aw/edit-gitignore
           "gl" 'magit-log-buffer-file
           "gs" 'magit-status)
-      
+
         ;; Compiling
         (evil-leader/set-key
           "mm" 'projectile-compile-project
           "mn" 'next-error
           "mp" 'previous-error
           "mt" 'projectile-test-project)
-      
+
         ;; Org stuff
         (evil-leader/set-key
           "oa" 'org-agenda-list
@@ -507,13 +507,14 @@
           "ol" 'org-store-link
           "os" 'org-search-view
           "op" 'org-pomodoro
+          "oP" 'aw/start-org-pomodoro-with-time
           "oi" 'org-toggle-inline-images
           "oT" 'aw/interactive-org-todo
           "t"  `org-todo
           "T"  `aw/set-tags-command
           "w"  'org-refile
           "ow" '(lambda () (interactive) (org-agenda "nil" "w")))
-      
+
         ;; Projectile/Helm stuff
         (evil-leader/set-key
           "pd" 'projectile-dired
@@ -923,7 +924,7 @@
         (if buf
             (if (eq (buffer-local-value 'major-mode (get-buffer buf)) 'org-mode)
                 (save-excursion (set-buffer buf) (apply command cmdargs)))))
-      
+
       (defun aw/ediff-org-unfold-tree-element ()
         "Unfold tree at diff location"
         (aw/ediff-org-showhide ediff-buffer-A 'org-reveal)
@@ -935,7 +936,7 @@
         (aw/ediff-org-showhide ediff-buffer-A 'hide-sublevels 1)
         (aw/ediff-org-showhide ediff-buffer-B 'hide-sublevels 1)
         (aw/ediff-org-showhide ediff-buffer-C 'hide-sublevels 1))
-      
+
       (add-hook 'ediff-select-hook 'aw/ediff-org-unfold-tree-element)
       (add-hook 'ediff-unselect-hook 'aw/ediff-org-fold-tree)
     #+END_SRC
