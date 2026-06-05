@@ -465,7 +465,8 @@ not in =config.el=.
       ;; light up a moment later once basedpyright is ready.
       (setq eglot-sync-connect nil
             eglot-events-buffer-size 0  ; skip logging every JSON-RPC event
-            eglot-autoshutdown t)       ; stop the server when its last buffer closes
+            eglot-autoshutdown t        ; stop the server when its last buffer closes
+            eglot-autoreconnect nil)    ; don't loop-restart a server that keeps dying
       ;; Treat any directory with a pyproject.toml as a project root. Consumed
       ;; by project-try-vc, which the eglot advice below calls.
       (setq project-vc-extra-root-markers '("pyproject.toml"))
@@ -486,6 +487,16 @@ not in =config.el=.
       (define-advice eglot--current-project
           (:around (orig) aw-prefer-pyproject-root)
         (or (project-try-vc default-directory) (funcall orig))))
+
+    ;; basedpyright is much stricter than stock pyright by default (it turns on
+    ;; reportUnknownMemberType, reportUntypedFunctionDecorator, reportAny, ...),
+    ;; which floods large/partially-typed codebases with thousands of
+    ;; diagnostics and bogs eglot's main thread down. Dial it to a sane baseline
+    ;; and only analyze open files. pet merges its :python pythonPath into this.
+    (setq-default eglot-workspace-configuration
+                  '(:basedpyright
+                    (:analysis (:typeCheckingMode "standard"
+                                :diagnosticMode "openFilesOnly"))))
   #+END_SRC
 
   Leader bindings for the LSP actions, under =SPC l=.
