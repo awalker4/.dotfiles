@@ -543,6 +543,13 @@ not in =config.el=.
   #+BEGIN_SRC emacs-lisp
     (use-package pet
       :config
+      ;; Only resolve tools in the project's own venv. The global fallback runs
+      ;; `pyenv which' per executable not found there, which is slow (the repos
+      ;; pin pyenv versions that aren't installed, so every shim call errors).
+      ;; venv tools (python, ruff) still resolve; eglot finds the global
+      ;; basedpyright server via exec-path itself. Flip per-project via
+      ;; .dir-locals if a project needs a tool only available globally.
+      (setq pet-search-globally nil)
       (add-hook 'python-base-mode-hook 'pet-mode -10))
   #+END_SRC
 
