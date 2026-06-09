@@ -723,3 +723,21 @@ not in =config.el=.
     (use-package terraform-mode
       :mode "\\.tf\\'")
   #+END_SRC
+
+  Live Markdown preview in the browser, auto-refreshing as you type — a
+  better-looking companion to =markdown-mode='s built-in =markdown-preview= (which
+  renders sparse, unstyled HTML). Pure Emacs over a websocket, no external binary.
+  Left on-demand rather than hooked so opening a =.md= doesn't spawn a browser;
+  toggle it from within a Markdown buffer.
+
+  It renders from the live *buffer*, not the file on disk, via an idle timer.
+  =markdown-preview-delay-time= is the debounce — the stock 2.0s makes edits feel
+  like they only land on save, so drop it to 0.5s for a tighter live feel.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package markdown-preview-mode
+      :after markdown-mode
+      :bind (:map markdown-mode-map
+                  ("C-c C-c p" . markdown-preview-mode))
+      :custom (markdown-preview-delay-time 0.5))
+  #+END_SRC
