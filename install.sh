@@ -11,6 +11,11 @@ ln -s ~/.dotfiles/bashrc ~/.bashrc
 ln -s ~/.dotfiles/emacs.d ~/.emacs.d
 ln -s ~/.dotfiles/gvimrc ~/.gvimrc
 ln -s ~/.dotfiles/i3 ~/.i3
+
+# XDG-style config dirs
+mkdir -p ~/.config
+ln -s ~/.dotfiles/ghostty ~/.config/ghostty
+
 ln -s ~/.dotfiles/nvimrc ~/.nvimrc
 ln -s ~/.dotfiles/screenrc ~/.screenrc
 ln -s ~/.dotfiles/tmux.conf ~/.tmux.conf

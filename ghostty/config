@@ -1,0 +1,82 @@
+########################################
+# ~/.config/ghostty/config
+# Ghostty terminal settings
+#
+# Sections:
+#   -> Font
+#   -> Colors
+#   -> Surface
+#   -> Splits
+#   -> Notifications
+#
+# This file governs the inside of a terminal pane only. Window
+# chrome — sidebar, tabs, workspace colors, notification rings —
+# belongs to cmux, in ~/.config/cmux/cmux.json.
+#
+# Reload in place with cmd+shift+, (no restart).
+#
+#   ghostty +list-themes          preview all bundled themes
+#   ghostty +list-fonts           exact family names
+#   ghostty +explain-config KEY   docs for one key
+#   ghostty +validate-config      check this file
+#
+# There is no standalone Ghostty install; the binary ships inside
+# the cmux bundle at
+#   /Applications/cmux.app/Contents/Resources/bin/ghostty
+########################################
+
+########################################
+# => Font
+########################################
+
+# Repeated font-family keys build a fallback stack, in order.
+# Maple Mono Normal NF carries its own Nerd Font glyphs; Symbols
+# Nerd Font Mono backstops anything it misses. The "Normal" cut
+# uses upright italics rather than the cursive default.
+font-family = Maple Mono Normal NF
+font-family = Symbols Nerd Font Mono
+font-size = 15
+
+# Loosen the line box slightly for long log output.
+adjust-cell-height = 6%
+
+########################################
+# => Colors
+########################################
+
+theme = Kanagawa Lotus
+
+# Rescue unreadable foreground/background pairs emitted by
+# programs that assume a different terminal palette. 1 disables.
+minimum-contrast = 1.1
+
+########################################
+# => Surface
+########################################
+
+window-padding-x = 8
+window-padding-y = 4
+window-padding-balance = true
+
+mouse-hide-while-typing = true
+
+########################################
+# => Splits
+########################################
+
+# Dim inactive splits less aggressively than the 0.7 default —
+# background agents stay readable while still reading as inactive.
+unfocused-split-opacity = 0.85
+
+# Kanagawa Lotus' own mid-gray (palette 8). A dark divider reads
+# as a hard rule against a light background.
+split-divider-color = #8a8980
+
+########################################
+# => Notifications
+########################################
+
+# Fire when a long command finishes in a pane you aren't watching.
+notify-on-command-finish = unfocused
+notify-on-command-finish-after = 30s
+notify-on-command-finish-action = bell,notify
