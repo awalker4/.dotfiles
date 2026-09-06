@@ -443,8 +443,23 @@ not in =config.el=.
       :custom
       ;; Let vertico handle completion rather than projectile's own backend.
       (projectile-completion-system 'default)
-      ;; Switching project drops straight into magit.
-      (projectile-switch-project-action #'magit-status))
+      ;; Build the file list once and reuse it — over Tramp, re-indexing on every
+      ;; find-file is a fresh remote round-trip and the main source of the stall.
+      (projectile-enable-caching t)
+      ;; One remote `git ls-files` instead of an Elisp directory walk (stat per file).
+      (projectile-indexing-method 'alien)
+      ;; Bottom-up with a minimal marker set: far fewer remote stats during root
+      ;; discovery than the default top-down sweep over a dozen marker files.
+      (projectile-project-root-files-functions '(projectile-root-bottom-up))
+      (projectile-project-root-files-bottom-up '(".git" ".projectile"))
+      ;; Switching project drops into magit locally, but magit fires dozens of git
+      ;; subprocesses — each a Tramp round-trip — so on a remote project just open a
+      ;; file instead and let me reach for magit explicitly.
+      (projectile-switch-project-action
+       (lambda ()
+         (if (file-remote-p default-directory)
+             (projectile-find-file)
+           (magit-status)))))
   #+END_SRC
 
 * Git — magit
@@ -457,6 +472,42 @@ not in =config.el=.
       :config
       ;; Some node repos need this set for git hooks to run.
       (add-to-list 'magit-git-environment "CODEARTIFACT_AUTH_TOKEN=foo"))
+  #+END_SRC
+
+  =git-link= turns point (or the active region) into a remote URL on the kill
+  ring. =git-link-use-commit= pins to the commit SHA instead of the branch name,
+  so the link is immutable and won't drift as the file changes. Caveat: it pins
+  to the *local* commit — push before sharing or the SHA 404s for a coworker.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package git-link
+      :init
+      (setq git-link-use-commit t))   ; permalink to the SHA, not the branch
+  #+END_SRC
+
+* Remote files — tramp
+
+  Editing on =cherry= over Tramp. The dominant cost is per-operation SSH
+  round-trips, so the wins are: reuse one SSH connection (ControlMaster, set in
+  =~/.ssh/config=), trust Tramp's stat cache for a short window instead of
+  re-statting constantly, and stop VC from probing every remote file open.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package tramp
+      :ensure nil
+      :custom
+      (tramp-default-method "ssh")          ; honours ControlMaster from ~/.ssh/config
+      (remote-file-name-inhibit-cache 60)   ; trust cached stats for 60s
+      (tramp-verbose 1)
+      :config
+      ;; VC walks backends on every file open; over Tramp that's pure latency.
+      ;; vc-ignore-dir-regexp is a single regexp string, so fold the Tramp path
+      ;; pattern into it (the manual's idiom) rather than add-to-list.
+      (setq vc-handled-backends '(Git)
+            vc-ignore-dir-regexp
+            (format "\\(%s\\)\\|\\(%s\\)"
+                    vc-ignore-dir-regexp
+                    tramp-file-name-regexp)))
   #+END_SRC
 
 * Leader keys
