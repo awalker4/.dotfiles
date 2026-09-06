@@ -103,6 +103,39 @@ not in =config.el=.
     (setq dired-listing-switches "-alh")
   #+END_SRC
 
+  *Dirvish* — a modern front-end for dired: ranger-style miller columns, live
+  previews, and inline subtree expansion (=TAB=), all on top of plain dired so
+  =evil-collection='s dired keys still apply. =dirvish-override-dired-mode= means
+  even =SPC e d= (dired-jump) opens into dirvish. Previews shell out to optional
+  CLI tools — =brew install fd ffmpegthumbnailer mediainfo imagemagick= (poppler
+  and ripgrep are already installed). Icons come from =nerd-icons=, which needs a
+  nerd font on the system: =brew install --cask font-symbols-only-nerd-font=.
+
+  In a dirvish buffer: =TAB= toggles a directory open as an inline tree, =a= is
+  quick-access, =?= opens the dispatch menu, and =M-x dirvish= (or the layout
+  toggle in dispatch) gives the full parent│current│preview miller view.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package nerd-icons)
+
+    (use-package dirvish
+      :after nerd-icons
+      :init
+      (dirvish-override-dired-mode)
+      :custom
+      (dirvish-attributes
+       '(nerd-icons subtree-state collapse file-size vc-state git-msg))
+      (dirvish-quick-access-entries
+       '(("h" "~/"             "home")
+         ("d" "~/.dotfiles/"   "dotfiles")
+         ("r" "~/repos/"       "repos")
+         ("b" "~/the-brain/"   "the-brain")))
+      :config
+      (setq dirvish-use-header-line 'global
+            ;; No parent pane; split the frame current(40%)/preview(60%).
+            dirvish-default-layout '(0 0.4 0.6)))
+  #+END_SRC
+
   Keep the =*scratch*= buffer across restarts: persist it to =var/= every five
   minutes (and on exit), reload it on startup.
 
