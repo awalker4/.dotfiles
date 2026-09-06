@@ -542,6 +542,7 @@ not in =config.el=.
         ;; Edit / Emacs
         "e"  '(:ignore t :which-key "emacs/edit")
         "ed" #'dired-jump
+        "eD" #'dirvish-side
         "ei" #'aw/edit-config
         "eI" #'aw/edit-init
         "es" #'aw/switch-to-scratch
@@ -553,6 +554,7 @@ not in =config.el=.
         "bk" #'kill-current-buffer
         "bK" #'aw/delete-this-file
         "bl" #'ibuffer
+        "bs" #'switch-to-buffer
         "bo" #'consult-line
         "bg" #'consult-line-multi
         "br" #'rename-buffer
@@ -576,6 +578,9 @@ not in =config.el=.
         "gb" #'magit-blame
         "gl" #'magit-log-buffer-file
         "gi" #'aw/edit-gitignore
+        "gy" #'git-link              ; permalink to line/region on the kill ring
+        "gY" #'git-link-commit       ; link to the commit that introduced the line
+        "gh" #'git-link-homepage     ; repo homepage
 
         ;; Make / compile
         "m"  '(:ignore t :which-key "make")
@@ -683,7 +688,13 @@ not in =config.el=.
       ;; consumers (consult, etc.) still use the git root.
       (define-advice eglot--current-project
           (:around (orig) aw-prefer-pyproject-root)
-        (or (project-try-vc default-directory) (funcall orig))))
+        (or (project-try-vc default-directory) (funcall orig)))
+
+      ;; Inlay hints (inline parameter-name / inferred-type annotations) are on
+      ;; by default in eglot-managed buffers and read as visual noise. Turn the
+      ;; minor mode off for every buffer eglot manages.
+      (add-hook 'eglot-managed-mode-hook
+                (lambda () (eglot-inlay-hints-mode -1)))
 
     ;; basedpyright is much stricter than stock pyright by default (it turns on
     ;; reportUnknownMemberType, reportUntypedFunctionDecorator, reportAny, ...),
